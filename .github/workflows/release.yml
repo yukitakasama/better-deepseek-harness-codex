@@ -1,0 +1,71 @@
+name: Release
+
+# 每次向 main 推送（即「每次提交」）时，读取 manifest.json 里的 version，
+# 若该版本（tag vX.Y.Z）尚未发过版，则自动构建 .dspack + .sha256 并发布 GitHub Release。
+# 已发过的版本会自动跳过，保证幂等、不会因重复 tag 而失败。
+#
+# 约定（与 v2.0.0 / v2.1.0 完全同构）：
+#   - Release tag = v<manifest.version>（普通 semver，无 dev- 前缀）
+#   - 资产 1：<manifest.name>-<version>.dspack   （format v3 zip，含 5 个固定文件）
+#   - 资产 2：同名 .dspack.sha256                 （64 字节十六进制，无换行）
+#   - 发行说明：优先用 docs/release-notes-<version>.md，缺省则 --generate-notes
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read manifest metadata
+        id: meta
+        run: |
+          VERSION=$(python3 -c "import json; print(json.load(open('manifest.json'))['version'])")
+          NAME=$(python3 -c "import json; print(json.load(open('manifest.json'))['name'])")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Version: $VERSION  Name: $NAME  Tag: v$VERSION"
+
+      - name: Check if release already exists
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "${{ steps.meta.outputs.tag }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release ${{ steps.meta.outputs.tag }} already exists - skipping."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build .dspack and .sha256
+        if: steps.check.outputs.exists == 'false'
+        run: python3 scripts/build-dspack.py . .
+
+      - name: Create GitHub release
+        if: steps.check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ steps.meta.outputs.tag }}"
+          VERSION="${{ steps.meta.outputs.version }}"
+          NAME="${{ steps.meta.outputs.name }}"
+          DSPACK="$NAME-$VERSION.dspack"
+          NOTES="docs/release-notes-$VERSION.md"
+          ARGS=(release create "$TAG" --title "$TAG" --target main)
+          if [ -f "$NOTES" ]; then
+            ARGS+=(--notes-file "$NOTES")
+          else
+            ARGS+=(--generate-notes)
+          fi
+          ARGS+=("$DSPACK" "$DSPACK.sha256")
+          gh "${ARGS[@]}"
