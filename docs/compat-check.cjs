@@ -58,6 +58,20 @@ const PLUGINS = {
   },
   "dsh-edit-resend@0.1.0": {
     peers: {} // 无 peer 约束 → 门禁不拦
+  },
+  "dsh-agent-arena@0.6.0 (fork: relax-peers-0.2.0-rc.2)": {
+    peers: {
+      "@deepseek-ai/dsh-agent": ">=0.1.7-rc.2",
+      "@deepseek-ai/dsh-agent-default-model": ">=0.1.7-rc.2",
+      "@deepseek-ai/dsh-host-webserver": ">=0.1.7-rc.2",
+      "@deepseek-ai/dsh-llm": ">=0.1.7-rc.2",
+      "@deepseek-ai/dsh-session": ">=0.1.7-rc.2",
+      "@deepseek-ai/dsh-session-persistence": ">=0.1.7-rc.2",
+      "@deepseek-ai/dsh-subagent": ">=0.1.7-rc.2",
+      "@deepseek-ai/dsh-system-prompt": ">=0.1.7-rc.2",
+      "@deepseek-ai/dsh-tools": ">=0.1.7-rc.2",
+      "@deepseek-ai/dsh-workspace": ">=0.1.7-rc.2"
+    }
   }
 };
 

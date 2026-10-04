@@ -11,7 +11,8 @@
     "@michengai/dsh-simplify": "0.1.12",
     "@michengai/dsh-code-review": "0.1.9",
     "@michengai/dsh-codex-ui": "1.1.25",
-    "dsh-computer-use-win": "0.2.3"
+    "dsh-computer-use-win": "0.2.3",
+    "dsh-agent-arena": "github:yukitakasama/dsh-agent-arena#25e2c55"
   },
   "dsh": {
     "profile": {
@@ -27,7 +28,8 @@
         "@michengai/dsh-btw",
         "@michengai/dsh-simplify",
         "@michengai/dsh-code-review",
-        "@michengai/dsh-codex-ui"
+        "@michengai/dsh-codex-ui",
+        "dsh-agent-arena"
       ]
     }
   }

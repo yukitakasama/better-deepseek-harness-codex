@@ -9,3 +9,6 @@ pnpm-lock.yaml
 .DS_Store
 Thumbs.db
 *.log
+
+# 本地记忆/运行日志（不进版本库）
+.workbuddy/
