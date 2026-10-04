@@ -2,7 +2,7 @@
   "manifestVersion": 5,
   "type": "profile",
   "name": "better-deepseek-harness-codex",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "displayName": {
     "zh-CN": "更好的 deepseek harness（codex 风格）",
     "en-US": "Better DeepSeek Harness (Codex Style)"
