@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DSH 插件选型器 · better-deepseek-harness-codex</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212b; --line:#2a2f3a;
+    --txt:#e6e9ef; --mut:#9aa3b2; --acc:#5b9cff; --acc2:#3a7bff;
+    --ok:#39d98a; --bad:#ff6b6b; --warn:#ffb454; --chip:#232936;
+    --radius:10px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+    font-size:14px;line-height:1.5}
+  header{padding:18px 22px;border-bottom:1px solid var(--line);background:var(--panel)}
+  header h1{margin:0;font-size:18px;font-weight:650}
+  header .sub{color:var(--mut);font-size:12.5px;margin-top:4px}
+  .wrap{display:flex;min-height:calc(100vh - 64px)}
+  /* sidebar */
+  .side{width:280px;flex:0 0 280px;border-right:1px solid var(--line);padding:16px;background:var(--panel)}
+  .side h3{margin:0 0 8px;font-size:12px;letter-spacing:.04em;color:var(--mut);text-transform:uppercase}
+  .filter{width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--line);
+    background:var(--panel2);color:var(--txt);margin-bottom:12px;outline:none}
+  .filter:focus{border-color:var(--acc)}
+  .stat{display:flex;justify-content:space-between;font-size:12.5px;color:var(--mut);margin:5px 0}
+  .stat b{color:var(--txt)}
+  .legend{margin-top:14px;font-size:12px}
+  .legend div{display:flex;align-items:center;gap:7px;margin:6px 0;color:var(--mut)}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .dot.ok{background:var(--ok)} .dot.bad{background:var(--bad)} .dot.warn{background:var(--warn)}
+  .bulk{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+  .btn{border:1px solid var(--line);background:var(--panel2);color:var(--txt);
+    padding:7px 10px;border-radius:8px;cursor:pointer;font-size:12.5px}
+  .btn:hover{border-color:var(--acc)}
+  .btn.primary{background:var(--acc2);border-color:var(--acc2);color:#fff}
+  .btn.primary:hover{background:var(--acc)}
+  /* main */
+  .main{flex:1;padding:16px 20px;overflow:auto}
+  .grp{margin-bottom:22px}
+  .grp h2{font-size:14px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+  .grp h2 .cnt{color:var(--mut);font-weight:400;font-size:12.5px}
+  .card{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);
+    border-radius:var(--radius);background:var(--panel);margin-bottom:10px}
+  .card.sel{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}
+  .card input[type=checkbox]{margin-top:3px;width:16px;height:16px;accent-color:var(--acc);cursor:pointer}
+  .body{flex:1;min-width:0}
+  .name{font-weight:600;font-size:14px}
+  .npm{color:var(--acc);font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all}
+  .fn{color:var(--mut);margin:4px 0 6px}
+  .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+  .tag{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--chip);color:var(--mut);border:1px solid var(--line)}
+  .tag.ok{color:var(--ok);border-color:#1f5e45}
+  .tag.bad{color:var(--bad);border-color:#5e2424}
+  .tag.warn{color:var(--warn);border-color:#5e4720}
+  .tag.pri{color:var(--acc);border-color:#244a7a}
+  .stars{font-size:11.5px;color:var(--mut)}
+  .foot{position:sticky;bottom:0;display:flex;gap:10px;align-items:center;justify-content:space-between;
+    padding:12px 20px;background:var(--panel);border-top:1px solid var(--line)}
+  .foot .info{color:var(--mut);font-size:12.5px}
+  .foot .info b{color:var(--txt)}
+  textarea{width:100%;height:200px;margin-top:12px;background:var(--panel2);color:var(--txt);
+    border:1px solid var(--line);border-radius:8px;padding:10px;font-family:ui-monospace,monospace;font-size:12px}
+  details{margin-top:10px}
+  summary{cursor:pointer;color:var(--acc);font-size:12.5px}
+  .note{color:var(--mut);font-size:12px;margin-top:6px}
+</style>
+</head>
+<body>
+<header>
+  <h1>DSH 插件选型器</h1>
+  <div class="sub">整合包 <b>better-deepseek-harness-codex</b> · 基座锁定 <b>DSH 0.2.0-rc.2</b> · 数据来源：<code>docs/plugin-research-2026-10-04.md</code> · 勾选后导出 JSON 交给我做添加与兼容性测试</div>
+</header>
+
+<div class="wrap">
+  <aside class="side">
+    <h3>筛选</h3>
+    <input id="q" class="filter" placeholder="搜索名称 / 功能 / npm 包名…" />
+    <div class="stat"><span>已选</span><b id="selCount">0</b></div>
+    <div class="stat"><span>兼容</span><b id="cOk">0</b></div>
+    <div class="stat"><span>不兼容</span><b id="cBad">0</b></div>
+    <div class="stat"><span>未验证</span><b id="cWarn">0</b></div>
+    <div class="bulk">
+      <button class="btn" data-bulk="ok">仅选兼容</button>
+      <button class="btn" data-bulk="pri">仅选优先</button>
+      <button class="btn" data-bulk="clear">清空</button>
+    </div>
+    <div class="legend">
+      <div><span class="dot ok"></span>兼容 0.2.0-rc.2（可纳入评估）</div>
+      <div><span class="dot bad"></span>不兼容（peer 钉 0.1.x，直接装会硬失败）</div>
+      <div><span class="dot warn"></span>未验证（未声明 peer，需实跑）</div>
+    </div>
+    <div class="note">提示：不兼容项勾选后我会在 fork 内临时 patch peer 再实测，或等上游更新。</div>
+  </aside>
+
+  <main class="main" id="list"></main>
+</div>
+
+<div class="foot">
+  <div class="info">已选 <b id="footCount">0</b> 个插件 · 导出 JSON 后即可发给我</div>
+  <div>
+    <button class="btn" id="previewBtn">预览 JSON</button>
+    <button class="btn primary" id="dlBtn">导出 JSON 下载</button>
+  </div>
+</div>
+
+<details id="previewBox" style="padding:0 20px 20px">
+  <summary>JSON 预览 / 复制</summary>
+  <textarea id="jsonOut" readonly></textarea>
+  <div style="margin-top:8px"><button class="btn" id="copyBtn">复制 JSON</button></div>
+</details>
+
+<script>
+const BASE_DSH = "0.2.0-rc.2";
+const PLUGINS = [
+  // ===== 兼容 =====
+  {id:"agent-teams", name:"DSH Agent Teams", npm:"@nanmicoder/dsh-agent-teams", repo:"NanmiCoder/dsh-agent-teams",
+   fn:"多智能体协作：把任务拆给多个子代理并行/串行完成，适合复杂编码与设计任务。", stars:1915,
+   status:"compatible", dshTarget:"0.2.0-rc.2", peer:"peer 含 0.2.x（已验证可装）",
+   rec:"priority", notes:"无冲突，复杂编码强需求 → 优先建议"},
+
+  {id:"context", name:"DSH Context 上下文仪表盘", npm:"dsh-context", repo:"bowenliang123/dsh-context",
+   fn:"上下文可视化仪表盘：实时看 token 占用、上下文构成，与现有 context-lens 互补（洞察 vs 压缩）。", stars:1844,
+   status:"compatible", dshTarget:"0.2.0-rc.2", peer:"peer 含 0.2.x（已验证可装）",
+   rec:"priority", notes:"与 context-lens 不冲突，可并存"},
+
+  {id:"subagent-director", name:"Subagent Director", npm:"dsh-plugin-subagent-director", repo:"SeverusZh/dsh-plugin-subagent-director",
+   fn:"为每一个子代理单独指定模型与参数，精细控制 agent 编排。", stars:18,
+   status:"compatible", dshTarget:"0.2.0-rc.2", peer:"peer 含 0.2.x（已验证可装）",
+   rec:"priority", notes:"与 /review 子代理契合 → 优先建议"},
+
+  {id:"better-sidebar", name:"Better Sidebar", npm:"dsh-better-sidebar", repo:"omdsh-dev/DSH-better-sidebar",
+   fn:"开放侧栏底座，可被其它插件挂载面板，是很多 UI 插件的前置依赖。", stars:3986,
+   status:"compatible", dshTarget:"0.2.0-rc.2", peer:"peer 含 0.2.x（已验证可装）",
+   rec:"caution", notes:"⚠️ 与 codex-ui 抢侧栏，只能二选一"},
+
+  {id:"dshmarket", name:"DSH Market 插件市场", npm:"dshmarket", repo:"dsh-market/dsh-market",
+   fn:"在 DSH 内部直接浏览、安装、更新插件，形成闭环。", stars:5486,
+   status:"compatible", dshTarget:"0.2.0-rc.2", peer:"peer 含 0.2.x（已验证可装）",
+   rec:"caution", notes:"偏冗余、增体积，建议不纳入整合包"},
+
+  {id:"super-injector", name:"Super Injector / Routing Suite", npm:"@dsh-external/dsh-super-injector", repo:"yjh051108/dsh-routing-suite",
+   fn:"注入器 + 路由套件：可向任意 DSH 扩展点注入行为，能力很强。", stars:7000,
+   status:"compatible", dshTarget:"0.2.0-rc.2", peer:"peer 含 0.2.x（已验证可装）",
+   rec:"caution", notes:"注入式有稳定性风险，纳入前需严格实测"},
+
+  {id:"tui", name:"DSH TUI", npm:"@deepseek-harness-tui/dsh-tui", repo:"ccch1mneyyy/dsh-TUI",
+   fn:"终端 TUI 界面，另一套前端体验。", stars:4016,
+   status:"compatible", dshTarget:"0.2.0-rc.2", peer:"peer 含 0.2.x（已验证可装）",
+   rec:"caution", notes:"另一套前端，不进 web 整合包"},
+
+  // ===== 不兼容 =====
+  {id:"searxng", name:"DSH SearXNG", npm:"dsh-searxng", repo:"rogerdigital/dsh-searxng",
+   fn:"网页搜索能力，接 SearXNG 实例，编码查资料很实用。", stars:0,
+   status:"incompatible", dshTarget:"<0.2.0", peer:"peer 上限 <0.2.0（硬失败）",
+   rec:"", notes:"实用但当前不可装；需上游放宽 peer 或 fork patch"},
+
+  {id:"approve-for-me", name:"Approve For Me", npm:"dsh-approve-for-me", repo:"timeance/dsh-approve-for-me",
+   fn:"沙箱命令自动审批，省去每次确认。", stars:0,
+   status:"incompatible", dshTarget:"0.1.5-rc.2", peer:"peer 精确钉 0.1.5-rc.2（硬失败）",
+   rec:"", notes:"需 fork patch peer 后实测"},
+
+  {id:"shell-command", name:"DSH Shell Command", npm:"dsh-shell-command", repo:"CHplus0/dsh-shell-command",
+   fn:"提供 /! 命令直接在对话里跑 shell，很顺手。", stars:0,
+   status:"incompatible", dshTarget:"0.1.0-rc.6", peer:"peer 钉 0.1.0-rc.6（硬失败）",
+   rec:"", notes:"实用；同需 patch peer"},
+
+  {id:"git-ui", name:"DSH Git UI", npm:"dsh-git-ui", repo:"Julyves/dsh-git-ui",
+   fn:"图形化 git 操作界面。", stars:0,
+   status:"incompatible", dshTarget:"未适配 0.2.0", peer:"未声明 0.2.0 兼容",
+   rec:"", notes:"与现有 git-graph 功能重叠，不建议"},
+
+  // ===== 未验证 =====
+  {id:"edit-resend", name:"DSH Edit & Resend", npm:"dsh-edit-resend", repo:"mbj733/dsh-edit-resend",
+   fn:"编辑并重发上一条消息，正好补上你移除的 edit-message 缺口。", stars:0,
+   status:"unverified", dshTarget:"未知", peer:"未声明 peer，需实跑验证",
+   rec:"", notes:"强烈建议验证，正好补缺口"},
+
+  {id:"undo", name:"DSH Undo", npm:"dsh-undo", repo:"23swccp/dsh-undo",
+   fn:"对话/操作撤销。", stars:0,
+   status:"unverified", dshTarget:"未知", peer:"未声明 peer，需实跑验证",
+   rec:"", notes:"实用工具类"},
+
+  {id:"anchored-standard", name:"DSH Anchored Standard", npm:"dsh-anchored-standard", repo:"xiaobright/dsh-anchored-standard",
+   fn:"锚定标准/规范类插件。", stars:0,
+   status:"unverified", dshTarget:"未知", peer:"未声明 peer，需实跑验证",
+   rec:"", notes:"需确认与现有规范类插件是否冲突"},
+
+  {id:"antibrow", name:"DSH Antibrow", npm:"dsh-antibrow", repo:"antibrow/dsh-antibrow",
+   fn:"Antibrow 自定义能力插件。", stars:0,
+   status:"unverified", dshTarget:"未知", peer:"未声明 peer，需实跑验证",
+   rec:"", notes:"未知功能，需实跑确认"},
+
+  {id:"bottom-info-bar", name:"DSH Bottom Info Bar", npm:"dsh-bottom-info-bar", repo:"songoao25/dsh-bottom-info-bar",
+   fn:"底部信息栏，显示状态/统计。", stars:0,
+   status:"unverified", dshTarget:"未知", peer:"未声明 peer，需实跑验证",
+   rec:"", notes:"⚠️ 与 cost-meter 冲突，二选一"},
+];
+
+const statusLabel = {compatible:"兼容", incompatible:"不兼容", unverified:"未验证"};
+const recLabel = {priority:"优先建议", caution:"谨慎"};
+
+const selected = new Set();
+const $ = s => document.querySelector(s);
+const list = $("#list");
+
+function cardStyle(p){
+  if(p.status==="compatible") return "ok";
+  if(p.status==="incompatible") return "bad";
+  return "warn";
+}
+function render(){
+  const q = $("#q").value.trim().toLowerCase();
+  list.innerHTML = "";
+  const groups = [
+    {key:"compatible", title:"✅ 兼容 0.2.0-rc.2（可纳入评估）"},
+    {key:"incompatible", title:"❌ 不兼容（peer 钉 0.1.x，直接装会硬失败）"},
+    {key:"unverified", title:"⚠️ 未验证（未声明 peer，需实跑）"},
+  ];
+  groups.forEach(g=>{
+    const items = PLUGINS.filter(p=>p.status===g.key &&
+      (!q || (p.name+p.fn+p.npm+p.repo).toLowerCase().includes(q)));
+    if(!items.length) return;
+    const sec = document.createElement("section");
+    sec.className="grp";
+    sec.innerHTML = `<h2>${g.title}<span class="cnt">（${items.length}）</span></h2>`;
+    items.forEach(p=>{
+      const sel = selected.has(p.id);
+      const el = document.createElement("div");
+      el.className = "card"+(sel?" sel":"");
+      el.innerHTML = `
+        <input type="checkbox" ${sel?"checked":""} data-id="${p.id}">
+        <div class="body">
+          <div class="name">${p.name}</div>
+          <div class="npm">npm: ${p.npm}</div>
+          <div class="fn">${p.fn}</div>
+          <div class="meta">
+            <span class="tag ${cardStyle(p)}">${statusLabel[p.status]}</span>
+            <span class="tag">适配 ${p.dshTarget}</span>
+            <span class="tag">${p.peer}</span>
+            ${p.rec?`<span class="tag pri">${recLabel[p.rec]}</span>`:""}
+            <span class="tag stars">★ ${p.stars}</span>
+            <span class="tag">repo: ${p.repo}</span>
+          </div>
+          ${p.notes?`<div class="note">↳ ${p.notes}</div>`:""}
+        </div>`;
+      el.querySelector("input").addEventListener("change",e=>{
+        if(e.target.checked) selected.add(p.id); else selected.delete(p.id);
+        el.classList.toggle("sel", e.target.checked);
+        updateCounts();
+      });
+      sec.appendChild(el);
+    });
+    list.appendChild(sec);
+  });
+  updateCounts();
+}
+function updateCounts(){
+  $("#selCount").textContent = selected.size;
+  $("#footCount").textContent = selected.size;
+  $("#cOk").textContent = PLUGINS.filter(p=>p.status==="compatible").length;
+  $("#cBad").textContent = PLUGINS.filter(p=>p.status==="incompatible").length;
+  $("#cWarn").textContent = PLUGINS.filter(p=>p.status==="unverified").length;
+}
+function buildJSON(){
+  const now = new Date().toISOString();
+  const chosen = PLUGINS.filter(p=>selected.has(p.id)).map(p=>({
+    id:p.id, name:p.name, npmName:p.npm, repo:p.repo,
+    function:p.fn, stars:p.stars, status:p.status,
+    dshTarget:p.dshTarget, peer:p.peer, recommendation:p.rec||"none",
+    notes:p.notes||""
+  }));
+  return {
+    schema:"dsh-plugin-selector/v1",
+    generatedAt:now,
+    baseDSHVersion:BASE_DSH,
+    packageName:"better-deepseek-harness-codex",
+    sourceReport:"docs/plugin-research-2026-10-04.md",
+    selectedCount:chosen.length,
+    selected:chosen
+  };
+}
+function showJSON(){
+  const json = JSON.stringify(buildJSON(), null, 2);
+  $("#jsonOut").value = json;
+  $("#previewBox").open = true;
+  return json;
+}
+$("#q").addEventListener("input", render);
+$("#previewBtn").addEventListener("click", showJSON);
+$("#copyBtn").addEventListener("click", ()=>{
+  const t=$("#jsonOut"); if(!t.value) showJSON();
+  navigator.clipboard.writeText($("#jsonOut").value).then(()=>alert("已复制到剪贴板"));
+});
+$("#dlBtn").addEventListener("click", ()=>{
+  if(selected.size===0){ alert("请先勾选至少一个插件"); return; }
+  const json = showJSON();
+  const blob = new Blob([json], {type:"application/json"});
+  const a = document.createElement("a");
+  const ts = new Date().toISOString().replace(/[:.]/g,"-");
+  a.href = URL.createObjectURL(blob);
+  a.download = `dsh-plugins-selection-${ts}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+document.querySelectorAll("[data-bulk]").forEach(b=>{
+  b.addEventListener("click",()=>{
+    const m=b.dataset.bulk;
+    selected.clear();
+    PLUGINS.forEach(p=>{
+      if(m==="ok" && p.status==="compatible") selected.add(p.id);
+      if(m==="pri" && p.rec==="priority") selected.add(p.id);
+    });
+    render();
+  });
+});
+render();
+</script>
+</body>
+</html>
