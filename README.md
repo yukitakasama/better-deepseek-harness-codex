@@ -1,5 +1,7 @@
 # 更好的 deepseek harness（codex 风格）
 
+[English](README.en.md) | 简体中文
+
 面向 **Coding 用户**的 DeepSeek Harness 整合包，向 Codex 的风格与功能看齐。
 基座 **DSH 0.2.0-rc.2**。
 
@@ -18,6 +20,10 @@
 - **桌宠** —— DeepSeek 娘鲸鱼女仆，报开工收工与单轮花费
 - **上下文守卫** —— AST 压缩、测试日志过滤、token 预算
 - **Git 图** —— 分支选择与提交图
+- **多智能体协作** —— agent-teams 多 Agent 团队协作；dsh-agent-arena 多智能体议事厅与提示词竞技场（可调协作栏、渠道限流、自动接话）
+- **上下文仪表盘** —— dsh-context 上下文可视化
+- **子代理选模型** —— subagent-director 为每个子代理独立指定模型
+- **消息编辑重发** —— edit-resend 编辑历史消息并重新发送
 - **Computer Use** —— 操控 Windows 原生桌面：UIA 无障碍树观察、截图、鼠标键盘、窗口管理（22 个工具）
 
 ## 安装
@@ -29,6 +35,9 @@ dsh --profile better-deepseek-harness-codex
 ```
 
 或由 DSH 启动器导入 `.dspack`。
+
+> **注意**：自 v2.2.0 起，`dsh-agent-arena` 以 git fork 依赖（`github:yukitakasama/dsh-agent-arena#25e2c55`）
+> 引入，安装时需能访问 GitHub。上游发布面向 0.2.0-rc.2 的官方版本后将改回 npm registry 版本。
 
 ## v2.0.0 变更说明
 
@@ -57,7 +66,7 @@ dsh --profile better-deepseek-harness-codex
 - `dshVersions`: 声明实测兼容版本集合（0.2.0-rc.2、0.2.0-rc.1）
 - `launchers`: 声明启动器兼容性（dshl、dsh-packforge-app）
 
-## 插件清单（10 个）
+## 插件清单（15 个）
 
 | 插件 | 版本 | 作用 |
 |---|---|---|
@@ -71,6 +80,11 @@ dsh --profile better-deepseek-harness-codex
 | `@goodandready/dsh-context-lens` | 0.1.28 | AST 上下文压缩、token 预算守卫 |
 | `@linxin666/dsh-client-ui-git-graph` | 0.4.4 | Git 分支图 |
 | `dsh-computer-use-win` | 0.2.3 | Windows Computer Use 桌面操控（22 工具） |
+| `@nanmicoder/dsh-agent-teams` | 0.1.22 | 多智能体团队协作 |
+| `dsh-context` | 0.63.0 | 上下文可视化仪表盘 |
+| `dsh-plugin-subagent-director` | 0.5.5 | 子代理独立选模型 |
+| `dsh-edit-resend` | 0.1.0 | 消息编辑重发 |
+| `dsh-agent-arena` | 0.6.0（fork `25e2c55`） | 多智能体议事厅与提示词竞技场 |
 
 ### Computer Use 说明
 
@@ -181,6 +195,24 @@ dsh --profile better-deepseek-harness-codex --dump-config
 格式规范：[DSH-PackForge](https://github.com/DSH-PackForge/DSH-PackForge)。
 
 ## 更新日志
+
+### v2.2.0 (2026-10-05)
+- **新增**：dsh-agent-arena —— 多智能体议事厅与提示词竞技场（可调协作栏、渠道限流、自动接话控制）
+- **兼容性处理**：上游 `Tikzen/dsh-agent-arena@0.6.0` 把核心 peer 精确锁定 `0.1.7-rc.2`，
+  无法在 DSH 0.2.0-rc.2 下安装；经授权采用 **fork 放宽**方案——
+  `yukitakasama/dsh-agent-arena@feat/relax-peers-0.2.0-rc.2`（commit `25e2c55`），
+  10 条核心 peer 由精确 `0.1.7-rc.2` 放宽为 `>=0.1.7-rc.2`，依赖精确钉到该 fork commit
+- **注意**：安装需可访问 GitHub（git fork 依赖）；上游出 0.2.0-rc.2 官方版后建议改回 npm 版本
+- `.gitignore` 新增忽略 `.workbuddy/`（本地记忆目录）
+
+### v2.1.0 (2026-10-04)
+- **新增 4 个社区插件**（全部 peer 兼容 0.2.0-rc.2，`docs/compat-check.cjs` 门禁通过）：
+  - `@nanmicoder/dsh-agent-teams@0.1.22` —— 多智能体团队协作
+  - `dsh-context@0.63.0` —— 上下文可视化仪表盘
+  - `dsh-plugin-subagent-director@0.5.5` —— 子代理独立选模型
+  - `dsh-edit-resend@0.1.0` —— 消息编辑重发，补回早前移除的 edit-message 缺口
+- 插件总数 12 → 16（bundles），依赖 10 → 14，全部钉死精确版本；同步更新中英文 description
+- 新增 `docs/`：插件调研报告、交互式选型器（`plugin-selector.html`）、兼容性测试脚本（`compat-check.cjs`）与结果
 
 ### v2.0.0 (2026-09-30)
 - **破坏性变更**：升级基座到 DSH 0.2.0-rc.2
