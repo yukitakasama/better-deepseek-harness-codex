@@ -123,6 +123,15 @@ const PLUGINS = {
   },
   "@goodandready/dsh-key-limits@0.2.19": {
     peers: {} // 仅 cordis/schemastery peer，与宿主版本无关
+  },
+  "@tencent-connect/dsh-qqbot@0.5.0": {
+    peers: {
+      "@deepseek-ai/dsh-agent": ">=0.1.0-rc.6",
+      "@deepseek-ai/dsh-llm": ">=0.1.0-rc.6",
+      "@deepseek-ai/dsh-session": ">=0.1.0-rc.6",
+      "@deepseek-ai/dsh-user-approval": ">=0.1.0-rc.6"
+    },
+    note: "cordis >=4.0.1 / schemastery >=3.18.1 / qqbot-connector 1.2.0 非 dsh-* host peer，按 0.2.0-rc.2 的 cordis 4.x 基线判定满足（同 agent-arena fork 基线）"
   }
 };
 

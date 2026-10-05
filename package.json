@@ -22,7 +22,8 @@
     "dsh-inline-figures": "0.1.0",
     "dsh-prompt": "0.3.0",
     "dsh-plugin-wallpaper-engine": "1.2.0",
-    "@goodandready/dsh-key-limits": "0.2.19"
+    "@goodandready/dsh-key-limits": "0.2.19",
+    "@tencent-connect/dsh-qqbot": "0.5.0"
   },
   "dsh": {
     "profile": {
@@ -49,6 +50,7 @@
         "dsh-prompt",
         "dsh-plugin-wallpaper-engine",
         "@goodandready/dsh-key-limits",
+        "@tencent-connect/dsh-qqbot",
         "@michengai/dsh-codex-ui"
       ]
     }

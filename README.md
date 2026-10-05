@@ -72,7 +72,7 @@ dsh --profile better-deepseek-harness-codex
 - `dshVersions`: 声明实测兼容版本集合（0.2.0-rc.2、0.2.0-rc.1）
 - `launchers`: 声明启动器兼容性（dshl、dsh-packforge-app）
 
-## 插件清单（21 个）
+## 插件清单（22 个）
 
 | 插件 | 版本 | 作用 |
 |---|---|---|
@@ -97,6 +97,7 @@ dsh --profile better-deepseek-harness-codex
 | `dsh-prompt` | 0.3.0 | Prompt 模板工具箱 |
 | `dsh-plugin-wallpaper-engine` | 1.2.0 | Wallpaper Engine 动态壁纸 |
 | `@goodandready/dsh-key-limits` | 0.2.19 | API key / 订阅额度上限 |
+| `@tencent-connect/dsh-qqbot` | 0.5.0 | QQ 机器人频道（腾讯官方）：私聊/群聊对话、图片与文件理解、流式回复、主动提问与操作确认、/preset 切换预设、/compact 压缩会话 |
 
 ### Computer Use 说明
 
@@ -207,6 +208,12 @@ dsh --profile better-deepseek-harness-codex --dump-config
 格式规范：[DSH-PackForge](https://github.com/DSH-PackForge/DSH-PackForge)。
 
 ## 更新日志
+
+### v2.4.0 (2026-10-05)
+- **新增**：`@tencent-connect/dsh-qqbot@0.5.0` —— QQ 机器人频道（腾讯官方插件）：把 QQ Bot 接入 DSH，支持私聊/群聊对话、图片与文件理解、流式回复、主动提问与操作确认、/preset 切换预设、/compact 压缩会话、/bot-ping 网络检测。
+- **适配判定**：peer `@deepseek-ai/dsh-agent/llm/session: >=0.1.0-rc.6` 与 `cordis: >=4.0.1` 均覆盖 0.2.0-rc.2（cordis 4.x 基线同 agent-arena fork）。npm 已发布 0.5.0，**无需 fork**，直接钉 npm 版本。
+- **验证**：`docs/compat-check.cjs` peer 门禁 dsh-qqbot 4/4 ✅；`npm install @tencent-connect/dsh-qqbot@0.5.0` 可下载、自带 `cordis.patch.yml`（dsh 启动自动加载）、传递依赖就位。全量 `pnpm install` + `dsh --dump-config` 真机加载因沙箱无法克隆 git fork（github.com TLS 限制）未能实跑，需在用户 0.2.0-rc.2 宿主确认（与本包既往版本同因）。
+- 插件总数 21 → 22（bundles 23 → 24 含 2 个官方基座；dependencies 21 → 22）。
 
 ### v2.3.0 (2026-10-05)
 - **新增 7 个插件**（经交互式选型器勾选，peer 门禁全过 + 真机 `dsh --dump-config` 零 stderr）：

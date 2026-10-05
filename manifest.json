@@ -2,14 +2,14 @@
   "manifestVersion": 5,
   "type": "profile",
   "name": "better-deepseek-harness-codex",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "displayName": {
     "zh-CN": "更好的 deepseek harness（codex 风格）",
     "en-US": "Better DeepSeek Harness (Codex Style)"
   },
   "description": {
-    "zh-CN": "面向 Coding 用户的 DSH 整合包：Codex 风格工作区侧栏与轮次导航、/review 独立子 Agent 代码审查、/simplify Git 范围代码简化、只读旁问、Codex 式思考强度连续滑块、费用与余额计量、DeepSeek 鲸鱼娘桌宠、AST 上下文压缩与 token 预算守卫、Git 分支图、多智能体协作（agent-teams）、上下文可视化仪表盘（dsh-context）、子代理独立选模型（subagent-director）、多智能体议事厅（agent-arena）、思考循环守护（loop-guard）、跨会话长期记忆（mneme）、视觉桥与截图理解（modlens）、回答内嵌矢量图（inline-figures）、Prompt 模板工具箱（dsh-prompt）、Wallpaper Engine 动态壁纸、API 额度上限显示（key-limits）、Windows Computer Use 桌面操控（22 个工具，含安全护栏）。基座 DSH 0.2.0-rc.2，全部插件已钉死精确版本并校验 peer 兼容。",
-    "en-US": "A coding-oriented DSH modpack: Codex-style workspace sidebar and turn navigation, /review independent code review, /simplify Git-scoped simplification, read-only side-ask, Codex-style reasoning-effort slider, cost and balance metering, a DeepSeek whale-girl desk pet, AST context compression with token budget guard, a Git graph, multi-agent teams (agent-teams), a context visualization dashboard (dsh-context), per-subagent model director (subagent-director), a multi-agent council (agent-arena), thought-loop guard (loop-guard), cross-session memory (mneme), vision bridge & screenshot understanding (modlens), inline vector figures (inline-figures), a prompt template toolbox (dsh-prompt), Wallpaper Engine live wallpapers, API key quota limits (key-limits), and Windows Computer Use desktop control (22 tools with safety guards). Built for DSH 0.2.0-rc.2; all plugins pinned to exact versions and peer-verified."
+    "zh-CN": "面向 Coding 用户的 DSH 整合包：Codex 风格工作区侧栏与轮次导航、/review 独立子 Agent 代码审查、/simplify Git 范围代码简化、只读旁问、Codex 式思考强度连续滑块、费用与余额计量、DeepSeek 鲸鱼娘桌宠、AST 上下文压缩与 token 预算守卫、Git 分支图、多智能体协作（agent-teams）、上下文可视化仪表盘（dsh-context）、子代理独立选模型（subagent-director）、多智能体议事厅（agent-arena）、思考循环守护（loop-guard）、跨会话长期记忆（mneme）、视觉桥与截图理解（modlens）、回答内嵌矢量图（inline-figures）、Prompt 模板工具箱（dsh-prompt）、Wallpaper Engine 动态壁纸、API 额度上限显示（key-limits）、Windows Computer Use 桌面操控（22 个工具，含安全护栏）、QQ 机器人频道（dsh-qqbot，腾讯官方）。基座 DSH 0.2.0-rc.2，全部插件已钉死精确版本并校验 peer 兼容。",
+    "en-US": "A coding-oriented DSH modpack: Codex-style workspace sidebar and turn navigation, /review independent code review, /simplify Git-scoped simplification, read-only side-ask, Codex-style reasoning-effort slider, cost and balance metering, a DeepSeek whale-girl desk pet, AST context compression with token budget guard, a Git graph, multi-agent teams (agent-teams), a context visualization dashboard (dsh-context), per-subagent model director (subagent-director), a multi-agent council (agent-arena), thought-loop guard (loop-guard), cross-session memory (mneme), vision bridge & screenshot understanding (modlens), inline vector figures (inline-figures), a prompt template toolbox (dsh-prompt), Wallpaper Engine live wallpapers, API key quota limits (key-limits), and Windows Computer Use desktop control (22 tools with safety guards), plus a QQ Bot IM channel (dsh-qqbot, official Tencent plugin). Built for DSH 0.2.0-rc.2; all plugins pinned to exact versions and peer-verified."
   },
   "author": "yukitakasama",
   "category": "coding",
@@ -40,6 +40,7 @@
     "dsh-prompt",
     "dsh-plugin-wallpaper-engine",
     "@goodandready/dsh-key-limits",
+    "@tencent-connect/dsh-qqbot",
     "@michengai/dsh-codex-ui"
   ],
   "dependencies": {
@@ -63,6 +64,7 @@
     "dsh-inline-figures": "0.1.0",
     "dsh-prompt": "0.3.0",
     "dsh-plugin-wallpaper-engine": "1.2.0",
-    "@goodandready/dsh-key-limits": "0.2.19"
+    "@goodandready/dsh-key-limits": "0.2.19",
+    "@tencent-connect/dsh-qqbot": "0.5.0"
   }
 }
