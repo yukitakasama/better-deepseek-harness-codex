@@ -23,7 +23,13 @@ One command to get a complete Codex-style coding workbench:
 - **Multi-agent collaboration** — agent-teams for multi-agent teamwork; dsh-agent-arena as a multi-agent council and prompt arena (adjustable collaboration bar, channel rate limiting, auto turn-taking)
 - **Context dashboard** — dsh-context for context visualization
 - **Per-subagent model** — subagent-director assigns an independent model to each sub-agent
-- **Edit & resend** — edit-resend lets you edit a past message and resend it
+- **Loop guard** — loop-guard detects degenerate "all thought, no action" loops and auto-interrupts with corrective prompts
+- **Cross-session memory** — mneme lets the agent remember project background and past decisions
+- **Vision** — modlens as a vision bridge, routing screenshots/images to a vision model
+- **Inline figures** — inline-figures turns answers into "text-figure-text"
+- **Prompt toolbox** — dsh-prompt with 24 deep templates one click away
+- **Live wallpapers** — brings Wallpaper Engine wallpapers into the DSH web UI
+- **Quota limits** — key-limits shows API key / subscription remaining quota (complements cost-meter)
 - **Computer Use** — control the native Windows desktop: UIA accessibility tree inspection, screenshots, mouse/keyboard, window management (22 tools)
 
 ## Installation
@@ -41,6 +47,22 @@ Or import the `.dspack` from the DSH launcher.
 > It will be switched back to the npm registry version once upstream ships an official release for 0.2.0-rc.2.
 
 ## Changelog
+
+### v2.3.0 (2026-10-05)
+- **Added 7 plugins** (picked via the interactive selector; peer gate all-pass + real `dsh --dump-config` with zero stderr):
+  - `@mrweicodes/dsh-loop-guard@1.0.8` — thought-loop guard
+  - `@modusensus/dsh-mneme@0.8.13` — cross-session long-term memory
+  - `@liustack/modlens@3.26.6` — vision bridge & screenshot understanding
+  - `dsh-inline-figures@0.1.0` — inline vector figures in answers
+  - `dsh-prompt@0.3.0` — prompt template toolbox
+  - `dsh-plugin-wallpaper-engine@1.2.0` — Wallpaper Engine live wallpapers (npm latest is 1.2.0; the repo's 1.3.0 is unpublished)
+  - `@goodandready/dsh-key-limits@0.2.19` — API key / subscription quota limits (npm is at 0.2.19, ahead of the repo's 0.2.15)
+- **Removed**: `dsh-edit-resend@0.1.0` — the npm artifact declares peers `^0.1.0-rc.6` and is rejected by the runtime
+  on 0.2.0-rc.2 (v2.1.0 judged it "no peers" from the GitHub source; corrected by real-machine testing)
+- **Fix**: the repo `package.json` had lagged behind the manifest since v2.1.0 (missing 4 plugins); fully re-synced;
+  the duplicate codex-ui entry in the manifest was also cleaned up (kept unique at the end of the layer stack)
+- Total plugins 15 → 21, dependencies 14 → 21; `pnpm-workspace.yaml` gains `minimumReleaseAgeExclude` entries for new plugins
+- Real-machine verification: `dsh --dump-config` exit 0, zero stderr, all 23 bundles loaded (isolated install of @deepseek-ai/dsh@0.2.0-rc.2)
 
 ### v2.2.0 (2026-10-05)
 - **Added**: dsh-agent-arena — a multi-agent council and prompt arena (adjustable collaboration bar, channel rate limiting, auto turn-taking)
@@ -100,7 +122,7 @@ Or import the `.dspack` from the DSH launcher.
 - `dshVersions`: declares the set of tested-compatible versions (0.2.0-rc.2, 0.2.0-rc.1)
 - `launchers`: declares launcher compatibility (dshl, dsh-packforge-app)
 
-## Plugin List (15)
+## Plugin List (21)
 
 | Plugin | Version | Purpose |
 |---|---|---|
@@ -117,8 +139,14 @@ Or import the `.dspack` from the DSH launcher.
 | `@nanmicoder/dsh-agent-teams` | 0.1.22 | Multi-agent team collaboration |
 | `dsh-context` | 0.63.0 | Context visualization dashboard |
 | `dsh-plugin-subagent-director` | 0.5.5 | Per-subagent model selection |
-| `dsh-edit-resend` | 0.1.0 | Edit & resend messages |
 | `dsh-agent-arena` | 0.6.0 (fork `25e2c55`) | Multi-agent council and prompt arena |
+| `@mrweicodes/dsh-loop-guard` | 1.0.8 | Thought-loop guard with auto-interruption |
+| `@modusensus/dsh-mneme` | 0.8.13 | Cross-session long-term memory |
+| `@liustack/modlens` | 3.26.6 | Vision bridge & screenshot understanding |
+| `dsh-inline-figures` | 0.1.0 | Inline vector figures in answers |
+| `dsh-prompt` | 0.3.0 | Prompt template toolbox |
+| `dsh-plugin-wallpaper-engine` | 1.2.0 | Wallpaper Engine live wallpapers |
+| `@goodandready/dsh-key-limits` | 0.2.19 | API key / subscription quota limits |
 
 ### Computer Use Notes
 
@@ -181,8 +209,8 @@ DSH validates with `semver.satisfies(version, peerRange, { includePrerelease: tr
 - Wide ranges like `>=0.1.0-rc.5 <0.2.0` **match** rc.2;
 - Plugins pinned to an exact version (e.g. `0.1.7-rc.1`) **hard-fail** on rc.2 — none are selected.
 
-All 10 plugins' peerDependencies were verified against rc.2 via its bundled
-`evaluatePluginCompatibility()`: 10/10 with no blockers.
+All 21 plugins' peerDependencies were verified against rc.2 via its bundled
+`evaluatePluginCompatibility()`: 21/21 with no blockers (`docs/compat-check.cjs` gate).
 
 ### Conflict exclusions
 

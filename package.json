@@ -12,7 +12,17 @@
     "@michengai/dsh-code-review": "0.1.9",
     "@michengai/dsh-codex-ui": "1.1.25",
     "dsh-computer-use-win": "0.2.3",
-    "dsh-agent-arena": "github:yukitakasama/dsh-agent-arena#25e2c55"
+    "@nanmicoder/dsh-agent-teams": "0.1.22",
+    "dsh-context": "0.63.0",
+    "dsh-plugin-subagent-director": "0.5.5",
+    "dsh-agent-arena": "github:yukitakasama/dsh-agent-arena#25e2c55",
+    "@mrweicodes/dsh-loop-guard": "1.0.8",
+    "@modusensus/dsh-mneme": "0.8.13",
+    "@liustack/modlens": "3.26.6",
+    "dsh-inline-figures": "0.1.0",
+    "dsh-prompt": "0.3.0",
+    "dsh-plugin-wallpaper-engine": "1.2.0",
+    "@goodandready/dsh-key-limits": "0.2.19"
   },
   "dsh": {
     "profile": {
@@ -28,8 +38,18 @@
         "@michengai/dsh-btw",
         "@michengai/dsh-simplify",
         "@michengai/dsh-code-review",
-        "@michengai/dsh-codex-ui",
-        "dsh-agent-arena"
+        "@nanmicoder/dsh-agent-teams",
+        "dsh-context",
+        "dsh-plugin-subagent-director",
+        "dsh-agent-arena",
+        "@mrweicodes/dsh-loop-guard",
+        "@modusensus/dsh-mneme",
+        "@liustack/modlens",
+        "dsh-inline-figures",
+        "dsh-prompt",
+        "dsh-plugin-wallpaper-engine",
+        "@goodandready/dsh-key-limits",
+        "@michengai/dsh-codex-ui"
       ]
     }
   }

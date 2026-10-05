@@ -23,7 +23,13 @@
 - **多智能体协作** —— agent-teams 多 Agent 团队协作；dsh-agent-arena 多智能体议事厅与提示词竞技场（可调协作栏、渠道限流、自动接话）
 - **上下文仪表盘** —— dsh-context 上下文可视化
 - **子代理选模型** —— subagent-director 为每个子代理独立指定模型
-- **消息编辑重发** —— edit-resend 编辑历史消息并重新发送
+- **循环守护** —— loop-guard 检测模型空转退化循环，自动打断并注入纠正提示
+- **跨会话记忆** —— mneme 让 agent 记住项目背景与既往决策
+- **视觉理解** —— modlens 视觉桥，截图/图片路由到视觉模型理解
+- **内嵌配图** —— inline-figures 让回答变成「文字-图-文字」
+- **Prompt 工具箱** —— dsh-prompt 24 条深度模板随手点选
+- **动态壁纸** —— Wallpaper Engine 壁纸搬进 DSH 网页界面
+- **额度上限** —— key-limits 显示 API key / 订阅剩余额度（与 cost-meter 互补）
 - **Computer Use** —— 操控 Windows 原生桌面：UIA 无障碍树观察、截图、鼠标键盘、窗口管理（22 个工具）
 
 ## 安装
@@ -66,7 +72,7 @@ dsh --profile better-deepseek-harness-codex
 - `dshVersions`: 声明实测兼容版本集合（0.2.0-rc.2、0.2.0-rc.1）
 - `launchers`: 声明启动器兼容性（dshl、dsh-packforge-app）
 
-## 插件清单（15 个）
+## 插件清单（21 个）
 
 | 插件 | 版本 | 作用 |
 |---|---|---|
@@ -83,8 +89,14 @@ dsh --profile better-deepseek-harness-codex
 | `@nanmicoder/dsh-agent-teams` | 0.1.22 | 多智能体团队协作 |
 | `dsh-context` | 0.63.0 | 上下文可视化仪表盘 |
 | `dsh-plugin-subagent-director` | 0.5.5 | 子代理独立选模型 |
-| `dsh-edit-resend` | 0.1.0 | 消息编辑重发 |
 | `dsh-agent-arena` | 0.6.0（fork `25e2c55`） | 多智能体议事厅与提示词竞技场 |
+| `@mrweicodes/dsh-loop-guard` | 1.0.8 | 思考循环守护，自动打断空转 |
+| `@modusensus/dsh-mneme` | 0.8.13 | 跨会话长期记忆 |
+| `@liustack/modlens` | 3.26.6 | 视觉桥与截图理解 |
+| `dsh-inline-figures` | 0.1.0 | 回答内嵌矢量图 |
+| `dsh-prompt` | 0.3.0 | Prompt 模板工具箱 |
+| `dsh-plugin-wallpaper-engine` | 1.2.0 | Wallpaper Engine 动态壁纸 |
+| `@goodandready/dsh-key-limits` | 0.2.19 | API key / 订阅额度上限 |
 
 ### Computer Use 说明
 
@@ -145,8 +157,8 @@ DSH 用 `semver.satisfies(版本, peer范围, { includePrerelease: true })` 校�
 - `>=0.1.0-rc.5 <0.2.0` 这类宽范围 **匹配** rc.2；
 - 钉死精确版本（如 `0.1.7-rc.1`）的插件在 rc.2 上会**硬失败**，本包一律不选。
 
-本包 10 个插件的 peerDependencies 全部通过 rc.2 自带的
-`evaluatePluginCompatibility()` 实测，10/10 无阻断。
+本包 21 个插件的 peerDependencies 全部通过 rc.2 自带的
+`evaluatePluginCompatibility()` 实测，21/21 无阻断（`docs/compat-check.cjs` 门禁）。
 
 ### 冲突排除
 
@@ -195,6 +207,22 @@ dsh --profile better-deepseek-harness-codex --dump-config
 格式规范：[DSH-PackForge](https://github.com/DSH-PackForge/DSH-PackForge)。
 
 ## 更新日志
+
+### v2.3.0 (2026-10-05)
+- **新增 7 个插件**（经交互式选型器勾选，peer 门禁全过 + 真机 `dsh --dump-config` 零 stderr）：
+  - `@mrweicodes/dsh-loop-guard@1.0.8` —— 思考循环守护
+  - `@modusensus/dsh-mneme@0.8.13` —— 跨会话长期记忆
+  - `@liustack/modlens@3.26.6` —— 视觉桥与截图理解
+  - `dsh-inline-figures@0.1.0` —— 回答内嵌矢量图
+  - `dsh-prompt@0.3.0` —— Prompt 模板工具箱
+  - `dsh-plugin-wallpaper-engine@1.2.0` —— Wallpaper Engine 动态壁纸（npm 最新为 1.2.0，repo 的 1.3.0 未发布）
+  - `@goodandready/dsh-key-limits@0.2.19` —— API key / 订阅额度上限（npm 已到 0.2.19，高于 repo 的 0.2.15）
+- **移除**：`dsh-edit-resend@0.1.0` —— npm 发布产物声明 peer `^0.1.0-rc.6`，
+  0.2.0-rc.2 下被 runtime 拒装（v2.1.0 时按 GitHub 源码判定「无 peer」有误，真机实测修正）
+- **修复**：仓库 `package.json` 自 v2.1.0 起落后于 manifest（缺 4 个插件），本次全量重同步；
+  manifest 中 codex-ui 重复条目一并清理（保持层栈末位唯一）
+- 插件总数 15 → 21，依赖 14 → 21；`pnpm-workspace.yaml` 补录新插件 `minimumReleaseAgeExclude`
+- 真机验证：`dsh --dump-config` exit 0、零 stderr，23 bundle 全部加载（隔离安装 @deepseek-ai/dsh@0.2.0-rc.2 实测）
 
 ### v2.2.0 (2026-10-05)
 - **新增**：dsh-agent-arena —— 多智能体议事厅与提示词竞技场（可调协作栏、渠道限流、自动接话控制）

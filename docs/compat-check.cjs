@@ -34,12 +34,18 @@ function compare(a, b) {
 }
 function satisfies(version, range) {
   if (range.includes("||")) return range.split("||").some(r => satisfies(version, r.trim()));
+  // 复合范围（如 ">=0.2.0-alpha.1 <0.3.0"）：空格分隔的多个条件取 AND
+  const parts = range.trim().split(/\s+/);
+  if (parts.length > 1) return parts.every(p => satisfies(version, p));
   range = range.trim();
   if (range.startsWith(">=")) return compare(version, range.slice(2).trim()) >= 0;
   if (range.startsWith(">"))  return compare(version, range.slice(1).trim()) > 0;
+  if (range.startsWith("<=")) return compare(version, range.slice(2).trim()) <= 0;
+  if (range.startsWith("<"))  return compare(version, range.slice(1).trim()) < 0;
   if (range.startsWith("^")) {
     const [maj, min, pat] = range.slice(1).split("-")[0].split(".").map(Number);
-    const upper = maj > 0 ? `${maj + 1}.0.0` : min > 0 ? `0.${min + 1}.0` : `0.0.${pat + 1}`;
+    // 真实 semver：caret 上界是 <X.Y.0-0（排除下一个 minor/major 的预发布版）
+    const upper = maj > 0 ? `${maj + 1}.0.0-0` : min > 0 ? `0.${min + 1}.0-0` : `0.0.${pat + 1}-0`;
     return compare(version, range.slice(1)) >= 0 && compare(version, upper) < 0;
   }
   return compare(version, range) === 0; // 精确
@@ -57,7 +63,13 @@ const PLUGINS = {
     peers: { "@deepseek-ai/dsh-agent": ">=0.1.7-rc.1", "@deepseek-ai/dsh-subagent": ">=0.1.7-rc.1", "@deepseek-ai/dsh-session": ">=0.1.7-rc.1" }
   },
   "dsh-edit-resend@0.1.0": {
-    peers: {} // 无 peer 约束 → 门禁不拦
+    // ⚠️ 2026-10-05 实测修正：GitHub 源码 package.json 无 peer，但 npm 发布产物
+    // 声明了 ^0.1.0-rc.6 peer → 0.2.0-rc.2 下被 runtime 拒装（dsh --dump-config stderr 实证）。
+    // v2.1.0/v2.2.0 记录的「无 peer 约束」有误，v2.3.0 起移除本插件。
+    peers: {
+      "@deepseek-ai/dsh-agent": "^0.1.0-rc.6",
+      "@deepseek-ai/dsh-typert-protocol": "^0.1.0-rc.6"
+    }
   },
   "dsh-agent-arena@0.6.0 (fork: relax-peers-0.2.0-rc.2)": {
     peers: {
@@ -72,6 +84,45 @@ const PLUGINS = {
       "@deepseek-ai/dsh-tools": ">=0.1.7-rc.2",
       "@deepseek-ai/dsh-workspace": ">=0.1.7-rc.2"
     }
+  },
+
+  // ---- v2.3.0 新增 7 个插件（peer 数据来自各自 repo/npm package.json，2026-10-05）----
+  "@mrweicodes/dsh-loop-guard@1.0.8": {
+    peers: {
+      "@deepseek-ai/dsh-agent": ">=0.1.2-rc.1 <0.1.3 || >=0.1.3-alpha.2 <0.1.4 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-alpha.1 <0.2.0 || >=0.1.7-alpha.1 <0.2.0 || >=0.2.0-alpha.1 <0.3.0",
+      "@deepseek-ai/dsh-llm": ">=0.1.2-rc.1 <0.1.3 || >=0.1.3-alpha.2 <0.1.4 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-alpha.1 <0.2.0 || >=0.1.7-alpha.1 <0.2.0 || >=0.2.0-alpha.1 <0.3.0"
+    }
+  },
+  "@modusensus/dsh-mneme@0.8.13": {
+    peers: {
+      "@deepseek-ai/dsh-host-webserver": ">=0.1.0-rc.6 <0.2.0 || >=0.1.5-rc.0 <0.3.0 || >=0.2.0-rc.0 <0.3.0",
+      "@deepseek-ai/dsh-llm": ">=0.1.0-rc.6 <0.2.0 || >=0.1.5-rc.0 <0.3.0 || >=0.2.0-rc.0 <0.3.0",
+      "@deepseek-ai/dsh-system-prompt": ">=0.1.0-rc.6 <0.2.0 || >=0.1.5-rc.0 <0.3.0 || >=0.2.0-rc.0 <0.3.0"
+    }
+  },
+  "@liustack/modlens@3.26.6": {
+    peers: {} // 未声明 peer → 门禁不拦；引擎要求以实跑 dsh --dump-config 验证
+  },
+  "dsh-inline-figures@0.1.0": {
+    peers: {
+      "@deepseek-ai/dsh-llm": "0.2.0-rc.2",
+      "@deepseek-ai/dsh-system-prompt": "0.2.0-rc.2",
+      "@deepseek-ai/dsh-tools": "0.2.0-rc.2"
+    }
+  },
+  "dsh-prompt@0.3.0": {
+    peers: {}, // 无 peer；package.json dsh.engines 声明 ">=0.2.0-rc.2"，依赖按 0.2.0-rc.2 构建
+    engines: ">=0.2.0-rc.2"
+  },
+  "dsh-plugin-wallpaper-engine@1.2.0": {
+    peers: {
+      "@deepseek-ai/dsh-client-runtime": ">=0.2.0-rc.1",
+      "@deepseek-ai/dsh-host-webserver": ">=0.2.0-rc.1",
+      "@deepseek-ai/dsh-client-ui-slots": ">=0.2.0-rc.1"
+    }
+  },
+  "@goodandready/dsh-key-limits@0.2.19": {
+    peers: {} // 仅 cordis/schemastery peer，与宿主版本无关
   }
 };
 
