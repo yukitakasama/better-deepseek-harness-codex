@@ -98,9 +98,15 @@ def main() -> int:
     print(f"sha256 {digest}")
     print(f"sidecar {(out_dir / (dspack_path.name + '.sha256'))}")
 
-    skill_count = len([e for e in collect_home_entries(repo_root)
-                       if e[0].startswith("home/skills/") and e[0].count("/") == 2
-                       and e[0].endswith("SKILL.md")])
+    # Count skill directories: home/skills/<name>/... (not SKILL.md files —
+    # a skill may legitimately ship nested SKILL.md files, and the old
+    # `count("/") == 2` check could never match home/skills/<name>/SKILL.md,
+    # so it always printed 0 even when all 47 skills were packed).
+    skill_count = len({
+        e[0].split("/")[2]
+        for e in collect_home_entries(repo_root)
+        if e[0].startswith("home/skills/") and len(e[0].split("/")) > 3
+    })
     print(f"skills {skill_count}")
     return 0
 
