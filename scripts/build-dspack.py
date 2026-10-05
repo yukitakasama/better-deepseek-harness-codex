@@ -7,12 +7,16 @@ installed by ``dsh`` exactly like a launcher-built package.
 
 Produced artifacts (named ``<manifest.name>-<manifest.version>.<ext>``):
 
-* ``.dspack``  — a ZIP (DEFLATED) containing exactly these 5 entries, in order:
+* ``.dspack``  — a ZIP (DEFLATED) containing these entries, in order:
     - ``dspack.json``             (synthetic, 41 bytes, fixed content)
     - ``manifest.json``
     - ``package.json``
     - ``pnpm-workspace.yaml``
     - ``overrides/cordis.patch.yml``
+    - ``home/skills/<name>/...``  (zero or more; each bundled skill ships
+                                   under ``home/skills/`` so the launcher's
+                                   import step copies it onto the DSH_HOME
+                                   root → ``<DSH_HOME>/skills/<name>``)
 * ``.dspack.sha256`` — lowercase hex SHA-256 of the ``.dspack`` file,
   64 bytes, **no** trailing newline.
 
@@ -41,6 +45,25 @@ ENTRIES = [
     ("overrides/cordis.patch.yml", "overrides/cordis.patch.yml"),
 ]
 
+# Directory (relative to repo root) whose contents are shipped verbatim under
+# the same path inside the dspack. The launcher copies ``home/`` onto the
+# DSH_HOME root on import, so ``home/skills/<name>`` lands at
+# ``<DSH_HOME>/skills/<name>``.
+HOME_PAYLOAD_DIR = "home"
+
+
+def collect_home_entries(repo_root: Path) -> list[tuple[str, str]]:
+    """Return (arcname, src_rel) pairs for every file under HOME_PAYLOAD_DIR."""
+    out: list[tuple[str, str]] = []
+    base = repo_root / HOME_PAYLOAD_DIR
+    if not base.is_dir():
+        return out
+    for p in sorted(base.rglob("*")):
+        if p.is_file():
+            rel = p.relative_to(repo_root).as_posix()
+            out.append((rel, rel))
+    return out
+
 
 def build(repo_root: Path, out_dir: Path) -> tuple[Path, str]:
     manifest = json.loads((repo_root / "manifest.json").read_text(encoding="utf-8"))
@@ -54,6 +77,8 @@ def build(repo_root: Path, out_dir: Path) -> tuple[Path, str]:
     with zipfile.ZipFile(dspack_path, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("dspack.json", DSPACK_JSON)
         for arcname, src in ENTRIES:
+            zf.writestr(arcname, (repo_root / src).read_bytes())
+        for arcname, src in collect_home_entries(repo_root):
             zf.writestr(arcname, (repo_root / src).read_bytes())
 
     digest = hashlib.sha256(dspack_path.read_bytes()).hexdigest()
@@ -72,6 +97,11 @@ def main() -> int:
     print(f"built  {dspack_path}  ({size} bytes)")
     print(f"sha256 {digest}")
     print(f"sidecar {(out_dir / (dspack_path.name + '.sha256'))}")
+
+    skill_count = len([e for e in collect_home_entries(repo_root)
+                       if e[0].startswith("home/skills/") and e[0].count("/") == 2
+                       and e[0].endswith("SKILL.md")])
+    print(f"skills {skill_count}")
     return 0
 
 

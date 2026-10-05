@@ -31,6 +31,7 @@
 - **动态壁纸** —— Wallpaper Engine 壁纸搬进 DSH 网页界面
 - **额度上限** —— key-limits 显示 API key / 订阅剩余额度（与 cost-meter 互补）
 - **Computer Use** —— 操控 Windows 原生桌面：UIA 无障碍树观察、截图、鼠标键盘、窗口管理（22 个工具）
+- **自带 47 个 skill** —— 安装即落入 `DSH_HOME/skills/`，开箱即用（覆盖设计/前端、动效、数据分析、代码开发、办公文档、浏览器等；MCP 服务器本次未随包分发，按本机 `cordis.patch.yml` 单独配置）
 
 ## 安装
 
@@ -208,6 +209,12 @@ dsh --profile better-deepseek-harness-codex --dump-config
 格式规范：[DSH-PackForge](https://github.com/DSH-PackForge/DSH-PackForge)。
 
 ## 更新日志
+
+### v2.5.0 (2026-10-06)
+- **整合包自带 47 个 skill**（v2.5.0 起）：dspack 携带 `home/skills/`，安装时落入 `DSH_HOME/skills/`，开箱即用，不再依赖各 harness 本地目录。
+- **47 个 skill**：覆盖设计/前端、动效、数据分析、代码开发、媒体、规划效率、打包、办公文档（docx/pdf/pptx/xlsx/research）、浏览器（agent-browser）及新建的 `qq-chat-style-miner`（从 QQ 聊天记录提炼用户风格）。选择标准：仅通用、可广泛改善体验的 skill；项目级与纯本机自动化类已排除。
+- **MCP 服务器本次未随整合包分发**：维持 `overrides/cordis.patch.yml` 原有 1 条 computer-use 修正，不含任何 MCP 条目；如需扩展 MCP 请在 DSH Launcher 的 MCP 管理页单独配置。
+- 基座与插件组合同 v2.4.0（DSH 0.2.0-rc.2，含 `@tencent-connect/dsh-qqbot@0.5.0`）；`scripts/build-dspack.py` 已更新为携带 `home/skills/`。
 
 ### v2.4.0 (2026-10-05)
 - **新增**：`@tencent-connect/dsh-qqbot@0.5.0` —— QQ 机器人频道（腾讯官方插件）：把 QQ Bot 接入 DSH，支持私聊/群聊对话、图片与文件理解、流式回复、主动提问与操作确认、/preset 切换预设、/compact 压缩会话、/bot-ping 网络检测。

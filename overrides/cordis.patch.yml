@@ -61,4 +61,3 @@
       - !!js "process.getBuiltinModule('node:url').fileURLToPath(new URL('node_modules/dsh-computer-use-win/mcp/server.mjs', baseUrl))"
     toolCallTimeoutMs: 60000
     failOnStartupError: false
-
