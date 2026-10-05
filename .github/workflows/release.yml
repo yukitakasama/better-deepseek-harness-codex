@@ -8,7 +8,7 @@ name: Release
 #   - Release tag = v<manifest.version>（普通 semver，无 dev- 前缀）
 #   - 资产 1：<manifest.name>-<version>.dspack   （format v3 zip，含 5 个固定文件）
 #   - 资产 2：同名 .dspack.sha256                 （64 字节十六进制，无换行）
-#   - 发行说明：优先用 docs/release-notes-<version>.md，缺省则 --generate-notes
+#   - 发行说明：优先用 docs/release-notes-v<version>.md，缺省则 --generate-notes
 on:
   push:
     branches:
@@ -60,7 +60,7 @@ jobs:
           VERSION="${{ steps.meta.outputs.version }}"
           NAME="${{ steps.meta.outputs.name }}"
           DSPACK="$NAME-$VERSION.dspack"
-          NOTES="docs/release-notes-$VERSION.md"
+          NOTES="docs/release-notes-v$VERSION.md"
           ARGS=(release create "$TAG" --title "$TAG" --target main)
           if [ -f "$NOTES" ]; then
             ARGS+=(--notes-file "$NOTES")
