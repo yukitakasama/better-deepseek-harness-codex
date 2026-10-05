@@ -61,3 +61,20 @@
       - !!js "process.getBuiltinModule('node:url').fileURLToPath(new URL('node_modules/dsh-computer-use-win/mcp/server.mjs', baseUrl))"
     toolCallTimeoutMs: 60000
     failOnStartupError: false
+
+# ── QQ 机器人频道（@tencent-connect/dsh-qqbot）：默认关闭 ─────────────────
+# 该插件是「按需启用」的功能 —— 用它的前提是已有 QQ 机器人的 AppID/AppSecret。
+# 上游实现在凭据缺失时会于 apply() 内同步等待扫码：那个 Promise 没有超时、
+# 二维码过期只是一直刷新，而 cordis 串行加载插件 → 整个 dsh 实例永远停在
+# 「等待就绪」（启动器启动窗口一直转圈、Web 服务始终不监听）。
+#
+# 本包改用 fork 版 yukitakasama/dsh-qqbot（凭据缺失时跳过而非阻塞），但默认
+# 仍关闭：需要时再打开，避免无谓加载一个没配凭据的频道。
+#
+# 启用步骤：
+#   1. 拿凭据 —— 在 profile 目录下跑 `npx dsh-qqbot-bind` 扫码绑定一次，或在
+#      QQ 开放平台创建机器人后设置 QQBOT_APPID / QQBOT_SECRET；
+#   2. 打开 —— 启动器「插件」页把 im-qqbot 设为启用并重启实例，或把下面
+#      这行的 disabled 改成 false。
+- id: im-qqbot
+  disabled: true

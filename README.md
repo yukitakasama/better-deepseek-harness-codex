@@ -98,7 +98,26 @@ dsh --profile better-deepseek-harness-codex
 | `dsh-prompt` | 0.3.0 | Prompt 模板工具箱 |
 | `dsh-plugin-wallpaper-engine` | 1.2.0 | Wallpaper Engine 动态壁纸 |
 | `@goodandready/dsh-key-limits` | 0.2.19 | API key / 订阅额度上限 |
-| `@tencent-connect/dsh-qqbot` | 0.5.0 | QQ 机器人频道（腾讯官方）：私聊/群聊对话、图片与文件理解、流式回复、主动提问与操作确认、/preset 切换预设、/compact 压缩会话 |
+| `@tencent-connect/dsh-qqbot` | fork 0.5.1 | QQ 机器人频道：**默认关闭、按需启用**。私聊/群聊对话、图片与文件理解、流式回复、主动提问与操作确认、/preset 切换预设、/compact 压缩会话。启用方式见下方「QQ 机器人频道（im-qqbot）」 |
+
+### QQ 机器人频道（im-qqbot）
+
+本插件**默认关闭**。原因是原版在凭据缺失时会于插件加载阶段同步等待扫码，而那个
+Promise 没有超时、二维码过期只会不断刷新——cordis 串行加载插件，于是整个 dsh 实例
+永远停在「等待就绪」（启动器表现为启动窗口一直转圈、Web 服务始终不监听）。
+
+本包已改用 fork 版 `yukitakasama/dsh-qqbot`（凭据缺失时跳过而非阻塞），并默认保持
+关闭：需要时再打开，不必为一个没配凭据的频道付出加载成本。
+
+**启用前先准备凭据**（二选一）：
+
+1. **免扫码**：在 QQ 开放平台创建机器人，拿到 AppID / AppSecret，填入启动器
+   「实例 → 环境变量」：`QQBOT_APPID`、`QQBOT_SECRET`。
+2. **扫码**：在 profile 目录下跑一次 `npx dsh-qqbot-bind`（首次出码会同时用默认
+   浏览器打开扫码页），凭据会自动写入 `cordis.patch.yml`。
+
+**然后启用并重启**：启动器「插件」页把 `im-qqbot` 设为启用，**重启实例**后生效
+（插件开关与环境变量都只在进程启动时读取，不支持热启用）。
 
 ### Computer Use 说明
 
