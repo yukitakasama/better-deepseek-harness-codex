@@ -78,3 +78,68 @@
 #      这行的 disabled 改成 false。
 - id: im-qqbot
   disabled: true
+
+# ── Codex 风格 Computer Use（dsh-computer-use）：工具行 + 独立 preset ─────────
+# 该插件把能力拆成两个平面：
+#   · HOST 平面（`computer-use` 行，由插件自带的 cordis.patch.yml 提供）
+#     —— 进程级桌面 sidecar：指针、覆盖层、截图、批准流、回合生命周期；
+#   · PRESET 平面（`dsh-computer-use/tool` 行）
+#     —— 13 个 window2 工具，必须挂在 agent preset 里才对模型可见。
+#
+# 插件自己只带 HOST 那一行（它的注释明确写了「Tools stay in the user agent preset
+# so standard coding sessions do not get the mouse」）。整合包要补下面这段，
+# 否则模型拿不到任何 computer use 工具 —— 插件装了等于没装。
+#
+# 为什么用 `- insert:` 新增一个独立 preset，而不是往 preset-standard 里塞：
+# loader patch 对已存在的 preset 条目是「整体替换它的 plugins 数组」而不是追加。
+# 实测把 preset-standard 的 config.plugins 写一次，标准 preset 的 32 行会被压缩成
+# 你写的那几行，等于废掉整个默认工作台。新增一个 preset 则完全不碰既有预设。
+#
+# 隔离意图：普通编码会话（standard / ptc preset）永远不会拿到鼠标；
+# 只有显式选「Computer Use」preset 新建的会话才有桌面工具。
+#
+# 与 dsh-computer-use-win 的关系：两者可以共存（工具名不同、preset 不同），
+# 但**不要在同一会话里同时驱动桌面**，否则两套指针/覆盖层会互相打架。
+- insert:
+    - id: preset-computer-use
+      name: "@deepseek-ai/dsh-agent-preset"
+      config:
+        id: computer-use
+        name: Computer Use
+        description: Codex-style desktop control (window2 tools with a visible cursor overlay and an Esc interrupt)
+        # 排在官方 standard(1) / ptc(2) 之后，作为「按需选用」的第三方预设。
+        order: 3
+        plugins:
+          - id: persona
+            name: "@deepseek-ai/dsh-persona"
+            config:
+              suffix: Your working directory is {{cwd}}.
+              prefix: You are a coding agent powered by the {{model}} model.
+          - id: agent-instructions
+            name: "@deepseek-ai/dsh-agent-instructions"
+            config:
+              maxBytes: 65536
+          - id: tool-pwsh
+            name: "@deepseek-ai/dsh-tool-pwsh"
+            disabled: !!js process.platform !== 'win32'
+          - id: tool-fs
+            name: "@deepseek-ai/dsh-tool-fs"
+          - id: tool-fs-search
+            name: "@deepseek-ai/dsh-tool-fs-search"
+            config:
+              # 必填项：官方 preset 同样显式给值，缺了它会以 ValidationError 拒绝整个 preset。
+              sampleOverCapGlobResults: false
+          - id: tool-jobs
+            name: "@deepseek-ai/dsh-tool-jobs"
+          - id: skill-filesystem
+            name: "@deepseek-ai/dsh-skill-filesystem"
+          - id: tool-skill
+            name: "@deepseek-ai/dsh-tool-skill"
+          # PRESET 平面：13 个 window2 工具 + computer_use_health / _experience。
+          # 消费 HOST 平面的 `dshComputerUse` sidecar，自身不发布服务，因此不需要隔离域。
+          - id: tool-computer-use
+            name: dsh-computer-use/tool
+            config:
+              surfaces:
+                - computer
+              browserSkill: computer-use-browser

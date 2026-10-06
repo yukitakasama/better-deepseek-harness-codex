@@ -12,3 +12,7 @@ Thumbs.db
 
 # 本地记忆/运行日志（不进版本库）
 .workbuddy/
+
+# Python bytecode from local packaging/validation runs
+__pycache__/
+*.pyc

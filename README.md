@@ -31,7 +31,7 @@
 - **动态壁纸** —— Wallpaper Engine 壁纸搬进 DSH 网页界面
 - **额度上限** —— key-limits 显示 API key / 订阅剩余额度（与 cost-meter 互补）
 - **Computer Use** —— 操控 Windows 原生桌面：UIA 无障碍树观察、截图、鼠标键盘、窗口管理（22 个工具）
-- **自带 47 个 skill** —— 安装即落入 `DSH_HOME/skills/`，开箱即用（覆盖设计/前端、动效、数据分析、代码开发、办公文档、浏览器等；MCP 服务器本次未随包分发，按本机 `cordis.patch.yml` 单独配置）
+- **自带 49 个 skill** —— 安装即落入 `DSH_HOME/skills/`，开箱即用（覆盖设计/前端、动效、数据分析、代码开发、办公文档、浏览器等；MCP 服务器本次未随包分发，按本机 `cordis.patch.yml` 单独配置）
 
 ## 安装
 
@@ -73,7 +73,7 @@ dsh --profile better-deepseek-harness-codex
 - `dshVersions`: 声明实测兼容版本集合（0.2.0-rc.2、0.2.0-rc.1）
 - `launchers`: 声明启动器兼容性（dshl、dsh-packforge-app）
 
-## 插件清单（22 个）
+## 插件清单（23 个）
 
 | 插件 | 版本 | 作用 |
 |---|---|---|
@@ -87,6 +87,7 @@ dsh --profile better-deepseek-harness-codex
 | `@goodandready/dsh-context-lens` | 0.1.28 | AST 上下文压缩、token 预算守卫 |
 | `@linxin666/dsh-client-ui-git-graph` | 0.4.4 | Git 分支图 |
 | `dsh-computer-use-win` | 0.2.3 | Windows Computer Use 桌面操控（22 工具） |
+| `dsh-computer-use` | fork `72f390a` | **Codex 风格 Computer Use**：13 个 window2 原生工具（+3 个 DSH 扩展）、可见合成光标与状态药丸、Esc 急停、按应用授权。挂在**独立的 `computer-use` preset** 里，普通编码会话拿不到鼠标。详见下方「Codex 风格 Computer Use」 |
 | `@nanmicoder/dsh-agent-teams` | 0.1.22 | 多智能体团队协作 |
 | `dsh-context` | 0.63.0 | 上下文可视化仪表盘 |
 | `dsh-plugin-subagent-director` | 0.5.5 | 子代理独立选模型 |
@@ -99,6 +100,37 @@ dsh --profile better-deepseek-harness-codex
 | `dsh-plugin-wallpaper-engine` | 1.2.0 | Wallpaper Engine 动态壁纸 |
 | `@goodandready/dsh-key-limits` | 0.2.19 | API key / 订阅额度上限 |
 | `@tencent-connect/dsh-qqbot` | fork 0.5.1 | QQ 机器人频道：**默认关闭、按需启用**。私聊/群聊对话、图片与文件理解、流式回复、主动提问与操作确认、/preset 切换预设、/compact 压缩会话。启用方式见下方「QQ 机器人频道（im-qqbot）」 |
+
+### Codex 风格 Computer Use（dsh-computer-use）
+
+上游： [wushi2333/dsh-computer-use_codex-style](https://github.com/wushi2333/dsh-computer-use_codex-style)，
+按提交精确钉死（`#72f390a`），**未做任何源码修改**。
+
+它把能力拆成两个平面，本包两层都接上了：
+
+| 平面 | 行 | 由谁提供 |
+|---|---|---|
+| HOST（进程级桌面 sidecar：指针、覆盖层、截图、批准、回合生命周期） | `computer-use` | 插件自带的 `cordis.patch.yml` |
+| PRESET（13 个 window2 工具） | `tool-computer-use` | **本包的 `overrides/cordis.patch.yml`** |
+
+**为什么整合包要补第二层**：上游插件只带 HOST 那一行——它的注释写明
+「Tools stay in the user agent preset so standard coding sessions do not get the mouse」。
+工具行必须挂在 agent preset 里才对模型可见，所以本包新增了一个 **`computer-use` preset**：
+
+> **普通编码会话（standard / ptc）永远不会拿到鼠标**；只有显式选「Computer Use」
+> preset 新建的会话才有桌面工具。
+
+技术细节：这一层用 `- insert:` **新增**一个 preset，而不是往 `preset-standard` 里塞行。
+loader patch 对已存在的 preset 条目是「整体替换它的 `plugins` 数组」而非追加——实测
+只要对 `preset-standard` 写一次 `config.plugins`，标准 preset 的 32 行会被压缩成你写的
+那几行，等于废掉整个默认工作台。新增 preset 则完全不碰既有预设（实测四个官方 preset
+行数不变）。
+
+> **不要在同一会话里同时驱动桌面**：`dsh-computer-use-win`（22 工具的 extension 方案）
+> 与本插件可以共存，工具名与挂载方式都不同，但两套指针/覆盖层同时跑会互相打架。
+> 日常桌面操控建议只用其中一个。
+
+随包投递 `computer-use` 与 `computer-use-browser` 两个 skill（落入 `DSH_HOME/skills/`）。
 
 ### QQ 机器人频道（im-qqbot）
 
@@ -178,7 +210,7 @@ DSH 用 `semver.satisfies(版本, peer范围, { includePrerelease: true })` 校�
 - `>=0.1.0-rc.5 <0.2.0` 这类宽范围 **匹配** rc.2；
 - 钉死精确版本（如 `0.1.7-rc.1`）的插件在 rc.2 上会**硬失败**，本包一律不选。
 
-本包 21 个插件的 peerDependencies 全部通过 rc.2 自带的
+本包 22 个插件的 peerDependencies 全部通过 rc.2 自带的
 `evaluatePluginCompatibility()` 实测，21/21 无阻断（`docs/compat-check.cjs` 门禁）。
 
 ### 冲突排除
@@ -230,8 +262,8 @@ dsh --profile better-deepseek-harness-codex --dump-config
 ## 更新日志
 
 ### v2.5.0 (2026-10-06)
-- **整合包自带 47 个 skill**（v2.5.0 起）：dspack 携带 `home/skills/`，安装时落入 `DSH_HOME/skills/`，开箱即用，不再依赖各 harness 本地目录。
-- **47 个 skill**：覆盖设计/前端、动效、数据分析、代码开发、媒体、规划效率、打包、办公文档（docx/pdf/pptx/xlsx/research）、浏览器（agent-browser）及新建的 `qq-chat-style-miner`（从 QQ 聊天记录提炼用户风格）。选择标准：仅通用、可广泛改善体验的 skill；项目级与纯本机自动化类已排除。
+- **整合包自带 49 个 skill**（v2.5.0 起）：dspack 携带 `home/skills/`，安装时落入 `DSH_HOME/skills/`，开箱即用，不再依赖各 harness 本地目录。
+- **49 个 skill**：覆盖设计/前端、动效、数据分析、代码开发、媒体、规划效率、打包、办公文档（docx/pdf/pptx/xlsx/research）、浏览器（agent-browser）及新建的 `qq-chat-style-miner`（从 QQ 聊天记录提炼用户风格）。选择标准：仅通用、可广泛改善体验的 skill；项目级与纯本机自动化类已排除。
 - **MCP 服务器本次未随整合包分发**：维持 `overrides/cordis.patch.yml` 原有 1 条 computer-use 修正，不含任何 MCP 条目；如需扩展 MCP 请在 DSH Launcher 的 MCP 管理页单独配置。
 - 基座与插件组合同 v2.4.0（DSH 0.2.0-rc.2，含 `@tencent-connect/dsh-qqbot@0.5.0`）；`scripts/build-dspack.py` 已更新为携带 `home/skills/`。
 

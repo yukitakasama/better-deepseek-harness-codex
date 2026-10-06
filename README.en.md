@@ -122,7 +122,7 @@ Or import the `.dspack` from the DSH launcher.
 - `dshVersions`: declares the set of tested-compatible versions (0.2.0-rc.2, 0.2.0-rc.1)
 - `launchers`: declares launcher compatibility (dshl, dsh-packforge-app)
 
-## Plugin List (21)
+## Plugin List (23)
 
 | Plugin | Version | Purpose |
 |---|---|---|
@@ -136,6 +136,7 @@ Or import the `.dspack` from the DSH launcher.
 | `@goodandready/dsh-context-lens` | 0.1.28 | AST context compression, token budget guard |
 | `@linxin666/dsh-client-ui-git-graph` | 0.4.4 | Git branch graph |
 | `dsh-computer-use-win` | 0.2.3 | Windows Computer Use desktop control (22 tools) |
+| `dsh-computer-use` | fork `72f390a` | **Codex-style Computer Use**: 13 native window2 tools (+3 DSH extensions), a visible synthetic cursor and status pill, an Esc interrupt, per-app approvals. Mounted in its own **`computer-use` preset**, so ordinary coding sessions never get the mouse. See "Codex-style Computer Use" below |
 | `@nanmicoder/dsh-agent-teams` | 0.1.22 | Multi-agent team collaboration |
 | `dsh-context` | 0.63.0 | Context visualization dashboard |
 | `dsh-plugin-subagent-director` | 0.5.5 | Per-subagent model selection |
@@ -147,6 +148,39 @@ Or import the `.dspack` from the DSH launcher.
 | `dsh-prompt` | 0.3.0 | Prompt template toolbox |
 | `dsh-plugin-wallpaper-engine` | 1.2.0 | Wallpaper Engine live wallpapers |
 | `@goodandready/dsh-key-limits` | 0.2.19 | API key / subscription quota limits |
+
+### Codex-style Computer Use (dsh-computer-use)
+
+Upstream: [wushi2333/dsh-computer-use_codex-style](https://github.com/wushi2333/dsh-computer-use_codex-style),
+pinned to an exact commit (`#72f390a`) and **shipped unmodified**.
+
+It splits its capability across two planes, and this pack wires up both:
+
+| Plane | Row | Provided by |
+|---|---|---|
+| HOST (process-wide desktop sidecar: pointer, overlay, capture, approvals, turn lifecycle) | `computer-use` | the plugin's own `cordis.patch.yml` |
+| PRESET (the 13 window2 tools) | `tool-computer-use` | **this pack's `overrides/cordis.patch.yml`** |
+
+**Why the pack must supply the second plane**: the upstream plugin ships only the HOST row —
+its own comment says "Tools stay in the user agent preset so standard coding sessions do not
+get the mouse". A tool row is only visible to the model when it is mounted in an agent preset,
+so this pack adds a **`computer-use` preset**:
+
+> **Ordinary coding sessions (standard / ptc) never get the mouse**; only a session created
+> with the "Computer Use" preset carries the desktop tools.
+
+Mechanically this layer uses `- insert:` to **add** a preset rather than writing rows into
+`preset-standard`. A loader patch replaces an existing preset entry's whole `plugins` array
+instead of appending: writing `config.plugins` once against `preset-standard` collapses its
+32 rows down to the ones you wrote, which would destroy the default workbench. Adding a preset
+leaves the existing four untouched (verified: their row counts are unchanged).
+
+> **Do not drive the desktop from two plugins at once**: `dsh-computer-use-win` (a 22-tool
+> extension-based approach) can coexist with this plugin — different tool names, different
+> mounting — but two pointers/overlays running together fight each other. Pick one for daily
+> desktop work.
+
+The pack ships the `computer-use` and `computer-use-browser` skills into `DSH_HOME/skills/`.
 
 ### Computer Use Notes
 
@@ -209,7 +243,7 @@ DSH validates with `semver.satisfies(version, peerRange, { includePrerelease: tr
 - Wide ranges like `>=0.1.0-rc.5 <0.2.0` **match** rc.2;
 - Plugins pinned to an exact version (e.g. `0.1.7-rc.1`) **hard-fail** on rc.2 — none are selected.
 
-All 21 plugins' peerDependencies were verified against rc.2 via its bundled
+All 22 plugins' peerDependencies were verified against rc.2 via its bundled
 `evaluatePluginCompatibility()`: 21/21 with no blockers (`docs/compat-check.cjs` gate).
 
 ### Conflict exclusions
