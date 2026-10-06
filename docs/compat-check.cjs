@@ -132,6 +132,18 @@ const PLUGINS = {
       "@deepseek-ai/dsh-user-approval": ">=0.1.0-rc.6"
     },
     note: "cordis >=4.0.1 / schemastery >=3.18.1 / qqbot-connector 1.2.0 非 dsh-* host peer，按 0.2.0-rc.2 的 cordis 4.x 基线判定满足（同 agent-arena fork 基线）"
+  },
+  "dsh-workbuddy-connect@0.7.1": {
+    peers: {
+      "@deepseek-ai/dsh-atomic-write": "0.2.0-rc.2",
+      "@deepseek-ai/dsh-attachment": "0.2.0-rc.2",
+      "@deepseek-ai/dsh-home-paths": "0.2.0-rc.2",
+      "@deepseek-ai/dsh-host-webserver": "0.2.0-rc.2",
+      "@deepseek-ai/dsh-llm": "0.2.0-rc.2",
+      "@deepseek-ai/dsh-llm-pi-ai": "0.2.0-rc.2",
+      "@deepseek-ai/dsh-settings": "0.2.0-rc.2"
+    },
+    note: "非 dsh-* host peer：cordis ^4.0.2（宿主 4.0.4 满足）、schemastery ^3.18.2（web-app 带 ~3.18.4）、@earendil-works/pi-ai ^0.87.1（dsh-llm-pi-ai@0.2.0-rc.2 自身依赖即 ^0.87.1）、react ^18.2.0（与已实测的 dsh-codex-ui 同一 peer）。另 dsh.client.platform=web，只在 web/desktop 界面注入，属 web 专用插件"
   }
 };
 

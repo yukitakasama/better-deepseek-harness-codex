@@ -31,6 +31,7 @@
 - **动态壁纸** —— Wallpaper Engine 壁纸搬进 DSH 网页界面
 - **额度上限** —— key-limits 显示 API key / 订阅剩余额度（与 cost-meter 互补）
 - **Computer Use** —— 操控 Windows 原生桌面：UIA 无障碍树观察、截图、鼠标键盘、窗口管理（22 个工具）
+- **WorkBuddy 模型接入** —— dsh-workbuddy-connect 复用 WorkBuddy 桌面 App 的登录态，GLM-5.3、DeepSeek-V4、Kimi-K3、MiniMax-M3、Hy3 等直接出现在模型选择器中，零配置；国内版与国际版各成一个分组，**本机没装/没登录 WorkBuddy 时该分组自动隐藏，不影响启动**
 - **自带 49 个 skill** —— 安装即落入 `DSH_HOME/skills/`，开箱即用（覆盖设计/前端、动效、数据分析、代码开发、办公文档、浏览器等；MCP 服务器本次未随包分发，按本机 `cordis.patch.yml` 单独配置）
 
 ## 安装
@@ -45,6 +46,11 @@ dsh --profile better-deepseek-harness-codex
 
 > **注意**：自 v2.2.0 起，`dsh-agent-arena` 以 git fork 依赖（`github:yukitakasama/dsh-agent-arena#25e2c55`）
 > 引入，安装时需能访问 GitHub。上游发布面向 0.2.0-rc.2 的官方版本后将改回 npm registry 版本。
+
+> **WorkBuddy 模型的前提**：自 v2.7.0 起本包带 `dsh-workbuddy-connect`，它复用 WorkBuddy 桌面 App
+> 的**本机登录态**，所以要看到 WorkBuddy 模型分组，需要先安装并登录 WorkBuddy（国内版或国际版
+> WorkBuddy AI 均可）。**没装也不影响本包启动**——对应分组直接隐藏，其余插件照旧。详见下方
+> 「WorkBuddy 模型接入」。
 
 ## v2.0.0 变更说明
 
@@ -73,7 +79,7 @@ dsh --profile better-deepseek-harness-codex
 - `dshVersions`: 声明实测兼容版本集合（0.2.0-rc.2、0.2.0-rc.1）
 - `launchers`: 声明启动器兼容性（dshl、dsh-packforge-app）
 
-## 插件清单（23 个）
+## 插件清单（24 个）
 
 | 插件 | 版本 | 作用 |
 |---|---|---|
@@ -100,6 +106,7 @@ dsh --profile better-deepseek-harness-codex
 | `dsh-plugin-wallpaper-engine` | 1.2.0 | Wallpaper Engine 动态壁纸 |
 | `@goodandready/dsh-key-limits` | 0.2.19 | API key / 订阅额度上限 |
 | `@tencent-connect/dsh-qqbot` | fork 0.5.1 | QQ 机器人频道：**默认关闭、按需启用**。私聊/群聊对话、图片与文件理解、流式回复、主动提问与操作确认、/preset 切换预设、/compact 压缩会话。启用方式见下方「QQ 机器人频道（im-qqbot）」 |
+| `dsh-workbuddy-connect` | 0.7.1 | **WorkBuddy 桌面端模型接入**：复用 WorkBuddy App 的本机登录态，把 GLM-5.3、DeepSeek-V4、Kimi-K3、MiniMax-M3、Hy3 等送进 DSH 模型选择器，零配置调用；国内版与国际版分组并存、各用自己的账号与积分，未登录则分组隐藏。详见下方「WorkBuddy 模型接入」 |
 
 ### Codex 风格 Computer Use（dsh-computer-use）
 
@@ -150,6 +157,39 @@ Promise 没有超时、二维码过期只会不断刷新——cordis 串行加�
 
 **然后启用并重启**：启动器「插件」页把 `im-qqbot` 设为启用，**重启实例**后生效
 （插件开关与环境变量都只在进程启动时读取，不支持热启用）。
+
+### WorkBuddy 模型接入（dsh-workbuddy-connect）
+
+上游：[corrinehu/dsh-workbuddy-connect](https://github.com/corrinehu/dsh-workbuddy-connect)，
+钉 npm `0.7.1`（当前稳定版），**未做任何源码修改**。
+
+它把 WorkBuddy 桌面 App 里的模型（GLM-5.3、GLM-5.2、GLM-5.3-Flash、DeepSeek-V4-Pro/Flash、
+Kimi-K3、MiniMax-M3、Hy3 等）注册成 DSH 的一个 LLM provider（`llm-workbuddy`），于是这些模型
+直接出现在模型选择器与 `/model` 弹窗里，**不需要另外申请 API key**。
+
+- **凭据来自本机 App** —— 插件复用 WorkBuddy 桌面端的登录态，不自建 OAuth 流程；你在 App 里
+  切换账号，DSH 这边跟着切。Windows 上先查 `%LOCALAPPDATA%\Programs\WorkBuddy\WorkBuddy.exe`，
+  再查卸载注册表来定位解密程序；国际版（WorkBuddy AI）只查注册表。
+- **国内版 / 国际版互不混用** —— 各成一个分组（「WorkBuddy」/「WorkBuddy AI」），各看自己那版
+  App 的登录状态，模型、账号、积分彼此独立。
+- **未登录时不打扰** —— 某版 App 从未登录、也没留下插件自留副本时，**该版分组不再显示**
+  （0.7 起的行为变化：过去国内版会显示一份内置兜底列表，但那些模型选了必然报错）。
+  因此没装 WorkBuddy 的用户装本包不会遇到任何启动报错。
+- **能力面** —— 多数模型支持发图（GLM-5.3-Flash、GLM-5.2、DeepSeek-V4 系列等）；上游声明了
+  档位的模型直接给出 low / high / max；模型名后显示积分倍率与促销徽章（限时免费、夜间折扣）；
+  设置卡片可查看账号、令牌有效期、剩余积分与模型列表来源（实时 / 已保存 / 内置）。
+- **计费走 WorkBuddy 积分**，不是 API key 余额，因此与 `dsh-cost-meter` 的费用数字**口径不同**：
+  cost-meter 按模型单价估算，WorkBuddy 侧实际扣的是积分倍率。
+
+> **版本必须对得上**：`0.7.0` 起插件**仅面向 0.2.0 内核**（`0.7.1` 只支持 `0.2.0-rc.2`），
+> 与本包基座正好一致；仍在 DSH `0.1.x` 上的人需要 `0.6.5`。不匹配的组合会让 DSH **启动失败**，
+> 上游 issue #63 即是插件被宿主整体跳过的案例。这也是本包把 `dshVersion` 精确锁在
+> `0.2.0-rc.2` 的原因之一。
+>
+> 另外，该插件是 **web 平台注入**（`dsh.client.platform: web`，客户端注入 model-selection 等
+> 六个官方包），与本包的 web 基座匹配。若你想把它单独装进 **TUI** profile，需要
+> `@deepseek-harness-tui/dsh-tui` **≥ 0.10.0-beta.5**，更早版本装了会启动失败
+> （报 `events is not iterable`）。
 
 ### Computer Use 说明
 
@@ -210,8 +250,19 @@ DSH 用 `semver.satisfies(版本, peer范围, { includePrerelease: true })` 校�
 - `>=0.1.0-rc.5 <0.2.0` 这类宽范围 **匹配** rc.2；
 - 钉死精确版本（如 `0.1.7-rc.1`）的插件在 rc.2 上会**硬失败**，本包一律不选。
 
-本包 22 个插件的 peerDependencies 全部通过 rc.2 自带的
-`evaluatePluginCompatibility()` 实测，21/21 无阻断（`docs/compat-check.cjs` 门禁）。
+本包 24 个插件的 peerDependencies 全部通过 rc.2 自带的
+`evaluatePluginCompatibility()` 判定口径（`docs/compat-check.cjs` 门禁）。
+
+v2.7.0 新增的 `dsh-workbuddy-connect@0.7.1` 声明 7 个 `@deepseek-ai/dsh-*` peer，
+**全部精确钉 `0.2.0-rc.2`**，与本包基座逐一对上 → 7/7 ✅。非 `dsh-*` 的 host peer 由基座树
+满足：`@deepseek-ai/cordis ^4.0.2`（宿主带 4.0.4）、`@deepseek-ai/schemastery ^3.18.2`
+（web-app 带 `~3.18.4`）、`@earendil-works/pi-ai ^0.87.1`（`dsh-llm-pi-ai@0.2.0-rc.2`
+自身的依赖范围就是 `^0.87.1`，不存在上游 issue #74 提到的两代混用）、`react ^18.2.0`
+（与已真机实测的 `dsh-codex-ui` 同一 peer）。
+
+> 跑 `node docs/compat-check.cjs` 时结尾会显示「存在不兼容 ❌」，那是清单里保留的
+> **候选插件 `dsh-edit-resend@0.1.0`**（v2.3.0 已因硬不兼容移除，未装进本包）造成的，
+> 与本包实际组合无关。
 
 ### 冲突排除
 
@@ -222,6 +273,9 @@ DSH 用 `semver.satisfies(版本, peer范围, { includePrerelease: true })` 校�
 - **没有**装 `dsh-better-sidebar` / `dsh-coding-sidebar`——与 codex-ui 抢同一侧栏位置。
 - **没有**装 `dsh-prompt-history`——↑↓ 召回历史输入已由 codex-ui 自带。
 - 桌宠只选 1 个（候选池 10+ 个全部抢同一浮层）。
+- `dsh-workbuddy-connect` **不争抢 UI 插槽**：它只注册一行 LLM provider（`llm-workbuddy`）并向
+  官方 model-selection / conversation / renderer 等六个客户端包注入内容，侧栏与设置页仍归
+  codex-ui 接管；层栈中它排在 codex-ui **之前**，保持「codex-ui 最后接管」的既有约定。
 - 层栈中 codex-ui 排在**最后**，确保它的插槽接管生效于其他插件注册之后。
 
 ## 验证（需在 DSH 0.2.0-rc.2 环境下重新验证）
@@ -255,11 +309,54 @@ dsh --profile better-deepseek-harness-codex --dump-config
 - [MichengAI](https://github.com/MichengAI)（Codex UI / Code Review / Simplify / BTW）
 - [goodandready](https://www.npmjs.com/~goodandready)（Context Lens）
 - [linxin666](https://www.npmjs.com/~linxin666)（Git Graph）
+- [corrinehu](https://github.com/corrinehu/dsh-workbuddy-connect)（WorkBuddy 模型接入）
+- [wushi2333](https://github.com/wushi2333/dsh-computer-use_codex-style)（Codex 风格 Computer Use）
 - `dsh-effort-slider`、`dsh-cost-meter`、`dsh-whale-girl-pet`、`dsh-computer-use-win` 各作者
+- `dsh-context`、`@modusensus/dsh-mneme`、`@liustack/modlens`、`dsh-prompt`、
+  `dsh-inline-figures`、`@mrweicodes/dsh-loop-guard`、`dsh-plugin-wallpaper-engine`、
+  `@nanmicoder/dsh-agent-teams`、`dsh-plugin-subagent-director`、`@goodandready/dsh-key-limits`
+  等各作者
+- fork 依赖 `dsh-agent-arena`、`dsh-qqbot` 由本仓库维护分叉，功能版权归上游原作者
 
 格式规范：[DSH-PackForge](https://github.com/DSH-PackForge/DSH-PackForge)。
 
 ## 更新日志
+
+### v2.7.0 (2026-10-07)
+- **新增**：`dsh-workbuddy-connect@0.7.1` —— **WorkBuddy 桌面端模型接入**。复用 WorkBuddy 桌面 App
+  的本机登录态，把 GLM-5.3、GLM-5.2、GLM-5.3-Flash、DeepSeek-V4-Pro/Flash、Kimi-K3、MiniMax-M3、Hy3
+  等注册成 DSH 的一个 LLM provider，零配置出现在模型选择器与 `/model` 里；国内版与国际版各成一个
+  分组、积分互不混用。功能与限制详见上方「WorkBuddy 模型接入」。
+- **不增加使用门槛**：没装或未登录 WorkBuddy 时，对应模型分组直接隐藏（0.7 起无凭据不再展示内置
+  兜底列表），不报错、不影响其余插件启动。
+- **适配判定**：该插件 7 个 `@deepseek-ai/dsh-*` peer **全部精确钉 `0.2.0-rc.2`**，与本包基座一致，
+  peer 门禁 7/7 ✅；`@earendil-works/pi-ai ^0.87.1` 与基座 `dsh-llm-pi-ai@0.2.0-rc.2` 自身的依赖
+  范围同源，不存在上游 issue #74 的两代混用。**版本必须对得上**：`0.7.x` 仅面向 0.2.0 内核，
+  在 DSH `0.1.x` 上需退回 `0.6.5`，装错会启动失败。
+- **层栈位置**：排在 `@tencent-connect/dsh-qqbot` 之后、`@michengai/dsh-codex-ui` 之前，
+  维持「codex-ui 末位接管」的既有约定；`overrides/cordis.patch.yml` **本次未新增条目**——
+  provider 行由插件自带的 bundle patch 注册，整合包无需补层。
+- `pnpm-workspace.yaml` 补录 `dsh-workbuddy-connect@0.7.1` 的 `minimumReleaseAgeExclude`
+  （0.7.1 发布于 2026-10-01，仍在新鲜度窗口内）。
+- 插件总数 23 → **24**（bundles 25 → **26** 含 2 个官方基座；dependencies 23 → **24**）；
+  自带 skill 数量与基座均与 v2.6.0 相同。
+- **验证**：静态 peer 门禁全绿 + 上游自述 `0.7.0`/`0.7.1` 已在 DSH `0.2.0-rc.2` web 端真机实测
+  （加载、两版目录、加密凭据、状态路由正常）。本包侧的全量 `pnpm install` 与
+  `dsh --dump-config` **未实跑**——本机 `registry.npmjs.org` 不可达（仅 npmmirror 可达），
+  与本包既往版本同一限制，需在宿主 0.2.0-rc.2 环境确认。
+
+### v2.6.0 (2026-10-06)
+- **新增**：`dsh-computer-use`（钉上游提交 `72f390a`，未改源码）—— Codex 风格 Computer Use：
+  13 个 window2 原生工具 + `batch_actions` / `health` / `experience` 三个 DSH 扩展、可见合成光标
+  与状态药丸、Esc 急停、按应用授权。
+- **新增独立 `computer-use` preset**：上游插件只带 HOST 平面那一行，13 个工具必须由 preset 挂载
+  才对模型可见，故本包在 `overrides/cordis.patch.yml` 用 `- insert:` **新增**一个 preset
+  （不往 `preset-standard` 塞行——loader patch 会整体替换它的 `plugins` 数组，实测会把标准
+  preset 的 32 行压没）。**普通编码会话（standard / ptc）拿不到鼠标**。
+- 与 `dsh-computer-use-win` 可共存，但**不要在同一会话里同时驱动桌面**（两套指针/覆盖层会打架）。
+- **随包 skill 47 → 49**：新增投递 `computer-use`、`computer-use-browser`。
+- 插件总数 22 → **23**（bundles 24 → 25；dependencies 22 → 23）。
+- 完整说明见 `docs/release-notes-v2.6.0.md`。
 
 ### v2.5.0 (2026-10-06)
 - **整合包自带 49 个 skill**（v2.5.0 起）：dspack 携带 `home/skills/`，安装时落入 `DSH_HOME/skills/`，开箱即用，不再依赖各 harness 本地目录。

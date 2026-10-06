@@ -31,6 +31,10 @@ One command to get a complete Codex-style coding workbench:
 - **Live wallpapers** — brings Wallpaper Engine wallpapers into the DSH web UI
 - **Quota limits** — key-limits shows API key / subscription remaining quota (complements cost-meter)
 - **Computer Use** — control the native Windows desktop: UIA accessibility tree inspection, screenshots, mouse/keyboard, window management (22 tools)
+- **Codex-style Computer Use** — a separate `computer-use` agent preset with 13 native window2 tools, a visible synthetic cursor and an Esc interrupt; ordinary coding sessions never get the mouse
+- **QQ Bot channel** — dsh-qqbot bridges a QQ Bot into DSH (DMs and group chats, image/file understanding, streaming replies); **disabled by default, opt-in**
+- **WorkBuddy model access** — dsh-workbuddy-connect reuses the WorkBuddy desktop app's local sign-in so GLM-5.3, DeepSeek-V4, Kimi-K3, MiniMax-M3, Hy3 and more show up in the model picker with zero configuration; the domestic and international editions form separate groups, and **when WorkBuddy is not installed or signed in the group simply hides — startup is unaffected**
+- **49 bundled skills** — installed into `DSH_HOME/skills/` on import, ready to use (design/frontend, motion, data analysis, coding, office documents, browser automation and more; MCP servers are not shipped with the pack — configure them in your local `cordis.patch.yml`)
 
 ## Installation
 
@@ -46,7 +50,64 @@ Or import the `.dspack` from the DSH launcher.
 > (`github:yukitakasama/dsh-agent-arena#25e2c55`), so installation requires access to GitHub.
 > It will be switched back to the npm registry version once upstream ships an official release for 0.2.0-rc.2.
 
+> **WorkBuddy prerequisite**: since v2.7.0 the pack ships `dsh-workbuddy-connect`, which reuses the
+> **local sign-in state** of the WorkBuddy desktop app. To actually see the WorkBuddy model groups you
+> need WorkBuddy (domestic edition or international WorkBuddy AI) installed and signed in.
+> **Not installing it does not break anything** — the group hides and every other plugin works as before.
+> See "WorkBuddy model access" below.
+
 ## Changelog
+
+### v2.7.0 (2026-10-07)
+- **Added**: `dsh-workbuddy-connect@0.7.1` — **WorkBuddy model access**. Reuses the WorkBuddy desktop
+  app's local sign-in to register GLM-5.3, GLM-5.2, GLM-5.3-Flash, DeepSeek-V4-Pro/Flash, Kimi-K3,
+  MiniMax-M3, Hy3 and more as a DSH provider, available in the model picker and `/model` with zero
+  configuration; domestic and international editions form separate groups with independent credits.
+  See "WorkBuddy model access" below.
+- **No new barrier to entry**: with WorkBuddy absent or signed out, the group is simply hidden (since
+  0.7 there is no built-in fallback list, because those models always errored) — no startup errors.
+- **Compatibility**: all 7 `@deepseek-ai/dsh-*` peers are pinned to exactly `0.2.0-rc.2`, matching this
+  pack's base (gate 7/7 ✅). `0.7.x` targets the 0.2.0 kernel only; DSH `0.1.x` users must stay on
+  `0.6.5`, and a mismatch makes DSH fail to start.
+- **Layer position**: after `@tencent-connect/dsh-qqbot`, before `@michengai/dsh-codex-ui`;
+  `overrides/cordis.patch.yml` gains **no new entry** — the provider row comes from the plugin's own
+  bundle patch.
+- `pnpm-workspace.yaml` adds `dsh-workbuddy-connect@0.7.1` to `minimumReleaseAgeExclude`
+  (0.7.1 was published 2026-10-01, still inside the freshness window).
+- Plugin total 23 → **24** (bundles 25 → **26** including the 2 official base bundles;
+  dependencies 23 → **24**); bundled skills and base unchanged from v2.6.0.
+- **Verification**: static peer gate fully green, plus upstream's own real-machine run of 0.7.0/0.7.1 on
+  DSH `0.2.0-rc.2` web (load, both catalogs, encrypted credentials, status routing). A full
+  `pnpm install` + `dsh --dump-config` of this pack was **not run locally** — `registry.npmjs.org`
+  is unreachable from this machine (only npmmirror is), the same limitation as previous releases.
+
+### v2.6.0 (2026-10-06)
+- **Added**: `dsh-computer-use` (pinned to upstream commit `72f390a`, unmodified) — Codex-style
+  Computer Use: 13 native window2 tools plus `batch_actions` / `health` / `experience`, a visible
+  synthetic cursor and status pill, an Esc interrupt and per-app approvals.
+- **Added a dedicated `computer-use` preset**: the upstream plugin only ships the HOST plane, so this
+  pack inserts a **new** preset carrying the tool rows (writing into `preset-standard` would replace
+  its whole `plugins` array — measured: the standard preset's 32 rows collapse). **Ordinary coding
+  sessions (standard / ptc) never get the mouse.**
+- Coexists with `dsh-computer-use-win`, but do not drive the desktop from both in one session.
+- **Bundled skills 47 → 49**: `computer-use`, `computer-use-browser` added.
+- Plugin total 22 → **23** (bundles 24 → 25; dependencies 22 → 23).
+
+### v2.5.0 (2026-10-06)
+- **49 curated cross-harness skills now ship inside the pack**: the `.dspack` carries `home/skills/`,
+  which lands in `DSH_HOME/skills/` on import, so skills no longer depend on a local harness folder.
+- No MCP servers are shipped with the pack: `overrides/cordis.patch.yml` keeps only the computer-use
+  fix; configure extra MCP servers in the launcher's MCP page.
+- Base and plugin combination identical to v2.4.0; `scripts/build-dspack.py` now carries `home/skills/`.
+
+### v2.4.0 (2026-10-05)
+- **Added**: `@tencent-connect/dsh-qqbot` — a QQ Bot channel (Tencent's official plugin): DM/group chat,
+  image and file understanding, streaming replies, proactive questions with action confirmation,
+  `/preset`, `/compact`, `/bot-ping`.
+- **Switched to the `yukitakasama/dsh-qqbot` fork and kept it disabled by default**: the original blocks
+  the cordis plugin chain waiting for a QR scan when credentials are missing (no timeout), which leaves
+  the whole instance stuck "waiting for ready".
+- Plugin total 21 → **22** (bundles 23 → 24; dependencies 21 → 22).
 
 ### v2.3.0 (2026-10-05)
 - **Added 7 plugins** (picked via the interactive selector; peer gate all-pass + real `dsh --dump-config` with zero stderr):
@@ -122,7 +183,7 @@ Or import the `.dspack` from the DSH launcher.
 - `dshVersions`: declares the set of tested-compatible versions (0.2.0-rc.2, 0.2.0-rc.1)
 - `launchers`: declares launcher compatibility (dshl, dsh-packforge-app)
 
-## Plugin List (23)
+## Plugin List (24)
 
 | Plugin | Version | Purpose |
 |---|---|---|
@@ -148,6 +209,8 @@ Or import the `.dspack` from the DSH launcher.
 | `dsh-prompt` | 0.3.0 | Prompt template toolbox |
 | `dsh-plugin-wallpaper-engine` | 1.2.0 | Wallpaper Engine live wallpapers |
 | `@goodandready/dsh-key-limits` | 0.2.19 | API key / subscription quota limits |
+| `@tencent-connect/dsh-qqbot` | fork 0.5.1 | QQ Bot channel: **disabled by default, opt-in**. DM/group chat, image & file understanding, streaming replies, proactive questions and action confirmations, `/preset` switching, `/compact`. This pack uses the `yukitakasama/dsh-qqbot` fork, which skips instead of blocking when credentials are missing |
+| `dsh-workbuddy-connect` | 0.7.1 | **WorkBuddy model access**: reuses the WorkBuddy desktop app's local sign-in to feed GLM-5.3, DeepSeek-V4, Kimi-K3, MiniMax-M3, Hy3 and more into the DSH model picker with zero configuration; domestic and international editions form separate groups with independent accounts and credits, and an unsigned-in edition just hides its group. See "WorkBuddy model access" below |
 
 ### Codex-style Computer Use (dsh-computer-use)
 
@@ -181,6 +244,43 @@ leaves the existing four untouched (verified: their row counts are unchanged).
 > desktop work.
 
 The pack ships the `computer-use` and `computer-use-browser` skills into `DSH_HOME/skills/`.
+
+### WorkBuddy model access (dsh-workbuddy-connect)
+
+Upstream: [corrinehu/dsh-workbuddy-connect](https://github.com/corrinehu/dsh-workbuddy-connect),
+pinned to npm `0.7.1` (current stable), **shipped unmodified**.
+
+It registers the models bundled in the WorkBuddy desktop app (GLM-5.3, GLM-5.2, GLM-5.3-Flash,
+DeepSeek-V4-Pro/Flash, Kimi-K3, MiniMax-M3, Hy3, …) as a DSH LLM provider (`llm-workbuddy`), so they
+appear in the model picker and in `/model` — **no extra API key required**.
+
+- **Credentials come from the local app** — the plugin reuses WorkBuddy's desktop sign-in instead of
+  starting its own OAuth flow; switching accounts in the app is followed automatically. On Windows it
+  locates the decrypt helper via `%LOCALAPPDATA%\Programs\WorkBuddy\WorkBuddy.exe` first, then the
+  uninstall registry; the international edition is registry-only.
+- **Domestic and international never mix** — each forms its own group ("WorkBuddy" / "WorkBuddy AI"),
+  each keyed to its own app's sign-in, with independent models, accounts and credits.
+- **Silent when unsigned** — if an edition was never signed in and left no cached copy, **its group is
+  not shown** (behaviour change since 0.7: the domestic edition used to show a built-in fallback list
+  whose models always errored when selected). So users without WorkBuddy get no errors from this pack.
+- **Feature surface** — image input on most models (GLM-5.3-Flash, GLM-5.2, DeepSeek-V4 series, …);
+  reasoning tiers where upstream declares them (low / high / max); credit multipliers and promotion
+  badges (free-for-a-limited-time, night discount) right in the model names; a settings card with the
+  account, token validity, remaining credits and whether the model list is live / saved / built-in.
+- **Billing runs on WorkBuddy credits**, not an API-key balance, so the money figures in
+  `dsh-cost-meter` use a **different basis**: cost-meter estimates by model price, while WorkBuddy
+  deducts credit multipliers.
+
+> **The version has to match**: since `0.7.0` the plugin targets the **0.2.0 kernel only**
+> (`0.7.1` supports `0.2.0-rc.2` and nothing else), which is exactly this pack's base. On DSH `0.1.x`
+> you need `0.6.5`. A mismatched combination makes DSH **fail to start** — upstream issue #63 is the
+> "plugin skipped wholesale by the host" case. This is one reason the pack pins `dshVersion`
+> to `0.2.0-rc.2`.
+>
+> The plugin also injects **web-platform client code** (`dsh.client.platform: web`, six official
+> client packages including model-selection), matching this pack's web base. If you install it into a
+> **TUI** profile instead, `@deepseek-harness-tui/dsh-tui` must be **≥ 0.10.0-beta.5**; older versions
+> fail to start (`events is not iterable`).
 
 ### Computer Use Notes
 
@@ -243,8 +343,19 @@ DSH validates with `semver.satisfies(version, peerRange, { includePrerelease: tr
 - Wide ranges like `>=0.1.0-rc.5 <0.2.0` **match** rc.2;
 - Plugins pinned to an exact version (e.g. `0.1.7-rc.1`) **hard-fail** on rc.2 — none are selected.
 
-All 22 plugins' peerDependencies were verified against rc.2 via its bundled
-`evaluatePluginCompatibility()`: 21/21 with no blockers (`docs/compat-check.cjs` gate).
+All 24 plugins' peerDependencies were verified against rc.2 via its bundled
+`evaluatePluginCompatibility()` (`docs/compat-check.cjs` gate).
+
+`dsh-workbuddy-connect@0.7.1` (added in v2.7.0) declares 7 `@deepseek-ai/dsh-*` peers, **all pinned to
+exactly `0.2.0-rc.2`**, one-for-one with this pack's base → 7/7 ✅. Its non-`dsh-*` host peers are met
+by the base tree: `@deepseek-ai/cordis ^4.0.2` (host ships 4.0.4), `@deepseek-ai/schemastery ^3.18.2`
+(web-app carries `~3.18.4`), `@earendil-works/pi-ai ^0.87.1` (the range `dsh-llm-pi-ai@0.2.0-rc.2`
+depends on itself, so the two-generation mix from upstream issue #74 cannot occur here) and
+`react ^18.2.0` (same peer as the already real-machine-tested `dsh-codex-ui`).
+
+> Running `node docs/compat-check.cjs` prints "存在不兼容 ❌" at the end because the list still keeps
+> the **candidate** plugin `dsh-edit-resend@0.1.0` (dropped in v2.3.0 for hard incompatibility, not
+> installed in this pack). It says nothing about the shipped combination.
 
 ### Conflict exclusions
 
@@ -255,6 +366,10 @@ All 22 plugins' peerDependencies were verified against rc.2 via its bundled
 - `dsh-better-sidebar` / `dsh-coding-sidebar` are **not** installed — they compete with codex-ui for the same sidebar slot.
 - `dsh-prompt-history` is **not** installed — ↑↓ input recall is built into codex-ui.
 - Only 1 desk pet is selected (a candidate pool of 10+ all fight over the same overlay).
+- `dsh-workbuddy-connect` **does not compete for UI slots**: it registers one LLM provider row
+  (`llm-workbuddy`) and injects into the official model-selection / conversation / renderer client
+  packages, leaving the sidebar and settings pages to codex-ui. In the layer stack it sits **before**
+  codex-ui, preserving the "codex-ui last" convention.
 - In the layer stack, codex-ui is placed **last**, so its slot takeover takes effect after other plugins register.
 
 ## Verification (to be re-verified under DSH 0.2.0-rc.2)
@@ -289,6 +404,13 @@ code of the plugins above. Copyright of each plugin belongs to its author:
 - [MichengAI](https://github.com/MichengAI) (Codex UI / Code Review / Simplify / BTW)
 - [goodandready](https://www.npmjs.com/~goodandready) (Context Lens)
 - [linxin666](https://www.npmjs.com/~linxin666) (Git Graph)
+- [corrinehu](https://github.com/corrinehu/dsh-workbuddy-connect) (WorkBuddy model access)
+- [wushi2333](https://github.com/wushi2333/dsh-computer-use_codex-style) (Codex-style Computer Use)
 - The respective authors of `dsh-effort-slider`, `dsh-cost-meter`, `dsh-whale-girl-pet`, `dsh-computer-use-win`
+- The respective authors of `dsh-context`, `@modusensus/dsh-mneme`, `@liustack/modlens`, `dsh-prompt`,
+  `dsh-inline-figures`, `@mrweicodes/dsh-loop-guard`, `dsh-plugin-wallpaper-engine`,
+  `@nanmicoder/dsh-agent-teams`, `dsh-plugin-subagent-director`, `@goodandready/dsh-key-limits`
+- The `dsh-agent-arena` and `dsh-qqbot` git dependencies are forks maintained in this repository;
+  feature copyright remains with the upstream authors
 
 Format specification: [DSH-PackForge](https://github.com/DSH-PackForge/DSH-PackForge).

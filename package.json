@@ -24,7 +24,8 @@
     "dsh-prompt": "0.3.0",
     "dsh-plugin-wallpaper-engine": "1.2.0",
     "@goodandready/dsh-key-limits": "0.2.19",
-    "@tencent-connect/dsh-qqbot": "github:yukitakasama/dsh-qqbot#7e88006dff56447248301a282667ab7b63fd70f0"
+    "@tencent-connect/dsh-qqbot": "github:yukitakasama/dsh-qqbot#7e88006dff56447248301a282667ab7b63fd70f0",
+    "dsh-workbuddy-connect": "0.7.1"
   },
   "dsh": {
     "profile": {
@@ -53,6 +54,7 @@
         "dsh-plugin-wallpaper-engine",
         "@goodandready/dsh-key-limits",
         "@tencent-connect/dsh-qqbot",
+        "dsh-workbuddy-connect",
         "@michengai/dsh-codex-ui"
       ]
     }
