@@ -174,7 +174,10 @@ Kimi-K3、MiniMax-M3、Hy3 等）注册成 DSH 的一个 LLM provider（`llm-wor
   App 的登录状态，模型、账号、积分彼此独立。
 - **未登录时不打扰** —— 某版 App 从未登录、也没留下插件自留副本时，**该版分组不再显示**
   （0.7 起的行为变化：过去国内版会显示一份内置兜底列表，但那些模型选了必然报错）。
-  因此没装 WorkBuddy 的用户装本包不会遇到任何启动报错。
+  因此没装 WorkBuddy 的用户装本包不会遇到任何启动报错（2026-10-07 实测：`--dump-config` 零 stderr、
+  web 服务正常监听、界面无 WorkBuddy 分组）。控制台会多出一条
+  `list slot "plugins.item" requires options.id`——该报错**不含本插件的基线同样存在**（基线 2 条 /
+  含插件 3 条同类），属既有的插槽注册问题，不影响使用，详见「验证记录」。
 - **能力面** —— 多数模型支持发图（GLM-5.3-Flash、GLM-5.2、DeepSeek-V4 系列等）；上游声明了
   档位的模型直接给出 low / high / max；模型名后显示积分倍率与促销徽章（限时免费、夜间折扣）；
   设置卡片可查看账号、令牌有效期、剩余积分与模型列表来源（实时 / 已保存 / 内置）。
@@ -250,8 +253,10 @@ DSH 用 `semver.satisfies(版本, peer范围, { includePrerelease: true })` 校�
 - `>=0.1.0-rc.5 <0.2.0` 这类宽范围 **匹配** rc.2；
 - 钉死精确版本（如 `0.1.7-rc.1`）的插件在 rc.2 上会**硬失败**，本包一律不选。
 
-本包 24 个插件的 peerDependencies 全部通过 rc.2 自带的
-`evaluatePluginCompatibility()` 判定口径（`docs/compat-check.cjs` 门禁）。
+判定口径与宿主一致：`semver.satisfies(宿主版本, peer范围, { includePrerelease: true })`。
+`docs/compat-check.cjs` 目前**逐条录入 13 个在装插件**的 peer 范围，实测 **13/13 通过**；
+候选池另计 1 个不兼容（`dsh-edit-resend`，v2.3.0 已移除、未装入本包，不参与总判定）。
+其余插件的 peer 范围在 v2.0.0–v2.3.0 的选型中逐个评估过，但**未录入脚本**，不要把它当成 24/24 的全覆盖声明。
 
 v2.7.0 新增的 `dsh-workbuddy-connect@0.7.1` 声明 7 个 `@deepseek-ai/dsh-*` peer，
 **全部精确钉 `0.2.0-rc.2`**，与本包基座逐一对上 → 7/7 ✅。非 `dsh-*` 的 host peer 由基座树
@@ -260,9 +265,9 @@ v2.7.0 新增的 `dsh-workbuddy-connect@0.7.1` 声明 7 个 `@deepseek-ai/dsh-*`
 自身的依赖范围就是 `^0.87.1`，不存在上游 issue #74 提到的两代混用）、`react ^18.2.0`
 （与已真机实测的 `dsh-codex-ui` 同一 peer）。
 
-> 跑 `node docs/compat-check.cjs` 时结尾会显示「存在不兼容 ❌」，那是清单里保留的
-> **候选插件 `dsh-edit-resend@0.1.0`**（v2.3.0 已因硬不兼容移除，未装进本包）造成的，
-> 与本包实际组合无关。
+> 跑 `node docs/compat-check.cjs` 会分别输出「在装插件 N/N 通过 ✅」与「候选池（未装）…」两行，
+> **只有前者决定门禁**（脚本 exit code 也只跟前者走）。自 v2.7.0 起候选条目用
+> `installed: false` 标注，已移除的历史候选（`dsh-edit-resend`）不再把总结行染红。
 
 ### 冲突排除
 
@@ -278,22 +283,45 @@ v2.7.0 新增的 `dsh-workbuddy-connect@0.7.1` 声明 7 个 `@deepseek-ai/dsh-*`
   codex-ui 接管；层栈中它排在 codex-ui **之前**，保持「codex-ui 最后接管」的既有约定。
 - 层栈中 codex-ui 排在**最后**，确保它的插槽接管生效于其他插件注册之后。
 
-## 验证（需在 DSH 0.2.0-rc.2 环境下重新验证）
+## 验证记录
 
-| 测试 | v1.1.0 结果 | v2.0.0 状态 |
-|---|---|---|
-| 规格校验（pack-structure v3 + manifest v5 硬约束） | 30/30 PASS | 待验证 |
-| `evaluatePluginCompatibility()` 实测 | 11/11 无阻断 | 待验证（10 个插件） |
-| `pnpm install` 全量解析 | 成功，11 插件就位 | 待验证 |
-| `dsh --dump-config` | exit 0，1303 行，零 stderr | 待验证 |
-| 真实启动 web 服务 | 成功监听，插件正常初始化 | 待验证 |
-| Computer Use MCP 服务器启动 | `windows-computer-use MCP server 0.1.2 ready` | 待验证（0.2.3） |
-| 插件 MCP self-test（独立验证） | UIA 树 + 截图均 OK（2560×1600） | 待验证 |
+### v2.7.0 · 2026-10-07 实测（隔离安装真 `@deepseek-ai/dsh@0.2.0-rc.2` CLI + 独立 DSH_HOME）
+
+| 测试 | 结果 |
+|---|---|
+| peer 门禁 `node docs/compat-check.cjs` | 在装 **13/13 ✅**，exit 0；候选池 1 个不兼容（未装） |
+| `dsh --dump-config` | **exit 0、stderr 0 字节**、stdout 1367 行 |
+| 层栈完整性 | 参与测试的 **23/23 bundle 全部出现**在层栈中 |
+| provider 行 | `llm-workbuddy` 由插件自带 bundle patch 注入，位于 codex-ui 之前 ✅ |
+| 真实启动 web 服务 | 成功监听 `http://127.0.0.1:3987`，页面标题 `DeepSeek Harness` 正常渲染 |
+| Computer Use MCP 启动 | `windows-computer-use MCP server 0.2.3 ready`（profile patch 的路径修正生效） |
+| 未装 WorkBuddy 时的行为 | 模型选择器中**无 WorkBuddy 分组**、启动与界面均不受影响（与插件 0.7 起的「无凭据即隐藏」一致） |
+
+**测试范围的两个诚实边界**：
+
+1. 本次是 **23 bundle**（基座 + 21 个 npm 插件）而不是全部 26 —— 三个 git 依赖插件
+   （`dsh-computer-use`、`dsh-agent-arena`、`@tencent-connect/dsh-qqbot`）在 Windows 上触发 pnpm 的
+   store 文件锁（`[EBUSY] unlink …\store\v11\tmp\_tmp_*\.git\FETCH_HEAD`）导致 `pnpm install` 失败，
+   两次尝试（共享 store 与独立 store）均复现。这三个插件本身在 v2.4.0 / v2.6.0 已分别真机验证过。
+2. **WorkBuddy 登录态下的功能冒烟（选模型、发图、积分显示、卡片）没有做** —— 本机未安装 WorkBuddy 桌面 App。
+
+另记录一条与本包无关的现象：DSH 界面控制台有 `list slot "plugins.item" requires options.id` 报错，
+**不含新插件的基线同样出现**（基线 2 条 / 含插件 3 条同类），属既有的插槽注册问题，非 v2.7.0 引入。
+
+### 历史（v1.1.0 时代在 0.1.x 基座上的记录，仅作对照）
+
+| 测试 | v1.1.0 结果 |
+|---|---|
+| 规格校验（pack-structure v3 + manifest v5 硬约束） | 30/30 PASS |
+| `evaluatePluginCompatibility()` 实测 | 11/11 无阻断 |
+| `dsh --dump-config` | exit 0，1303 行，零 stderr |
+| 插件 MCP self-test | UIA 树 + 截图均 OK（2560×1600） |
 
 ## 自定义
 
-profile patch 层 `overrides/cordis.patch.yml` 为空数组 `[]`——挂载关系已由各插件
-自身的 bundle patch 完整表达。改动后请跑：
+profile patch 层 `overrides/cordis.patch.yml` 现有 **3 条**：`dsh-computer-use-win` 的 MCP 路径修正、
+`im-qqbot` 默认关闭、`computer-use` preset 注入。其余挂载关系仍由各插件自身的 bundle patch 表达——
+`dsh-workbuddy-connect` 的 provider 行同样由它自带 patch 注册，**不需要在这里补条目**。改动后请跑：
 
 ```bash
 dsh --profile better-deepseek-harness-codex --dump-config
@@ -328,7 +356,8 @@ dsh --profile better-deepseek-harness-codex --dump-config
   等注册成 DSH 的一个 LLM provider，零配置出现在模型选择器与 `/model` 里；国内版与国际版各成一个
   分组、积分互不混用。功能与限制详见上方「WorkBuddy 模型接入」。
 - **不增加使用门槛**：没装或未登录 WorkBuddy 时，对应模型分组直接隐藏（0.7 起无凭据不再展示内置
-  兜底列表），不报错、不影响其余插件启动。
+  兜底列表），不报错、不影响其余插件启动——实测 `--dump-config` 零 stderr、web 服务正常监听、
+  界面无该分组（见「验证记录」）。
 - **适配判定**：该插件 7 个 `@deepseek-ai/dsh-*` peer **全部精确钉 `0.2.0-rc.2`**，与本包基座一致，
   peer 门禁 7/7 ✅；`@earendil-works/pi-ai ^0.87.1` 与基座 `dsh-llm-pi-ai@0.2.0-rc.2` 自身的依赖
   范围同源，不存在上游 issue #74 的两代混用。**版本必须对得上**：`0.7.x` 仅面向 0.2.0 内核，
@@ -336,14 +365,21 @@ dsh --profile better-deepseek-harness-codex --dump-config
 - **层栈位置**：排在 `@tencent-connect/dsh-qqbot` 之后、`@michengai/dsh-codex-ui` 之前，
   维持「codex-ui 末位接管」的既有约定；`overrides/cordis.patch.yml` **本次未新增条目**——
   provider 行由插件自带的 bundle patch 注册，整合包无需补层。
-- `pnpm-workspace.yaml` 补录 `dsh-workbuddy-connect@0.7.1` 的 `minimumReleaseAgeExclude`
-  （0.7.1 发布于 2026-10-01，仍在新鲜度窗口内）。
+- `pnpm-workspace.yaml` 补录 `dsh-workbuddy-connect@0.7.1` 的 `minimumReleaseAgeExclude`。
+  **事后溯源（2026-10-07）**：阈值不在 profile 的 `pnpm-workspace.yaml` 里，来自 pnpm 11 的
+  `minimumReleaseAge`（DSH 生态实测按 `1440` 分钟＝1 天处理，见 dsh-market 安装器的绕过逻辑）；
+  0.7.1 发布于 2026-10-01，早已超出 1 天窗口 → **这条 exclude 其实不需要**，保留至 v2.7.0 已发布
+  资产不变，**下一版移除**。
 - 插件总数 23 → **24**（bundles 25 → **26** 含 2 个官方基座；dependencies 23 → **24**）；
   自带 skill 数量与基座均与 v2.6.0 相同。
-- **验证**：静态 peer 门禁全绿 + 上游自述 `0.7.0`/`0.7.1` 已在 DSH `0.2.0-rc.2` web 端真机实测
-  （加载、两版目录、加密凭据、状态路由正常）。本包侧的全量 `pnpm install` 与
-  `dsh --dump-config` **未实跑**——本机 `registry.npmjs.org` 不可达（仅 npmmirror 可达），
-  与本包既往版本同一限制，需在宿主 0.2.0-rc.2 环境确认。
+- **验证（2026-10-07 实测，详见「验证记录」）**：隔离安装真 `@deepseek-ai/dsh@0.2.0-rc.2` CLI + 独立
+  DSH_HOME 跑通 —— `dsh --dump-config` **exit 0、stderr 0 字节、1367 行**，参与测试的 **23/23 bundle
+  全部在层栈中**，`llm-workbuddy` provider 行由插件自带 patch 注入在位；web 服务成功监听、界面正常，
+  未登录时模型选择器无 WorkBuddy 分组。peer 门禁 13/13 ✅（脚本口径见「兼容性判定」）。
+  **两个边界**：三个 git 依赖插件（`dsh-computer-use` / `dsh-agent-arena` / `dsh-qqbot`）本次
+  **未参与同一次启动**——Windows 上 pnpm 取 git 依赖稳定触发 store 文件锁
+  （`[EBUSY] unlink …\.git\FETCH_HEAD`），共享/独立 store 两次尝试均复现；**WorkBuddy 登录态下的
+  功能冒烟未做**（本机未装该桌面 App）。上游自述 0.7.0/0.7.1 已在 0.2.0-rc.2 web 端真机实测。
 
 ### v2.6.0 (2026-10-06)
 - **新增**：`dsh-computer-use`（钉上游提交 `72f390a`，未改源码）—— Codex 风格 Computer Use：

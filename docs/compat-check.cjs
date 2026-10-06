@@ -66,6 +66,8 @@ const PLUGINS = {
     // ⚠️ 2026-10-05 实测修正：GitHub 源码 package.json 无 peer，但 npm 发布产物
     // 声明了 ^0.1.0-rc.6 peer → 0.2.0-rc.2 下被 runtime 拒装（dsh --dump-config stderr 实证）。
     // v2.1.0/v2.2.0 记录的「无 peer 约束」有误，v2.3.0 起移除本插件。
+    // installed: false —— **候选池**条目，不在本包组合里，不计入总体判定。
+    installed: false,
     peers: {
       "@deepseek-ai/dsh-agent": "^0.1.0-rc.6",
       "@deepseek-ai/dsh-typert-protocol": "^0.1.0-rc.6"
@@ -147,20 +149,26 @@ const PLUGINS = {
   }
 };
 
-let allPass = true;
-for (const [name, { peers }] of Object.entries(PLUGINS)) {
-  console.log(`\n=== ${name} ===`);
+// 判定口径：**只有装进本包的插件才计入总体结论**。
+// 候选池条目（package.json/manifest 里没有、只是评估过的）标 `installed: false`，
+// 单独统计，不再让已移除的历史候选把总行染红（旧版恒为 ❌，极易误读）。
+let instTotal = 0, instFail = 0, candTotal = 0, candFail = 0;
+for (const [name, { peers, installed = true }] of Object.entries(PLUGINS)) {
+  console.log(`\n=== ${name} ===` + (installed ? "" : "  [候选池 · 未装入本包]"));
+  let ok = true;
   if (Object.keys(peers).length === 0) {
     console.log("  (无 @deepseek-ai/dsh-* peer 约束 → 安装门禁 PASS，运行时需冒烟测试)");
-    continue;
+  } else {
+    for (const [dep, range] of Object.entries(peers)) {
+      const r = satisfies(HOST, range);
+      if (!r) ok = false;
+      console.log(`  ${r ? "✅" : "❌"} ${dep}  "${range}"  →  0.2.0-rc.2 ${r ? "满足" : "不满足"}`);
+    }
+    console.log(`  >> ${ok ? "兼容 0.2.0-rc.2" : "不兼容！"}`);
   }
-  let ok = true;
-  for (const [dep, range] of Object.entries(peers)) {
-    const r = satisfies(HOST, range);
-    if (!r) ok = false;
-    console.log(`  ${r ? "✅" : "❌"} ${dep}  "${range}"  →  0.2.0-rc.2 ${r ? "满足" : "不满足"}`);
-  }
-  if (!ok) allPass = false;
-  console.log(`  >> ${ok ? "兼容 0.2.0-rc.2" : "不兼容！"}`);
+  if (installed) { instTotal++; if (!ok) instFail++; }
+  else { candTotal++; if (!ok) candFail++; }
 }
-console.log(`\n==== 总体：${allPass ? "全部通过 peer 门禁 ✅" : "存在不兼容 ❌"} ====`);
+console.log(`\n==== 在装插件：${instTotal - instFail}/${instTotal} 通过 peer 门禁 ${instFail === 0 ? "✅" : "❌"} ====`);
+if (candTotal) console.log(`==== 候选池（未装，不影响本包判定）：${candTotal} 个，其中 ${candFail} 个不兼容 ====`);
+process.exitCode = instFail === 0 ? 0 : 1;

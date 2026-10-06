@@ -74,9 +74,8 @@ WorkBuddy 按倍率扣积分。两边数字都对，但不要互相换算。
 
 **尚未实跑的部分（如实标注）**：上游自述 `0.7.0` / `0.7.1` 已在 DSH `0.2.0-rc.2` 的 web 端真机实测
 （加载、国内版与国际版目录、加密凭据、状态路由正常）。本包侧的全量 `pnpm install` 与
-`dsh --dump-config` **本次未实跑**——打包环境无法访问 `registry.npmjs.org`（只有 npmmirror 可达），
-与本包既往版本同一限制。首次在宿主上导入本版后，建议跑一次
-`dsh --profile better-deepseek-harness-codex --dump-config` 确认 26 个 bundle 全部加载。
+`dsh --dump-config` **本次发布前未实跑**——打包环境无法访问 `registry.npmjs.org`（只有 npmmirror 可达）。
+**→ 该项已由下方「补充记录 · 2026-10-07」的实测取代，请读补充记录。**
 
 ## 集成方式：为什么 patch 层没有新增条目
 
@@ -118,3 +117,48 @@ WorkBuddy 按倍率扣积分。两边数字都对，但不要互相换算。
 
 发行资产：`better-deepseek-harness-codex-2.7.0.dspack` 与同名 `.dspack.sha256`
 （64 字节小写十六进制，无换行）。
+
+## 补充记录 · 2026-10-07 01:25（发布后真机实测）
+
+发布后用隔离环境补做了实测：真 `@deepseek-ai/dsh@0.2.0-rc.2` CLI + 独立 `DSH_HOME`（不触碰任何既有实例）。
+
+### 已验证 ✅
+
+| 项 | 实测结果 |
+|---|---|
+| peer 门禁 | `node docs/compat-check.cjs` → 在装插件 **13/13 通过**，exit 0 |
+| `dsh --dump-config` | **exit 0**、**stderr 0 字节**、stdout 1367 行 |
+| 层栈完整性 | 参与测试的 **23/23 bundle 全部在层栈中** |
+| provider 行 | `llm-workbuddy`（`name: dsh-workbuddy-connect`）由插件自带 bundle patch 注入，位置在 codex-ui 之前 ✅ |
+| web 服务启动 | 成功监听 `http://127.0.0.1:3987`，页面正常渲染（title `DeepSeek Harness`） |
+| Computer Use MCP | `windows-computer-use MCP server 0.2.3 ready` —— 本包 patch 层的路径修正确实生效 |
+| **无 WorkBuddy 时的行为** | 模型选择器中**没有** WorkBuddy 分组，启动与界面均不受影响 —— 与上文「分组隐藏、不报错」的承诺一致 |
+
+### 两个边界（不要把上面读成「26 bundle 全验」）
+
+1. 本次覆盖 **23 个 bundle**（基座 + 21 个 npm 插件）。三个 **git 依赖插件**
+   （`dsh-computer-use`、`dsh-agent-arena`、`@tencent-connect/dsh-qqbot`）**没有参与这次启动**：
+   Windows 上 pnpm 取 git 依赖稳定触发 store 文件锁
+   （`[EBUSY] unlink <store>\v11\tmp\_tmp_*\.git\FETCH_HEAD`），共享 store 与独立 store 两次尝试均复现，
+   `pnpm install` 因此失败。这三个插件本身在 v2.4.0 / v2.6.0 已各自真机验证过。
+2. **WorkBuddy 登录态下的功能冒烟没做** —— 本机未安装 WorkBuddy 桌面 App（进程、
+   `%LOCALAPPDATA%\Programs\WorkBuddy`、Program Files 与卸载注册表均无该 App）。
+   选模型对话、发图、积分倍率显示、设置卡片等仍需在有登录态的机器上确认。
+
+### 一条与本包无关的既有问题
+
+浏览器控制台会报 `list slot "plugins.item" requires options.id`。做了 A/B：
+**不含新插件的基线同样报**（基线 2 条 / 含插件 3 条同类报错），属既有的插槽注册问题，
+**不是 v2.7.0 引入的回归**。因此上文「不会有启动报错」的表述限定为**启动层面**（stderr 为零、
+服务正常监听），控制台层面本包在 v2.7.0 之前就不干净。
+
+### 顺带结案的两个待办
+
+- **`minimumReleaseAgeExclude` 溯源**：阈值不在 profile 的 `pnpm-workspace.yaml` 里，来自 pnpm 11 的
+  `minimumReleaseAge`（DSH 生态按 `1440` 分钟＝1 天处理，见 dsh-market 安装器的绕过逻辑）。
+  `0.7.1` 发布于 2026-10-01，远超 1 天 → **这条 exclude 实际不需要**，本版已发布资产保持不动，
+  下一版移除。
+- **上游版本跟进**：npm `dist-tags.latest` 仍是 **0.7.1**（2026-10-01），GitHub tag 亦止于 `v0.7.1`，
+  无面向 0.2.0 正式版的新发布 → 本版钉版正确，无需出 v2.7.1。
+  留意上游 issue #82：有人在既有 profile 里升级到 0.7.1 后仍遇 pi-ai 相关报错，加 override 后恢复；
+  本包为**首次引入**该插件、且基座 `dsh-llm-pi-ai@0.2.0-rc.2` 的依赖范围就是 `^0.87.1`，不存在该残留。

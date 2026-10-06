@@ -72,14 +72,21 @@ Or import the `.dspack` from the DSH launcher.
 - **Layer position**: after `@tencent-connect/dsh-qqbot`, before `@michengai/dsh-codex-ui`;
   `overrides/cordis.patch.yml` gains **no new entry** — the provider row comes from the plugin's own
   bundle patch.
-- `pnpm-workspace.yaml` adds `dsh-workbuddy-connect@0.7.1` to `minimumReleaseAgeExclude`
-  (0.7.1 was published 2026-10-01, still inside the freshness window).
+- `pnpm-workspace.yaml` adds `dsh-workbuddy-connect@0.7.1` to `minimumReleaseAgeExclude`.
+  **Traced afterwards (2026-10-07)**: the threshold is not set in the profile's `pnpm-workspace.yaml` — it
+  comes from pnpm 11's `minimumReleaseAge` (the DSH ecosystem treats it as `1440` minutes = 1 day, per the
+  bypass logic in the dsh-market installer). 0.7.1 was published 2026-10-01, far outside a 1-day window →
+  **this exclude entry is unnecessary**; it stays in the already-published v2.7.0 asset and will be
+  **removed in the next version**.
 - Plugin total 23 → **24** (bundles 25 → **26** including the 2 official base bundles;
   dependencies 23 → **24**); bundled skills and base unchanged from v2.6.0.
-- **Verification**: static peer gate fully green, plus upstream's own real-machine run of 0.7.0/0.7.1 on
-  DSH `0.2.0-rc.2` web (load, both catalogs, encrypted credentials, status routing). A full
-  `pnpm install` + `dsh --dump-config` of this pack was **not run locally** — `registry.npmjs.org`
-  is unreachable from this machine (only npmmirror is), the same limitation as previous releases.
+- **Verification (measured 2026-10-07; see "Verification record")**: with an isolated real
+  `@deepseek-ai/dsh@0.2.0-rc.2` CLI and a separate DSH_HOME — `dsh --dump-config` **exit 0, 0 bytes on
+  stderr**, **23/23 tested bundles present**, `llm-workbuddy` row in place; the web service listened and
+  the UI rendered with no WorkBuddy group while signed out. **Limits**: the three git-dependency plugins
+  were not part of this boot (pnpm hits a `[EBUSY]` store lock fetching git deps on Windows), and no
+  signed-in WorkBuddy smoke test was possible (app not installed here). Upstream states 0.7.0/0.7.1 were
+  real-machine tested on 0.2.0-rc.2 web.
 
 ### v2.6.0 (2026-10-06)
 - **Added**: `dsh-computer-use` (pinned to upstream commit `72f390a`, unmodified) — Codex-style
@@ -262,7 +269,11 @@ appear in the model picker and in `/model` — **no extra API key required**.
   each keyed to its own app's sign-in, with independent models, accounts and credits.
 - **Silent when unsigned** — if an edition was never signed in and left no cached copy, **its group is
   not shown** (behaviour change since 0.7: the domestic edition used to show a built-in fallback list
-  whose models always errored when selected). So users without WorkBuddy get no errors from this pack.
+  whose models always errored when selected). So users without WorkBuddy get **no startup errors** from
+  this pack — measured 2026-10-07: `--dump-config` with zero stderr, web service listening, no group in
+  the UI. (The browser console gains one more `list slot "plugins.item" requires options.id` message —
+  the same class the baseline already emits without this plugin, i.e. a pre-existing slot-registration
+  issue, not a v2.7.0 regression.)
 - **Feature surface** — image input on most models (GLM-5.3-Flash, GLM-5.2, DeepSeek-V4 series, …);
   reasoning tiers where upstream declares them (low / high / max); credit multipliers and promotion
   badges (free-for-a-limited-time, night discount) right in the model names; a settings card with the
@@ -343,8 +354,12 @@ DSH validates with `semver.satisfies(version, peerRange, { includePrerelease: tr
 - Wide ranges like `>=0.1.0-rc.5 <0.2.0` **match** rc.2;
 - Plugins pinned to an exact version (e.g. `0.1.7-rc.1`) **hard-fail** on rc.2 — none are selected.
 
-All 24 plugins' peerDependencies were verified against rc.2 via its bundled
-`evaluatePluginCompatibility()` (`docs/compat-check.cjs` gate).
+The gate uses the host's own rule — `semver.satisfies(hostVersion, peerRange, { includePrerelease: true })`.
+`docs/compat-check.cjs` currently records peer ranges for **13 of the installed plugins**, and they
+measure **13/13 pass**; the candidate pool adds 1 incompatible entry (`dsh-edit-resend`, removed in
+v2.3.0, not installed) which no longer counts toward the verdict. The remaining plugins' ranges were
+evaluated one by one during v2.0.0–v2.3.0 selection but **are not in the script**, so do not read this
+as a 24/24 automated-coverage claim.
 
 `dsh-workbuddy-connect@0.7.1` (added in v2.7.0) declares 7 `@deepseek-ai/dsh-*` peers, **all pinned to
 exactly `0.2.0-rc.2`**, one-for-one with this pack's base → 7/7 ✅. Its non-`dsh-*` host peers are met
@@ -353,9 +368,9 @@ by the base tree: `@deepseek-ai/cordis ^4.0.2` (host ships 4.0.4), `@deepseek-ai
 depends on itself, so the two-generation mix from upstream issue #74 cannot occur here) and
 `react ^18.2.0` (same peer as the already real-machine-tested `dsh-codex-ui`).
 
-> Running `node docs/compat-check.cjs` prints "存在不兼容 ❌" at the end because the list still keeps
-> the **candidate** plugin `dsh-edit-resend@0.1.0` (dropped in v2.3.0 for hard incompatibility, not
-> installed in this pack). It says nothing about the shipped combination.
+> Since v2.7.0 the script prints two separate lines — "在装插件 N/N 通过 ✅" (installed plugins, which
+> alone drives the exit code) and "候选池（未装…）" — because candidate entries are tagged
+> `installed: false`. A removed historical candidate (`dsh-edit-resend`) no longer turns the summary red.
 
 ### Conflict exclusions
 
@@ -372,22 +387,48 @@ depends on itself, so the two-generation mix from upstream issue #74 cannot occu
   codex-ui, preserving the "codex-ui last" convention.
 - In the layer stack, codex-ui is placed **last**, so its slot takeover takes effect after other plugins register.
 
-## Verification (to be re-verified under DSH 0.2.0-rc.2)
+## Verification record
 
-| Test | v1.1.0 result | v2.0.0 status |
-|---|---|---|
-| Spec validation (pack-structure v3 + manifest v5 hard constraints) | 30/30 PASS | pending |
-| `evaluatePluginCompatibility()` live check | 11/11 no blockers | pending (10 plugins) |
-| `pnpm install` full resolution | success, 11 plugins in place | pending |
-| `dsh --dump-config` | exit 0, 1303 lines, zero stderr | pending |
-| Real web service startup | listening, plugins initialized | pending |
-| Computer Use MCP server startup | `windows-computer-use MCP server 0.1.2 ready` | pending (0.2.3) |
-| Plugin MCP self-test (independent verification) | UIA tree + screenshot OK (2560×1600) | pending |
+### v2.7.0 · measured 2026-10-07 (isolated real `@deepseek-ai/dsh@0.2.0-rc.2` CLI + separate DSH_HOME)
+
+| Test | Result |
+|---|---|
+| Peer gate `node docs/compat-check.cjs` | installed plugins **13/13 ✅**, exit 0; 1 incompatible candidate (not installed) reported separately |
+| `dsh --dump-config` | **exit 0, 0 bytes on stderr**, 1367 lines on stdout |
+| Layer-stack completeness | **23/23 bundles** in the tested profile all present |
+| Provider row | `llm-workbuddy` injected by the plugin's own bundle patch, positioned before codex-ui ✅ |
+| Real web service startup | listening on `http://127.0.0.1:3987`; page renders with title `DeepSeek Harness` |
+| Computer Use MCP startup | `windows-computer-use MCP server 0.2.3 ready` (the pack's path fix works) |
+| Behaviour without WorkBuddy installed | **no WorkBuddy group** in the model picker; startup and UI unaffected |
+
+**Two honest limits of this run:**
+
+1. It covered **23 bundles** (base + 21 npm plugins), not all 26 — the three git-dependency plugins
+   (`dsh-computer-use`, `dsh-agent-arena`, `@tencent-connect/dsh-qqbot`) fail to install on Windows
+   because pnpm hits a store file lock (`[EBUSY] unlink …\store\v11\tmp\_tmp_*\.git\FETCH_HEAD`),
+   reproduced with both a shared and a dedicated store. Those three were each verified on real
+   machines in v2.4.0 / v2.6.0.
+2. **No smoke test with WorkBuddy signed in** — the desktop app is not installed on this machine.
+
+Unrelated observation: the browser console reports `list slot "plugins.item" requires options.id`;
+the **baseline without the new plugin shows it too** (2 occurrences baseline / 3 of the same class with
+the plugin), i.e. a pre-existing slot-registration issue, not something v2.7.0 introduces.
+
+### Historical (recorded on the 0.1.x base at v1.1.0, for reference only)
+
+| Test | v1.1.0 result |
+|---|---|
+| Spec validation (pack-structure v3 + manifest v5 hard constraints) | 30/30 PASS |
+| `evaluatePluginCompatibility()` live check | 11/11 no blockers |
+| `dsh --dump-config` | exit 0, 1303 lines, zero stderr |
+| Plugin MCP self-test | UIA tree + screenshot OK (2560×1600) |
 
 ## Customization
 
-The profile patch layer `overrides/cordis.patch.yml` is an empty array `[]` — the mount
-relations are fully expressed by each plugin's own bundle patch. After changes, run:
+The profile patch layer `overrides/cordis.patch.yml` currently holds **3 entries**: the
+`dsh-computer-use-win` MCP path fix, `im-qqbot` disabled by default, and the `computer-use` preset
+insertion. Everything else is expressed by each plugin's own bundle patch — including
+`dsh-workbuddy-connect`'s provider row, which needs **no entry here**. After changes, run:
 
 ```bash
 dsh --profile better-deepseek-harness-codex --dump-config
