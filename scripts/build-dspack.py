@@ -53,7 +53,11 @@ HOME_PAYLOAD_DIR = "home"
 
 
 def collect_home_entries(repo_root: Path) -> list[tuple[str, str]]:
-    """Return (arcname, src_rel) pairs for every file under HOME_PAYLOAD_DIR."""
+    """Return (arcname, src_rel) pairs for every file under HOME_PAYLOAD_DIR.
+
+    Raises SystemExit when the payload contains a nested ``home/`` tree —
+    see :func:`_reject_nested_home`.
+    """
     out: list[tuple[str, str]] = []
     base = repo_root / HOME_PAYLOAD_DIR
     if not base.is_dir():
@@ -62,7 +66,40 @@ def collect_home_entries(repo_root: Path) -> list[tuple[str, str]]:
         if p.is_file():
             rel = p.relative_to(repo_root).as_posix()
             out.append((rel, rel))
+    _reject_nested_home(out)
     return out
+
+
+def _reject_nested_home(entries: list[tuple[str, str]]) -> None:
+    """Fail fast on nested ``home/`` directories inside the payload.
+
+    An arcname shaped like ``home/**/home/**`` means a bundled skill was
+    copied with its upstream host ``home/`` prefix still attached (issue #1):
+    the launcher maps ``home/`` onto the DSH_HOME root on import, so the
+    duplicate would land at ``<DSH_HOME>/skills/<name>/home/skills/<name>/``
+    — dead data the skill filesystem never scans. Surface it at pack time
+    instead of shipping it silently.
+    """
+    prefix = f"{HOME_PAYLOAD_DIR}/"
+    inner = f"/{HOME_PAYLOAD_DIR}/"
+    polluted = [
+        arcname
+        for arcname, _ in entries
+        if arcname.startswith(prefix) and inner in arcname[len(prefix):]
+    ]
+    if not polluted:
+        return
+    shown = "\n".join(f"  - {arcname}" for arcname in polluted[:20])
+    more = len(polluted) - 20
+    raise SystemExit(
+        f"build-dspack: {len(polluted)} payload file(s) live under a nested "
+        "'home/' directory (e.g. home/skills/<name>/home/...). The launcher "
+        "maps 'home/' onto the DSH_HOME root, so these would become dead "
+        f"duplicates under <DSH_HOME>:\n{shown}"
+        + (f"\n  ... and {more} more" if more > 0 else "")
+        + "\nFix: remove the nested home/ tree(s), e.g. `git rm -r "
+        "home/skills/<name>/home`. See docs/fix-plan-issue-1-v2.7.1.md."
+    )
 
 
 def build(repo_root: Path, out_dir: Path) -> tuple[Path, str]:
@@ -74,11 +111,15 @@ def build(repo_root: Path, out_dir: Path) -> tuple[Path, str]:
     out_dir.mkdir(parents=True, exist_ok=True)
     dspack_path = out_dir / dspack_name
 
+    # Collect (and validate) home payload entries *before* touching the
+    # output files, so a nested-home rejection leaves no partial dspack.
+    home_entries = collect_home_entries(repo_root)
+
     with zipfile.ZipFile(dspack_path, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("dspack.json", DSPACK_JSON)
         for arcname, src in ENTRIES:
             zf.writestr(arcname, (repo_root / src).read_bytes())
-        for arcname, src in collect_home_entries(repo_root):
+        for arcname, src in home_entries:
             zf.writestr(arcname, (repo_root / src).read_bytes())
 
     digest = hashlib.sha256(dspack_path.read_bytes()).hexdigest()

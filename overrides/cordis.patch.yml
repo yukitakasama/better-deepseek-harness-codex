@@ -137,9 +137,30 @@
             name: "@deepseek-ai/dsh-tool-skill"
           # PRESET 平面：13 个 window2 工具 + computer_use_health / _experience。
           # 消费 HOST 平面的 `dshComputerUse` sidecar，自身不发布服务，因此不需要隔离域。
+          # 非 Windows 一并显式关闭：HOST sidecar 已被下方守卫禁用，这里保证
+          # 模型侧也不会看到 13 个注定不可用的工具（与上方 tool-pwsh 同一模式）。
           - id: tool-computer-use
             name: dsh-computer-use/tool
+            disabled: !!js process.platform !== 'win32'
             config:
               surfaces:
                 - computer
               browserSkill: computer-use-browser
+
+# ── HOST 平面守卫：dsh-computer-use 的 sidecar 仅限 Windows ─────────────────
+# 上游插件自带 patch 以 - insert: 创建的 `computer-use` 行（HOST 平面：指针、
+# 覆盖层、截图、批准流 sidecar）会拉起 Python sidecar，而 sidecar 入口
+# cli.py:51 无条件 `from computer_use.win_dpi import enable_dpi_awareness`，
+# win_dpi.py:13 在**模块顶层**执行 ctypes.WinDLL("user32", ...) —— 该属性仅
+# Windows 的 ctypes 才有，非 Windows 上 import 即 AttributeError。表现：
+# 非 Windows 平台每次启动都打印一整段 Traceback（插件 failOnStartupError:
+# false 保证不影响启动，但日志很难看，见 issue #1）。
+#
+# 平台判定放 profile 层（本文件，最后生效）：非 Windows 显式 disabled，
+# Windows 上表达式求值为 false，行为与上游完全一致（该键原先未写、默认启用）。
+# 逐键覆盖语义：这里只写 disabled，不触碰 backend / surface 等其余键。
+# 修完后非 Windows =「安静地不可用」，与 preset-computer-use 里 tool-pwsh
+# 的既有模式一致。源码级修复走上游 PR，见 docs/fix-plan-issue-1-v2.7.1.md。
+- id: computer-use
+  name: dsh-computer-use
+  disabled: !!js process.platform !== 'win32'

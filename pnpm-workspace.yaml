@@ -14,4 +14,3 @@ minimumReleaseAgeExclude:
   - '@goodandready/dsh-key-limits@0.2.19'
   - 'dsh-inline-figures@0.1.0'
   - 'dsh-prompt@0.3.0'
-  - 'dsh-workbuddy-connect@0.7.1'

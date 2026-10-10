@@ -244,6 +244,31 @@ MCP 服务器，注释里假设 `baseUrl` 是**该 patch 文件所在目录**。
 修复后 boot 日志出现 `windows-computer-use MCP server 0.1.2 ready`。
 若上游修好此 bug，可以删掉这条补丁。
 
+### `dsh-computer-use` 的 sidecar 在非 Windows 上启动即崩（v2.7.1 起已守卫）
+
+该插件（钉上游提交 `72f390a`）的 Python sidecar 入口 `cli.py:51` 无条件
+`from computer_use.win_dpi import enable_dpi_awareness`，而 `win_dpi.py:13` 在
+**模块顶层**执行 `ctypes.WinDLL("user32", …)` —— 该属性仅 Windows 的 ctypes 才有，
+Linux / Android（proot）等平台 import 即 `AttributeError: module 'ctypes' has no
+attribute 'WinDLL'`。由于 `failOnStartupError: false`，启动不受影响，但**每次启动
+都刷一整段 Traceback**（issue #1，Android arm64 / proot Ubuntu 实测）。
+
+**本包修法（v2.7.1）**：在 profile patch 层给两处加平台守卫，非 Windows 显式
+disabled、Windows 上表达式求值为 `false` 行为不变（与 `preset-computer-use` 里
+`tool-pwsh` 的既有模式一致）：
+
+```yaml
+# HOST 平面（上游插件自带 patch 以 insert 创建的 sidecar 行）
+- id: computer-use
+  name: dsh-computer-use
+  disabled: !!js process.platform !== 'win32'
+```
+
+以及 `preset-computer-use` 内 `tool-computer-use` 行同款 `disabled` —— HOST 与
+PRESET 两平面同开同关，普通编码会话本来就拿不到这些工具，非 Windows 上从
+「崩溃 + 刷屏」变成「安静地不可用」。修完后该能力仍仅限 Windows（这本来就是
+sidecar 的平台边界），源码级修复走上游 PR；上游修好后可删掉这两条守卫。
+
 ## 选型说明
 
 ### 兼容性判定
@@ -349,6 +374,26 @@ dsh --profile better-deepseek-harness-codex --dump-config
 格式规范：[DSH-PackForge](https://github.com/DSH-PackForge/DSH-PackForge)。
 
 ## 更新日志
+
+### v2.7.1 (2026-10-10)
+- **修复（issue #1）**：6 个自带 skill（agent-browser / docx / pdf / pptx / research / xlsx）目录内误嵌套
+  了一层 `home/skills/<name>/`（v2.5.0 收录时把上游宿主前缀一并复制进来，引入提交 `fafc9e8`）。安装时
+  launcher 把 `home/` 递归映射到 DSH_HOME 根，嵌套副本落在 `$DSH_HOME/skills/<name>/home/skills/<name>/`，
+  成为 skill 加载器（只扫一层）永远读不到的死数据。本次全部清理，skill 目录数维持 49 不变。
+- **构建防回归**：`scripts/build-dspack.py` 打包期检测任何 `home/**/home/**` 形态的条目，命中即报错中断
+  并列出污染路径（先收集校验、后写包，不留半成品），同类污染从此进不了 dspack；CI 侧同步加了同款守卫。
+- **dsh-computer-use 平台守卫**：该插件 Python sidecar 入口 `cli.py:51` 无条件
+  `from computer_use.win_dpi import …`，而 `win_dpi.py:13` 在**模块顶层**执行 `ctypes.WinDLL("user32", …)`
+  ——该属性仅 Windows 的 ctypes 才有，非 Windows 上 import 即 AttributeError，每次启动刷一整段
+  Traceback（`failOnStartupError: false` 保证不影响启动，但很吵，见 issue #1）。本包在 profile 层给
+  HOST 平面 `computer-use` 行（上游自带 patch insert 的那行，id 已对照钉死的上游提交核实）与
+  `preset-computer-use` 内 `tool-computer-use` 行都加 `disabled: !!js process.platform !== 'win32'`
+  （与既有 `tool-pwsh` 同一模式）：非 Windows「安静地不可用」，Windows 上表达式为 false、行为不变。
+  逐键覆盖语义只写 disabled，不触碰其余配置键；源码级修复走上游 PR。
+- **清理遗留**：按 v2.7.0 更新日志的事后溯源承诺，移除 `pnpm-workspace.yaml` 里其实不需要的
+  `dsh-workbuddy-connect@0.7.1` minimumReleaseAgeExclude（该版本发布于 2026-10-01，远超 1 天窗口）。
+- **零依赖变更**：插件数量、依赖版本、基座与 v2.7.0 完全相同。
+- 完整说明见 `docs/release-notes-v2.7.1.md`；修复规划与本地核实见 `docs/fix-plan-issue-1-v2.7.1.md`。
 
 ### v2.7.0 (2026-10-07)
 - **新增**：`dsh-workbuddy-connect@0.7.1` —— **WorkBuddy 桌面端模型接入**。复用 WorkBuddy 桌面 App

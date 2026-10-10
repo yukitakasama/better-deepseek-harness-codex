@@ -25,6 +25,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Guard against nested home/ payload (issue #1 regression)
+        run: |
+          HITS=$(find home -mindepth 2 -type d -name home 2>/dev/null || true)
+          if [ -n "$HITS" ]; then
+            echo "::error::nested home/ directories in the home/ payload — these become dead data under DSH_HOME:"
+            echo "$HITS"
+            exit 1
+          fi
+
       - name: Read manifest metadata
         id: meta
         run: |

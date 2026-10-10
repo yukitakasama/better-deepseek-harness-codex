@@ -58,6 +58,31 @@ Or import the `.dspack` from the DSH launcher.
 
 ## Changelog
 
+### v2.7.1 (2026-10-10)
+- **Fixed (issue #1)**: 6 bundled skills (agent-browser / docx / pdf / pptx / research / xlsx) carried a
+  mistakenly nested `home/skills/<name>/` tree (introduced in `fafc9e8` when the skills were vendored in
+  v2.5.0 with their upstream host prefix attached). The launcher maps `home/` onto the DSH_HOME root on
+  import, so the duplicates landed at `$DSH_HOME/skills/<name>/home/skills/<name>/` — dead data the skill
+  filesystem (one-level scan) never reads. All nested trees removed; still 49 skill directories.
+- **Build regression guard**: `scripts/build-dspack.py` now fails the pack with a listed-path error when
+  any payload entry matches `home/**/home/**` (payload is collected and validated before any output is
+  written); a matching guard was added to CI.
+- **dsh-computer-use platform guard**: the plugin's Python sidecar entry (`cli.py:51`) unconditionally
+  imports `computer_use.win_dpi`, whose module top level calls `ctypes.WinDLL("user32", …)` — a
+  Windows-only attribute, so non-Windows platforms printed a full Traceback on every startup (harmless
+  thanks to `failOnStartupError: false`, but noisy; issue #1). This pack now sets
+  `disabled: !!js process.platform !== 'win32'` on both the HOST-plane `computer-use` row (inserted by the
+  upstream bundle patch; id verified against the pinned commit) and the `tool-computer-use` row inside
+  `preset-computer-use` (same pattern as the existing `tool-pwsh` guard): quietly unavailable on
+  non-Windows, unchanged behavior on Windows. Per-key override semantics — only `disabled` is touched;
+  the source-level fix goes upstream as a PR.
+- **Housekeeping**: removed the unnecessary `dsh-workbuddy-connect@0.7.1` `minimumReleaseAgeExclude` from
+  `pnpm-workspace.yaml`, as promised in the v2.7.0 changelog post-mortem (published 2026-10-01, well past
+  the 1-day window).
+- **No dependency changes**: plugin count, versions and base are identical to v2.7.0.
+- Full notes in `docs/release-notes-v2.7.1.md`; fix plan and local evidence in
+  `docs/fix-plan-issue-1-v2.7.1.md`.
+
 ### v2.7.0 (2026-10-07)
 - **Added**: `dsh-workbuddy-connect@0.7.1` — **WorkBuddy model access**. Reuses the WorkBuddy desktop
   app's local sign-in to register GLM-5.3, GLM-5.2, GLM-5.3-Flash, DeepSeek-V4-Pro/Flash, Kimi-K3,
@@ -344,6 +369,33 @@ relative to the profile root (where `node_modules` lives):
 
 After the fix, the boot log shows `windows-computer-use MCP server 0.1.2 ready`.
 If upstream fixes this bug, this patch can be removed.
+
+### `dsh-computer-use` sidecar crashes on startup on non-Windows (guarded since v2.7.1)
+
+The plugin (pinned to upstream commit `72f390a`) launches a Python sidecar whose entry
+`cli.py:51` unconditionally does `from computer_use.win_dpi import enable_dpi_awareness`,
+while `win_dpi.py:13` executes `ctypes.WinDLL("user32", …)` at **module top level** — an
+attribute that only exists in Windows' `ctypes`. On Linux / Android (proot) the import
+fails immediately with `AttributeError: module 'ctypes' has no attribute 'WinDLL'`.
+`failOnStartupError: false` keeps startup unaffected, but **every startup prints a full
+Traceback** (issue #1, measured on Android arm64 / proot Ubuntu).
+
+**Fix in this modpack (v2.7.1)**: platform guards on both planes, disabled on non-Windows
+and evaluating to `false` (unchanged behavior) on Windows — same pattern as the existing
+`tool-pwsh` guard in `preset-computer-use`:
+
+```yaml
+# HOST plane (the sidecar row inserted by the plugin's own bundle patch)
+- id: computer-use
+  name: dsh-computer-use
+  disabled: !!js process.platform !== 'win32'
+```
+
+plus the same `disabled` on the `tool-computer-use` row inside `preset-computer-use` —
+HOST and PRESET planes switch together. Non-Windows goes from "crash + noise" to "quietly
+unavailable"; the capability remains Windows-only (that was always the sidecar's platform
+boundary). The source-level fix goes upstream as a PR; once upstream lands it, these two
+guards can be removed.
 
 ## Selection Rationale
 
