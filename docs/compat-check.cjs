@@ -105,13 +105,6 @@ const PLUGINS = {
   "@liustack/modlens@3.26.6": {
     peers: {} // 未声明 peer → 门禁不拦；引擎要求以实跑 dsh --dump-config 验证
   },
-  "dsh-inline-figures@0.1.0": {
-    peers: {
-      "@deepseek-ai/dsh-llm": "0.2.0-rc.2",
-      "@deepseek-ai/dsh-system-prompt": "0.2.0-rc.2",
-      "@deepseek-ai/dsh-tools": "0.2.0-rc.2"
-    }
-  },
   "dsh-prompt@0.3.0": {
     peers: {}, // 无 peer；package.json dsh.engines 声明 ">=0.2.0-rc.2"，依赖按 0.2.0-rc.2 构建
     engines: ">=0.2.0-rc.2"

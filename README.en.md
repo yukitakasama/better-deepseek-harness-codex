@@ -26,7 +26,6 @@ One command to get a complete Codex-style coding workbench:
 - **Loop guard** — loop-guard detects degenerate "all thought, no action" loops and auto-interrupts with corrective prompts
 - **Cross-session memory** — mneme lets the agent remember project background and past decisions
 - **Vision** — modlens as a vision bridge, routing screenshots/images to a vision model
-- **Inline figures** — inline-figures turns answers into "text-figure-text"
 - **Prompt toolbox** — dsh-prompt with 24 deep templates one click away
 - **Live wallpapers** — brings Wallpaper Engine wallpapers into the DSH web UI
 - **Quota limits** — key-limits shows API key / subscription remaining quota (complements cost-meter)
@@ -59,7 +58,19 @@ Or import the `.dspack` from the DSH launcher.
 
 ## Changelog
 
-### v2.8.0 (2026-10-17)
+### v2.8.1 (2026-10-10)
+- **Removed**: `dsh-inline-figures@0.1.0` — its `draw_figure` tool kept failing with
+  `invalid output: value is not lossless JSON` on the return channel (reproduced with a
+  minimal spec, so the fault is in the tool binding layer, not the spec, and cannot be
+  configured around). Figure drawing now falls back to the bundled `chart-visualization`
+  skill and host-native capabilities.
+- All 6 references cleaned in step: `package.json`, `manifest.json` (both descriptions),
+  `pnpm-workspace.yaml`, `docs/compat-check.cjs`, `README.md`, `README.en.md`.
+- Plugins 25 → 24 (bundles 27 → 26 including the 2 official base bundles; dependencies
+  25 → 24); compat-check installed plugins 13 → 12; the 49 bundled skills are unchanged.
+- **No version changes**: the other 24 plugins, and base DSH 0.2.0-rc.2, are identical to v2.8.0.
+- Full notes in `docs/release-notes-v2.8.1.md`.
+
 - **Added the dsh-ops plugin** ([T-Auto/dsh-ops](https://github.com/T-Auto/dsh-ops) 0.3.0, from the
   npm registry, whose peer range already declares DSH 0.2.0-rc.2): four Rust file tools
   (`ops_inspect_local_file` / `ops_grep` / `ops_glob` / `ops_replace`), an `ops_bash` command
@@ -250,12 +261,12 @@ Or import the `.dspack` from the DSH launcher.
 | `@mrweicodes/dsh-loop-guard` | 1.0.8 | Thought-loop guard with auto-interruption |
 | `@modusensus/dsh-mneme` | 0.8.13 | Cross-session long-term memory |
 | `@liustack/modlens` | 3.26.6 | Vision bridge & screenshot understanding |
-| `dsh-inline-figures` | 0.1.0 | Inline vector figures in answers |
 | `dsh-prompt` | 0.3.0 | Prompt template toolbox |
 | `dsh-plugin-wallpaper-engine` | 1.2.0 | Wallpaper Engine live wallpapers |
 | `@goodandready/dsh-key-limits` | 0.2.19 | API key / subscription quota limits |
 | `@tencent-connect/dsh-qqbot` | fork 0.5.1 | QQ Bot channel: **disabled by default, opt-in**. DM/group chat, image & file understanding, streaming replies, proactive questions and action confirmations, `/preset` switching, `/compact`. This pack uses the `yukitakasama/dsh-qqbot` fork, which skips instead of blocking when credentials are missing |
 | `dsh-workbuddy-connect` | 0.7.1 | **WorkBuddy model access**: reuses the WorkBuddy desktop app's local sign-in to feed GLM-5.3, DeepSeek-V4, Kimi-K3, MiniMax-M3, Hy3 and more into the DSH model picker with zero configuration; domestic and international editions form separate groups with independent accounts and credits, and an unsigned-in edition just hides its group. See "WorkBuddy model access" below |
+| `dsh-ops` | 0.3.0 | Four Rust file tools + `ops_bash` + bundled PowerShell 7 |
 
 ### Codex-style Computer Use (dsh-computer-use)
 
@@ -556,7 +567,6 @@ code of the plugins above. Copyright of each plugin belongs to its author:
 - [T-Auto](https://github.com/T-Auto/dsh-ops) (native high-performance tooling dsh-ops)
 - The respective authors of `dsh-effort-slider`, `dsh-cost-meter`, `dsh-whale-girl-pet`, `dsh-computer-use-win`
 - The respective authors of `dsh-context`, `@modusensus/dsh-mneme`, `@liustack/modlens`, `dsh-prompt`,
-  `dsh-inline-figures`, `@mrweicodes/dsh-loop-guard`, `dsh-plugin-wallpaper-engine`,
   `@nanmicoder/dsh-agent-teams`, `dsh-plugin-subagent-director`, `@goodandready/dsh-key-limits`
 - The `dsh-agent-arena` and `dsh-qqbot` git dependencies are forks maintained in this repository;
   feature copyright remains with the upstream authors

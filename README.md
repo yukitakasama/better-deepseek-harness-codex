@@ -26,7 +26,6 @@
 - **循环守护** —— loop-guard 检测模型空转退化循环，自动打断并注入纠正提示
 - **跨会话记忆** —— mneme 让 agent 记住项目背景与既往决策
 - **视觉理解** —— modlens 视觉桥，截图/图片路由到视觉模型理解
-- **内嵌配图** —— inline-figures 让回答变成「文字-图-文字」
 - **Prompt 工具箱** —— dsh-prompt 24 条深度模板随手点选
 - **动态壁纸** —— Wallpaper Engine 壁纸搬进 DSH 网页界面
 - **额度上限** —— key-limits 显示 API key / 订阅剩余额度（与 cost-meter 互补）
@@ -102,12 +101,12 @@ dsh --profile better-deepseek-harness-codex
 | `@mrweicodes/dsh-loop-guard` | 1.0.8 | 思考循环守护，自动打断空转 |
 | `@modusensus/dsh-mneme` | 0.8.13 | 跨会话长期记忆 |
 | `@liustack/modlens` | 3.26.6 | 视觉桥与截图理解 |
-| `dsh-inline-figures` | 0.1.0 | 回答内嵌矢量图 |
 | `dsh-prompt` | 0.3.0 | Prompt 模板工具箱 |
 | `dsh-plugin-wallpaper-engine` | 1.2.0 | Wallpaper Engine 动态壁纸 |
 | `@goodandready/dsh-key-limits` | 0.2.19 | API key / 订阅额度上限 |
 | `@tencent-connect/dsh-qqbot` | fork 0.5.1 | QQ 机器人频道：**默认关闭、按需启用**。私聊/群聊对话、图片与文件理解、流式回复、主动提问与操作确认、/preset 切换预设、/compact 压缩会话。启用方式见下方「QQ 机器人频道（im-qqbot）」 |
 | `dsh-workbuddy-connect` | 0.7.1 | **WorkBuddy 桌面端模型接入**：复用 WorkBuddy App 的本机登录态，把 GLM-5.3、DeepSeek-V4、Kimi-K3、MiniMax-M3、Hy3 等送进 DSH 模型选择器，零配置调用；国内版与国际版分组并存、各用自己的账号与积分，未登录则分组隐藏。详见下方「WorkBuddy 模型接入」 |
+| `dsh-ops` | 0.3.0 | Rust 文件工具四件套 + `ops_bash` + 随包 PowerShell 7 |
 
 ### Codex 风格 Computer Use（dsh-computer-use）
 
@@ -402,7 +401,6 @@ dsh --profile better-deepseek-harness-codex --dump-config
 - [T-Auto](https://github.com/T-Auto/dsh-ops)（原生高性能工具链 dsh-ops）
 - `dsh-effort-slider`、`dsh-cost-meter`、`dsh-whale-girl-pet`、`dsh-computer-use-win` 各作者
 - `dsh-context`、`@modusensus/dsh-mneme`、`@liustack/modlens`、`dsh-prompt`、
-  `dsh-inline-figures`、`@mrweicodes/dsh-loop-guard`、`dsh-plugin-wallpaper-engine`、
   `@nanmicoder/dsh-agent-teams`、`dsh-plugin-subagent-director`、`@goodandready/dsh-key-limits`
   等各作者
 - fork 依赖 `dsh-agent-arena`、`dsh-qqbot` 由本仓库维护分叉，功能版权归上游原作者
@@ -411,7 +409,18 @@ dsh --profile better-deepseek-harness-codex --dump-config
 
 ## 更新日志
 
-### v2.8.0 (2026-10-17)
+### v2.8.1 (2026-10-10)
+- **移除**：`dsh-inline-figures@0.1.0` —— 其 `draw_figure` 工具返回通道持续报
+  `invalid output: value is not lossless JSON`（用最小 spec 复现，故障与 spec 内容无关，
+  属工具绑定层缺陷，无法配置规避）。绘图能力改由自带 skill `chart-visualization`
+  与宿主原生能力承担。
+- 同步清理 6 处引用：`package.json`、`manifest.json`（含中英文 description）、
+  `pnpm-workspace.yaml`、`docs/compat-check.cjs`、`README.md`、`README.en.md`。
+- 插件 25 → 24（bundles 27 → 26 含 2 个官方基座；dependencies 25 → 24）；
+  compat-check 在装插件 13 → 12；49 个自带 skill 不变。
+- **零版本变更**：其余 24 个插件版本、基座 DSH 0.2.0-rc.2 与 v2.8.0 完全相同。
+- 完整说明见 `docs/release-notes-v2.8.1.md`。
+
 - **新增 dsh-ops 插件**（[T-Auto/dsh-ops](https://github.com/T-Auto/dsh-ops) 0.3.0，npm registry 版本，
   peer 已声明兼容 DSH 0.2.0-rc.2）：Rust 编写的四个文件工具（`ops_inspect_local_file` / `ops_grep` /
   `ops_glob` / `ops_replace`）+ `ops_bash` 命令执行器 + Windows 随包 PowerShell 7。
