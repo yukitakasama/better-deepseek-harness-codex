@@ -34,6 +34,7 @@ One command to get a complete Codex-style coding workbench:
 - **Codex-style Computer Use** — a separate `computer-use` agent preset with 13 native window2 tools, a visible synthetic cursor and an Esc interrupt; ordinary coding sessions never get the mouse
 - **QQ Bot channel** — dsh-qqbot bridges a QQ Bot into DSH (DMs and group chats, image/file understanding, streaming replies); **disabled by default, opt-in**
 - **WorkBuddy model access** — dsh-workbuddy-connect reuses the WorkBuddy desktop app's local sign-in so GLM-5.3, DeepSeek-V4, Kimi-K3, MiniMax-M3, Hy3 and more show up in the model picker with zero configuration; the domestic and international editions form separate groups, and **when WorkBuddy is not installed or signed in the group simply hides — startup is unaffected**
+- **Native high-performance tooling** — dsh-ops adds four Rust file tools (`ops_inspect_local_file` / `ops_grep` / `ops_glob` / `ops_replace`) plus an `ops_bash` command executor and a bundled PowerShell 7 on Windows; smaller input and output, wider coverage
 - **49 bundled skills** — installed into `DSH_HOME/skills/` on import, ready to use (design/frontend, motion, data analysis, coding, office documents, browser automation and more; MCP servers are not shipped with the pack — configure them in your local `cordis.patch.yml`)
 
 ## Installation
@@ -57,6 +58,18 @@ Or import the `.dspack` from the DSH launcher.
 > See "WorkBuddy model access" below.
 
 ## Changelog
+
+### v2.8.0 (2026-10-17)
+- **Added the dsh-ops plugin** ([T-Auto/dsh-ops](https://github.com/T-Auto/dsh-ops) 0.3.0, from the
+  npm registry, whose peer range already declares DSH 0.2.0-rc.2): four Rust file tools
+  (`ops_inspect_local_file` / `ops_grep` / `ops_glob` / `ops_replace`), an `ops_bash` command
+  executor, and a bundled PowerShell 7 on Windows. The file and shell components are enabled by
+  default; ptc (native PTC batch) and tui (read-only sidebar) stay off as upstream ships them.
+  `overrides/cordis.patch.yml` records the two enabled components' config and adds
+  `disabled: !!js process.platform !== 'win32'` to the `pwsh-sandbox` row, so a non-Windows host
+  never points at a missing executable.
+- No plugin source was modified; the worker binary and the bash / pwsh payloads arrive with the
+  npm dependency, with no install-time download scripts.
 
 ### v2.7.1 (2026-10-10)
 - **Fixed (issue #1)**: 6 bundled skills (agent-browser / docx / pdf / pptx / research / xlsx) carried a
@@ -318,6 +331,45 @@ appear in the model picker and in `/model` — **no extra API key required**.
 > **TUI** profile instead, `@deepseek-harness-tui/dsh-tui` must be **≥ 0.10.0-beta.5**; older versions
 > fail to start (`events is not iterable`).
 
+### Native high-performance tooling (dsh-ops)
+
+Upstream: [T-Auto/dsh-ops](https://github.com/T-Auto/dsh-ops), pinned to npm `0.3.0`
+(the registry latest; upstream 0.3.1 shipped only as a GitHub Release and was never published
+to npm). No source changes.
+
+A resident tool set written in Rust, executed through the host subprocess as a fixed worker —
+no model code ever runs:
+
+- **Four file tools** — `ops_inspect_local_file` (bounded UTF-8 lines / hex view), `ops_grep`
+  (Rust regex search with file filters, counts and summaries), `ops_glob` (multi-pattern path
+  finder with excludes), `ops_replace` (cross-file literal replacement; precise edits still use
+  the host `edit`)
+- **`ops_bash`** — the preferred general command executor; short commands use `command`,
+  longer scripts (heredocs, quotes, backslashes, non-ASCII) are written to a file first and
+  passed as `script_path` to avoid nested JSON escaping
+- **Bundled PowerShell 7** — Windows-native cmdlets / registry / services go through the host
+  `pwsh` tool, which the plugin points at its own 7.6.6 at execution time
+
+Tools appear with an `ops_` prefix and coexist with the host `read` / `edit` / `pwsh`: file reads
+and replacements are recorded in the host read-before-write observation table, so a file read
+through OPS can still be edited with the host `edit`.
+
+**Component switches** (`dsh-ops/shell` and `dsh-ops/file` on by default; `dsh-ops/ptc` and
+`dsh-ops/tui` off by default):
+
+| Component | Default | Purpose |
+| --- | --- | --- |
+| `dsh-ops/shell` | on | `ops_bash` + bundled PowerShell 7 |
+| `dsh-ops/file` | on | the four Rust file tools |
+| `dsh-ops/ptc` | off | native PTC batch operations (`ops_batch` / `ops_result`), pure PTC sessions only |
+| `dsh-ops/tui` | off | read-only dsh-TUI sidebar |
+| `dsh-ops/hide-official` | off | masks official tools (not inserted by the 0.3.0 bundle patch) |
+
+> **About bash on Windows**: in restricted modes (`workspace-write` / `read-only`) `ops_bash`
+> runs only the IPC-verified bundled MSYS copy; pointing `bashPath` at your own Git for Windows
+> returns `EXECUTOR_UNAVAILABLE` by design instead of executing unverified. Under
+> `danger-full-access` an explicit `bashPath` is honoured.
+
 ### Computer Use Notes
 
 `dsh-computer-use-win` bridges an MCP stdio server through DSH's built-in
@@ -477,10 +529,12 @@ the plugin), i.e. a pre-existing slot-registration issue, not something v2.7.0 i
 
 ## Customization
 
-The profile patch layer `overrides/cordis.patch.yml` currently holds **3 entries**: the
-`dsh-computer-use-win` MCP path fix, `im-qqbot` disabled by default, and the `computer-use` preset
-insertion. Everything else is expressed by each plugin's own bundle patch — including
-`dsh-workbuddy-connect`'s provider row, which needs **no entry here**. After changes, run:
+The profile patch layer `overrides/cordis.patch.yml` currently holds **5 entries**: the
+`dsh-computer-use-win` MCP path fix, `im-qqbot` disabled by default, the `computer-use` preset
+insertion, the recorded `dsh-ops` file/shell config, and the `pwsh-sandbox` Windows platform guard.
+Everything else is expressed by each plugin's own bundle patch — including
+`dsh-workbuddy-connect`'s provider row and dsh-ops' four component rows, which need **no entry
+here**. After changes, run:
 
 ```bash
 dsh --profile better-deepseek-harness-codex --dump-config
@@ -499,6 +553,7 @@ code of the plugins above. Copyright of each plugin belongs to its author:
 - [linxin666](https://www.npmjs.com/~linxin666) (Git Graph)
 - [corrinehu](https://github.com/corrinehu/dsh-workbuddy-connect) (WorkBuddy model access)
 - [wushi2333](https://github.com/wushi2333/dsh-computer-use_codex-style) (Codex-style Computer Use)
+- [T-Auto](https://github.com/T-Auto/dsh-ops) (native high-performance tooling dsh-ops)
 - The respective authors of `dsh-effort-slider`, `dsh-cost-meter`, `dsh-whale-girl-pet`, `dsh-computer-use-win`
 - The respective authors of `dsh-context`, `@modusensus/dsh-mneme`, `@liustack/modlens`, `dsh-prompt`,
   `dsh-inline-figures`, `@mrweicodes/dsh-loop-guard`, `dsh-plugin-wallpaper-engine`,

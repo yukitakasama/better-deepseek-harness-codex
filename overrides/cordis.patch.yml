@@ -164,3 +164,33 @@
 - id: computer-use
   name: dsh-computer-use
   disabled: !!js process.platform !== 'win32'
+
+# ── dsh-ops（T-Auto/dsh-ops 0.3.0）：默认值记录 + 平台守卫 ──────────────────
+# 插件自带 bundle patch 已插入 4 行（shell / file / background 空操作桩 / ptc），
+# 本层不再 insert 任何行，只做两件事：
+#
+# 1. 显式记录 file 与 shell 两个默认开启组件的配置值（与上游 bundle patch 一致），
+#    便于阅读与后续调整；只带 config: 的补丁按「逐键覆盖」语义合并，不会动 disabled。
+# 2. 给随包 PowerShell 7 的宿主行加 Windows 守卫：pwsh-sandbox 行只在 Windows 宿主存在，
+#    非 Windows 上指向不存在的可执行文件会让启动报错。
+#
+# 未在此层启用 ptc / tui / hide-official：PTC 仅纯 PTC 会话需要，只读侧栏属于 dsh-TUI，
+# hide-official 会遮蔽官方工具，三者都保持上游默认关闭，需要时按需开启。
+- id: dsh-ops-file
+  name: dsh-ops/file
+  config:
+    promptPolicy: true
+    required: false
+- id: dsh-ops-shell
+  name: dsh-ops/shell
+  config:
+    promptPolicy: true
+    publishBashTool: true
+    shellPolicy: advise
+    allowSystemShellFallback: false
+
+# pwsh-sandbox 是宿主自带行；dsh-ops 只在 Windows 上解析随包 PowerShell 7，
+# 非 Windows 显式 disabled，避免指向不存在的执行器。
+- id: pwsh-sandbox
+  name: "@deepseek-ai/dsh-pwsh-sandbox"
+  disabled: !!js process.platform !== 'win32'
