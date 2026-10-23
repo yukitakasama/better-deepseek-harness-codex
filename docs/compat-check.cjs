@@ -139,6 +139,22 @@ const PLUGINS = {
       "@deepseek-ai/dsh-settings": "0.2.0-rc.2"
     },
     note: "非 dsh-* host peer：cordis ^4.0.2（宿主 4.0.4 满足）、schemastery ^3.18.2（web-app 带 ~3.18.4）、@earendil-works/pi-ai ^0.87.1（dsh-llm-pi-ai@0.2.0-rc.2 自身依赖即 ^0.87.1）、react ^18.2.0（与已实测的 dsh-codex-ui 同一 peer）。另 dsh.client.platform=web，只在 web/desktop 界面注入，属 web 专用插件"
+  },
+
+  // ---- v2.9.0 桌宠换装：dsh-whale-girl-pet@0.3.7 → dsh-pet@0.3.8 ----
+  "dsh-pet@0.3.8": {
+    peers: {
+      "@deepseek-ai/dsh-agent-default-model": "^0.2.0-rc.1",
+      "@deepseek-ai/dsh-client-connection": "^0.2.0-rc.1",
+      "@deepseek-ai/dsh-client-ui-primitives": "^0.2.0-rc.1",
+      "@deepseek-ai/dsh-client-ui-slots": "^0.2.0-rc.1",
+      "@deepseek-ai/dsh-commands": "^0.2.0-rc.1",
+      "@deepseek-ai/dsh-credentials": "^0.2.0-rc.1",
+      "@deepseek-ai/dsh-home-paths": "^0.2.0-rc.1",
+      "@deepseek-ai/dsh-host-webserver": "^0.2.0-rc.1",
+      "@deepseek-ai/dsh-llm": "^0.2.0-rc.1"
+    },
+    note: "非 dsh-* host peer：cordis ^4.0.4（宿主 4.0.4 满足）、react / react-dom ^18.2.0（与 dsh-codex-ui 同一 peer）；另 dsh.compatibility.dshReleases 自行声明 0.2.0-rc.2 = compatible，dsh.client.platform=web"
   }
 };
 

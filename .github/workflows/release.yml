@@ -9,6 +9,8 @@ name: Release
 #   - 资产 1：<manifest.name>-<version>.dspack   （format v3 zip，含 5 个固定文件）
 #   - 资产 2：同名 .dspack.sha256                 （64 字节十六进制，无换行）
 #   - 发行说明：优先用 docs/release-notes-v<version>.md，缺省则 --generate-notes
+#   - 发行通道：docs/prerelease-versions.txt 逐行列出「只发 pre-release」的版本号，
+#     命中即给 gh release create 追加 --prerelease；不在其中则为正式版。
 on:
   push:
     branches:
@@ -44,6 +46,16 @@ jobs:
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
           echo "Version: $VERSION  Name: $NAME  Tag: v$VERSION"
 
+      - name: Determine release channel
+        id: channel
+        run: |
+          if grep -qxF "${{ steps.meta.outputs.version }}" docs/prerelease-versions.txt 2>/dev/null; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+            echo "Release ${{ steps.meta.outputs.version }} is registered as a pre-release."
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Check if release already exists
         id: check
         env:
@@ -75,6 +87,9 @@ jobs:
             ARGS+=(--notes-file "$NOTES")
           else
             ARGS+=(--generate-notes)
+          fi
+          if [ "${{ steps.channel.outputs.prerelease }}" = "true" ]; then
+            ARGS+=(--prerelease)
           fi
           ARGS+=("$DSPACK" "$DSPACK.sha256")
           gh "${ARGS[@]}"

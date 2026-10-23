@@ -17,7 +17,7 @@ One command to get a complete Codex-style coding workbench:
 - **Read-only side-ask** — ask questions based on the current context without interrupting the main task
 - **Reasoning-effort slider** — the reasoning level becomes a Codex-style continuous slider, with animations
 - **Cost & balance** — per-session/daily cost, 90+ model prices, quota for 11 coding plans
-- **Desk pet** — a DeepSeek whale-girl maid pet that announces work start/end and per-turn cost
+- **Desk pet** — dsh-pet, a blue big fish with 97 seamless transparent animations, idle breathing, screen wandering, throw-and-bounce dragging, multiple pets on one screen, and an optional always-on-top transparent desktop window
 - **Context guard** — AST compression, test log filtering, token budget
 - **Git graph** — branch selection and commit graph
 - **Multi-agent collaboration** — agent-teams for multi-agent teamwork; dsh-agent-arena as a multi-agent council and prompt arena (adjustable collaboration bar, channel rate limiting, auto turn-taking)
@@ -34,7 +34,7 @@ One command to get a complete Codex-style coding workbench:
 - **QQ Bot channel** — dsh-qqbot bridges a QQ Bot into DSH (DMs and group chats, image/file understanding, streaming replies); **disabled by default, opt-in**
 - **WorkBuddy model access** — dsh-workbuddy-connect reuses the WorkBuddy desktop app's local sign-in so GLM-5.3, DeepSeek-V4, Kimi-K3, MiniMax-M3, Hy3 and more show up in the model picker with zero configuration; the domestic and international editions form separate groups, and **when WorkBuddy is not installed or signed in the group simply hides — startup is unaffected**
 - **Native high-performance tooling** — dsh-ops adds four Rust file tools (`ops_inspect_local_file` / `ops_grep` / `ops_glob` / `ops_replace`) plus an `ops_bash` command executor and a bundled PowerShell 7 on Windows; smaller input and output, wider coverage
-- **49 bundled skills** — installed into `DSH_HOME/skills/` on import, ready to use (design/frontend, motion, data analysis, coding, office documents, browser automation and more; MCP servers are not shipped with the pack — configure them in your local `cordis.patch.yml`)
+- **50 bundled skills** — installed into `DSH_HOME/skills/` on import, ready to use (design/frontend, motion, data analysis, coding, office documents, browser automation including ego-lite's `ego-browser`, and more; MCP servers are not shipped with the pack — configure them in your local `cordis.patch.yml`)
 
 ## Installation
 
@@ -57,6 +57,39 @@ Or import the `.dspack` from the DSH launcher.
 > See "WorkBuddy model access" below.
 
 ## Changelog
+
+### v2.9.0 (2026-10-23) (**pre-release, not a stable release**)
+
+- **Desk pet swap**: `dsh-whale-girl-pet@0.3.7` → **`dsh-pet@0.3.8`**
+  ([PC2005-cloud/dsh-pet](https://github.com/PC2005-cloud/dsh-pet)). A blue big fish: 97 seamlessly
+  chained transparent animations, idle breathing, screen wandering, squash-and-stretch clicks,
+  throw-and-bounce drag physics, right-click action menu, balance animation with a thinking bubble,
+  occasional self-talk and a chat dialog; multiple pets on one screen, and an optional **desktop**
+  (always-on-top transparent) window. Row id `dsh-pet`; the settings section is carried by
+  `settings.section` (`pet-config`) and the pet itself is a `position: fixed` overlay that takes no
+  sidebar slot — no conflict with codex-ui's sidebar rework, so `overrides/cordis.patch.yml` needed
+  **no new entries** (only two comments updated).
+- **Desktop window is optional**: the first time the host finds no local Electron it downloads one
+  runtime into `~/.dsh/electron` (once only, progress on the console); a failed download or not
+  wanting it only affects desktop mode — **the in-browser pet keeps working** (settings → display
+  location: browser / desktop / both).
+- **Added ego-lite (the `ego-browser` skill)**: [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite)
+  v2.1.0 — the agent drives your signed-in Chromium for browser automation. Upstream's DSH entry point
+  (`plugins/ego`, package `@citrolabs/ego`) breaks when installed from git because npm/pnpm drop the
+  symlinked Skill directory and it then throws `ENOENT` at import (measured), so this pack ships the
+  same `skills/ego-browser/` payload (tag `v2.1.0`) instead. See "ego-lite browser automation" above
+  for the reasoning and prerequisites.
+- **Compatibility**: all 9 `@deepseek-ai/dsh-*` peers of `dsh-pet@0.3.8` are `^0.2.0-rc.1`, satisfied
+  by host 0.2.0-rc.2; the package's own `dsh.compatibility.dshReleases` also declares
+  `0.2.0-rc.2 = compatible`; non-`dsh-*` peers cordis `^4.0.4` (host 4.0.4) and react/react-dom
+  `^18.2.0` match the existing plugin baseline. `docs/compat-check.cjs` gained a `dsh-pet@0.3.8`
+  entry: **13/13 pass**.
+- **Counts**: plugins 24 → **24** (one-for-one swap; bundles 26 including the 2 official bases,
+  dependencies 24); bundled skills **49 → 50** (new `ego-browser`, 50 directories).
+- **Release channel**: the version rolls forward a normal minor step 2.8.1 → **2.9.0**, but the GitHub
+  Release is published as a **pre-release**, not a stable one. CI (`.github/workflows/release.yml`)
+  now checks `docs/prerelease-versions.txt` and passes `--prerelease` for listed versions.
+- Full notes: `docs/release-notes-v2.9.0.md`.
 
 ### v2.8.1 (2026-10-10)
 - **Removed**: `dsh-inline-figures@0.1.0` — its `draw_figure` tool kept failing with
@@ -249,7 +282,7 @@ Or import the `.dspack` from the DSH launcher.
 | `@michengai/dsh-btw` | 0.1.15 | Read-only side-ask without interrupting the main task |
 | `dsh-effort-slider` | 1.3.1 | Codex-style continuous reasoning-effort slider |
 | `dsh-cost-meter` | 1.7.47 | Cost metering, model prices, coding plan quota, balance |
-| `dsh-whale-girl-pet` | 0.3.7 | DeepSeek whale-girl maid desk pet |
+| `dsh-pet` | 0.3.8 | Desk pet: a blue big fish with 97 transparent animations, multiple pets, and an optional transparent desktop window (browser side needs no configuration) |
 | `@goodandready/dsh-context-lens` | 0.1.28 | AST context compression, token budget guard |
 | `@linxin666/dsh-client-ui-git-graph` | 0.4.4 | Git branch graph |
 | `dsh-computer-use-win` | 0.2.3 | Windows Computer Use desktop control (22 tools) |
@@ -381,6 +414,36 @@ through OPS can still be edited with the host `edit`.
 > returns `EXECUTOR_UNAVAILABLE` by design instead of executing unverified. Under
 > `danger-full-access` an explicit `bashPath` is honoured.
 
+### ego-lite browser automation (the ego-browser skill)
+
+Upstream: [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) v2.1.0. ego-lite is a Chromium
+built for AI agents: the agent reuses your **already signed-in** browser state to open pages, fill
+forms, click, screenshot and extract data, without starting a blank browser or disturbing what you
+are doing.
+
+**Why it ships as a skill instead of a plugin dependency**: the entry point upstream prepares for DSH
+is `plugins/ego` (package name `@citrolabs/ego`), and all it does is register the bundled
+`ego-browser` Skill as a skill provider. But `plugins/ego/skills/ego-browser` is a **symlink** in git
+(pointing back at the repo-root `skills/ego-browser`), and npm/pnpm drop symlinks when packing a git
+dependency — the installed package has no `SKILL.md` and the plugin module dies with `ENOENT` at
+import time (measured here: `pnpm add github:citrolabs/ego-lite#path:/plugins/ego` installs
+`@citrolabs/ego@2.1.0`, but `import('@citrolabs/ego/dsh')` throws
+`ENOENT ... skills/ego-browser/SKILL.md`). Upstream's own README says "npm omits the linked Skill when
+packing the source directly", and the official DSH artifact
+(`@citrolabs/ego-deepseek-harness` tgz) exists only as a build-script output — it is **not on npm**.
+
+So this pack ships the **same** `skills/ego-browser/` (taken from tag `v2.1.0`, including
+`references/`, `scripts/`, `learnings/` and `assets/`) through `home/skills/` into
+`DSH_HOME/skills/ego-browser/` — equivalent to installing that plugin (the plugin is nothing but a
+skill provider, with no extra UI or tools) and independent of git packing behaviour. Once upstream
+publishes `@citrolabs/ego-deepseek-harness` to npm, the pack can switch back to the plugin form.
+
+**ego lite itself must be installed first** (the `ego-browser` command comes from the desktop app):
+macOS can use the script bundled with the skill (`scripts/install.sh`, see `references/install.md`);
+**Windows has no install script** — download the installer from <https://lite.ego.app/>, run it, and
+finish the one-time onboarding, which is what puts `ego-browser` on PATH (and only terminals opened
+afterwards will see it). This pack ships only the Skill text and small icons (~90 KB), not the browser.
+
 ### Computer Use Notes
 
 `dsh-computer-use-win` bridges an MCP stdio server through DSH's built-in
@@ -471,7 +534,7 @@ DSH validates with `semver.satisfies(version, peerRange, { includePrerelease: tr
 
 The gate uses the host's own rule — `semver.satisfies(hostVersion, peerRange, { includePrerelease: true })`.
 `docs/compat-check.cjs` currently records peer ranges for **13 of the installed plugins**, and they
-measure **13/13 pass**; the candidate pool adds 1 incompatible entry (`dsh-edit-resend`, removed in
+measure **13/13 pass** (since v2.9.0 including `dsh-pet@0.3.8`; the previous `dsh-whale-girl-pet` was never recorded there); the candidate pool adds 1 incompatible entry (`dsh-edit-resend`, removed in
 v2.3.0, not installed) which no longer counts toward the verdict. The remaining plugins' ranges were
 evaluated one by one during v2.0.0–v2.3.0 selection but **are not in the script**, so do not read this
 as a 24/24 automated-coverage claim.
@@ -565,7 +628,9 @@ code of the plugins above. Copyright of each plugin belongs to its author:
 - [corrinehu](https://github.com/corrinehu/dsh-workbuddy-connect) (WorkBuddy model access)
 - [wushi2333](https://github.com/wushi2333/dsh-computer-use_codex-style) (Codex-style Computer Use)
 - [T-Auto](https://github.com/T-Auto/dsh-ops) (native high-performance tooling dsh-ops)
-- The respective authors of `dsh-effort-slider`, `dsh-cost-meter`, `dsh-whale-girl-pet`, `dsh-computer-use-win`
+- [PC2005-cloud](https://github.com/PC2005-cloud/dsh-pet) (desk pet dsh-pet)
+- The respective authors of `dsh-effort-slider`, `dsh-cost-meter`, `dsh-computer-use-win`
+- [citrolabs](https://github.com/citrolabs/ego-lite) (ego-lite / the `ego-browser` skill; the Skill text and icons shipped in this pack remain their copyright, MIT)
 - The respective authors of `dsh-context`, `@modusensus/dsh-mneme`, `@liustack/modlens`, `dsh-prompt`,
   `@nanmicoder/dsh-agent-teams`, `dsh-plugin-subagent-director`, `@goodandready/dsh-key-limits`
 - The `dsh-agent-arena` and `dsh-qqbot` git dependencies are forks maintained in this repository;

@@ -9,7 +9,7 @@ minimumReleaseAgeExclude:
   - '@michengai/dsh-codex-ui@1.1.25'
   - '@michengai/dsh-simplify@0.1.12'
   - dsh-cost-meter@1.7.47
-  - dsh-whale-girl-pet@0.3.7
+  - dsh-pet@0.3.8
   - '@mrweicodes/dsh-loop-guard@1.0.8'
   - '@goodandready/dsh-key-limits@0.2.19'
   - 'dsh-prompt@0.3.0'

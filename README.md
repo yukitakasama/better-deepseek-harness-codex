@@ -17,7 +17,7 @@
 - **只读旁问** —— 基于当前上下文单独提问，不打断主任务
 - **思考强度滑块** —— 推理等级换成 Codex 风格连续滑块，带动效
 - **费用与余额** —— 本会话/当日费用、90+ 模型价格、11 家 Coding Plan 额度
-- **桌宠** —— DeepSeek 娘鲸鱼女仆，报开工收工与单轮花费
+- **桌宠** —— dsh-pet 蓝色大肥鱼：97 段透明动画待机呼吸、屏幕漫游、拖拽甩抛、可多开同屏，还能落到桌面做透明置顶小窗
 - **上下文守卫** —— AST 压缩、测试日志过滤、token 预算
 - **Git 图** —— 分支选择与提交图
 - **多智能体协作** —— agent-teams 多 Agent 团队协作；dsh-agent-arena 多智能体议事厅与提示词竞技场（可调协作栏、渠道限流、自动接话）
@@ -32,7 +32,7 @@
 - **Computer Use** —— 操控 Windows 原生桌面：UIA 无障碍树观察、截图、鼠标键盘、窗口管理（22 个工具）
 - **WorkBuddy 模型接入** —— dsh-workbuddy-connect 复用 WorkBuddy 桌面 App 的登录态，GLM-5.3、DeepSeek-V4、Kimi-K3、MiniMax-M3、Hy3 等直接出现在模型选择器中，零配置；国内版与国际版各成一个分组，**本机没装/没登录 WorkBuddy 时该分组自动隐藏，不影响启动**
 - **原生高性能工具链** —— dsh-ops 提供 Rust 编写的 `ops_inspect_local_file` / `ops_grep` / `ops_glob` / `ops_replace` 四个文件工具与 `ops_bash` 命令执行器，Windows 上另附随包 PowerShell 7；输入输出更省 token、覆盖更广
-- **自带 49 个 skill** —— 安装即落入 `DSH_HOME/skills/`，开箱即用（覆盖设计/前端、动效、数据分析、代码开发、办公文档、浏览器等；MCP 服务器本次未随包分发，按本机 `cordis.patch.yml` 单独配置）
+- **自带 50 个 skill** —— 安装即落入 `DSH_HOME/skills/`，开箱即用（覆盖设计/前端、动效、数据分析、代码开发、办公文档、浏览器自动化（含 ego-lite 的 `ego-browser`）等；MCP 服务器本次未随包分发，按本机 `cordis.patch.yml` 单独配置）
 
 ## 安装
 
@@ -89,7 +89,7 @@ dsh --profile better-deepseek-harness-codex
 | `@michengai/dsh-btw` | 0.1.15 | 只读旁问，不打断主任务 |
 | `dsh-effort-slider` | 1.3.1 | Codex 风格思考强度连续滑块 |
 | `dsh-cost-meter` | 1.7.47 | 费用统计、模型价格、Coding Plan 额度、余额 |
-| `dsh-whale-girl-pet` | 0.3.7 | DeepSeek 娘鲸鱼女仆桌宠 |
+| `dsh-pet` | 0.3.8 | 桌宠：蓝色大肥鱼，97 段透明动画、可多开、可落到桌面独立小窗（浏览器端零配置） |
 | `@goodandready/dsh-context-lens` | 0.1.28 | AST 上下文压缩、token 预算守卫 |
 | `@linxin666/dsh-client-ui-git-graph` | 0.4.4 | Git 分支图 |
 | `dsh-computer-use-win` | 0.2.3 | Windows Computer Use 桌面操控（22 工具） |
@@ -226,6 +226,33 @@ Kimi-K3、MiniMax-M3、Hy3 等）注册成 DSH 的一个 LLM provider（`llm-wor
 > 已校验 IPC 兼容的随包 MSYS 副本；指向自己的 Git for Windows 会按设计返回
 > `EXECUTOR_UNAVAILABLE`，不会裸执行。`danger-full-access` 下可用 `bashPath` 指定执行器。
 
+### ego-lite 浏览器自动化（ego-browser skill）
+
+上游：[citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) v2.1.0。ego-lite 是给 AI agent
+用的 Chromium：agent 直接复用你**已登录**的浏览器状态去开网页、填表、点击、截图、取数据，
+不另起一个空白浏览器，也不打断你手上的操作。
+
+**为什么是 skill 而不是一条插件依赖**：上游为 DSH 准备的入口是 `plugins/ego`（包名
+`@citrolabs/ego`），它只做一件事——把随包的 `ego-browser` Skill 注册成 skill provider。
+但该目录里的 `skills/ego-browser` 在 git 里是**软链**（指回仓库根的 `skills/ego-browser`），
+npm / pnpm 打包 git 依赖时会丢掉软链，装出来的包缺 `SKILL.md`，插件模块在 import 阶段直接
+`ENOENT`（本机实测：`pnpm add github:citrolabs/ego-lite#path:/plugins/ego` 能装上
+`@citrolabs/ego@2.1.0`，但 `import('@citrolabs/ego/dsh')` 抛
+`ENOENT ... skills/ego-browser/SKILL.md`）；上游 README 自己也写明「npm omits the linked Skill
+when packing the source directly」，而 DSH 侧的官方分发物（`@citrolabs/ego-deepseek-harness`
+tgz）只存在于其打包脚本产物中，**未上 npm**。
+
+所以本包直接把**同一份** `skills/ego-browser/`（取自仓库 tag `v2.1.0`，含 `references/`、
+`scripts/`、`learnings/`、`assets/`）随 `home/skills/` 投递到 `DSH_HOME/skills/ego-browser/`
+——效果与装那个插件等价（插件本身就是一个 Skill provider，没有额外 UI/工具），且不依赖 git
+打包行为。等上游把 `@citrolabs/ego-deepseek-harness` 发上 npm 后，可改回插件依赖形态。
+
+**第一次用之前要装 ego lite 本体**（`ego-browser` 命令由桌面 App 提供）：macOS 可用 skill 自带
+的 `scripts/install.sh`（步骤见 `references/install.md`）；**Windows 没有安装脚本**，需到
+<https://lite.ego.app/> 下载安装包手动安装，完成一次性引导（onboarding）后才会把
+`ego-browser` 写进 PATH，且**只有引导之后新开的终端**才认得这个命令。本包只投递 Skill 文本
+与小图（约 90 KB），不含浏览器二进制。
+
 ### Computer Use 说明
 
 `dsh-computer-use-win` 通过 DSH 内置的 `@deepseek-ai/dsh-mcp-client` 桥接一个
@@ -311,7 +338,7 @@ DSH 用 `semver.satisfies(版本, peer范围, { includePrerelease: true })` 校�
 - 钉死精确版本（如 `0.1.7-rc.1`）的插件在 rc.2 上会**硬失败**，本包一律不选。
 
 判定口径与宿主一致：`semver.satisfies(宿主版本, peer范围, { includePrerelease: true })`。
-`docs/compat-check.cjs` 目前**逐条录入 13 个在装插件**的 peer 范围，实测 **13/13 通过**；
+`docs/compat-check.cjs` 目前**逐条录入 13 个在装插件**的 peer 范围，实测 **13/13 通过**（v2.9.0 起含 `dsh-pet@0.3.8`；换装前的 `dsh-whale-girl-pet` 未录入脚本）；
 候选池另计 1 个不兼容（`dsh-edit-resend`，v2.3.0 已移除、未装入本包，不参与总判定）。
 其余插件的 peer 范围在 v2.0.0–v2.3.0 的选型中逐个评估过，但**未录入脚本**，不要把它当成 24/24 的全覆盖声明。
 
@@ -399,7 +426,9 @@ dsh --profile better-deepseek-harness-codex --dump-config
 - [corrinehu](https://github.com/corrinehu/dsh-workbuddy-connect)（WorkBuddy 模型接入）
 - [wushi2333](https://github.com/wushi2333/dsh-computer-use_codex-style)（Codex 风格 Computer Use）
 - [T-Auto](https://github.com/T-Auto/dsh-ops)（原生高性能工具链 dsh-ops）
-- `dsh-effort-slider`、`dsh-cost-meter`、`dsh-whale-girl-pet`、`dsh-computer-use-win` 各作者
+- [PC2005-cloud](https://github.com/PC2005-cloud/dsh-pet)（桌宠 dsh-pet）
+- `dsh-effort-slider`、`dsh-cost-meter`、`dsh-computer-use-win` 各作者
+- [citrolabs](https://github.com/citrolabs/ego-lite)（ego-lite / `ego-browser` skill，随包投递的 Skill 文本与图标版权归其所有，MIT）
 - `dsh-context`、`@modusensus/dsh-mneme`、`@liustack/modlens`、`dsh-prompt`、
   `@nanmicoder/dsh-agent-teams`、`dsh-plugin-subagent-director`、`@goodandready/dsh-key-limits`
   等各作者
@@ -408,6 +437,34 @@ dsh --profile better-deepseek-harness-codex --dump-config
 格式规范：[DSH-PackForge](https://github.com/DSH-PackForge/DSH-PackForge)。
 
 ## 更新日志
+
+### v2.9.0 (2026-10-23)（**预发布 pre-release，非正式版**）
+
+- **桌宠换装**：`dsh-whale-girl-pet@0.3.7` → **`dsh-pet@0.3.8`**
+  （[PC2005-cloud/dsh-pet](https://github.com/PC2005-cloud/dsh-pet)）。蓝色大肥鱼：97 段透明动画
+  无缝衔接、待机呼吸、屏幕漫游、点击 Q 弹、拖拽甩抛反弹、右键点播动作、余额动画 + 头顶联想气泡、
+  偶尔碎碎念与对话；可多开同屏，也能把宠物落到**桌面**（透明置顶小窗）。行标识 `dsh-pet`，
+  设置分区由 `settings.section`（`pet-config`）承接、浮层走 `position: fixed`，不占侧栏槽位——
+  与 codex-ui 的侧栏改造不冲突，`overrides/cordis.patch.yml` **无需新增条目**（只更新了两处注释）。
+- **桌面小窗是可选能力**：宿主首次发现本机没有 Electron 时会自行下载一份 runtime 到
+  `~/.dsh/electron`（只下一次、打在控制台日志里）；下载失败或不想用时只影响桌面模式，
+  **浏览器里的宠物照常可用**（设置页「显示位置」可切「仅浏览器 / 仅桌面 / 两者」）。
+- **新增 ego-lite（`ego-browser` skill）**：[citrolabs/ego-lite](https://github.com/citrolabs/ego-lite)
+  v2.1.0 —— 让 agent 复用你已登录的 Chromium 做浏览器自动化。上游的 DSH 插件入口
+  （`plugins/ego`，包名 `@citrolabs/ego`）在 git 安装时会因软链的 Skill 目录被 npm/pnpm 打包
+  丢弃而在 import 阶段 `ENOENT`（已实测），故本包改为投递同一份 `skills/ego-browser/`
+  （tag `v2.1.0`）。理由与安装前提见上方「ego-lite 浏览器自动化」。
+- **兼容性判定**：`dsh-pet@0.3.8` 的 9 个 `@deepseek-ai/dsh-*` peer 全为 `^0.2.0-rc.1`，
+  宿主 0.2.0-rc.2 满足；插件自带 `dsh.compatibility.dshReleases` 亦声明
+  `0.2.0-rc.2 = compatible`；非 `dsh-*` peer 的 cordis `^4.0.4`（宿主 4.0.4）、
+  react / react-dom `^18.2.0` 与既有插件同基线。`docs/compat-check.cjs` 新增
+  `dsh-pet@0.3.8` 条目，实测 **13/13 通过**。
+- **计数**：插件 24 → **24**（1:1 换装；bundles 26 含 2 个官方基座，dependencies 24）；
+  自带 skill **49 → 50**（新增 `ego-browser`，目录数 50）。
+- **发行口径**：本次按常规推进小版本号 2.8.1 → **2.9.0**，但 GitHub Release 以
+  **pre-release** 形式发布，**不走正式版**。CI 的 `.github/workflows/release.yml` 新增发布通道判定：
+  版本出现在 `docs/prerelease-versions.txt` 里就打 `--prerelease`。
+- 完整说明见 `docs/release-notes-v2.9.0.md`。
 
 ### v2.8.1 (2026-10-10)
 - **移除**：`dsh-inline-figures@0.1.0` —— 其 `draw_figure` 工具返回通道持续报
