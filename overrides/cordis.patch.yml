@@ -1,4 +1,14 @@
 # 更好的 deepseek harness（codex 风格）· profile patch 层
+#
+# ═══ v3.0.0 状态（基座 DSH 0.2.1-rc.2）══════════════════════════════════════
+# 本版把 13 个「上游未明确声明适配 0.2.1-rc.2」的插件移出了 package.json 的
+# dsh.profile.bundles（不挂载），但仍保留在 dependencies 里（装着不加载）。
+# patch 层独立于 bundles 生效，所以凡是引用这些插件模块的行必须在这里一并 disabled，
+# 否则那一行仍会把模块拉起来 → 依旧有崩在兼容门/启动期的风险。
+# 本文件里共处理 5 行：computer-use HOST 行、preset-computer-use、它的 MCP client 行、
+# dsh-ops 的 file 与 shell 两行（另 im-qqbot 行自 v2.4.0 起就默认关闭）。
+# 重新启用某插件时：把它加回 bundles，并删掉这里对应的 disabled: true。
+# ═══════════════════════════════════════════════════════════════════════════
 # 包标识：better-deepseek-harness-codex
 #
 # 本文件由整合包携带，安装时落在 profile 根目录，作为「最后一层」应用
@@ -53,6 +63,8 @@
 # 这里覆盖的是 args 键，不影响 serverName / transport 等其余配置。
 - id: mcp-dsh-computer-use-win
   name: "@deepseek-ai/dsh-mcp-client"
+  # v3.0.0：dsh-computer-use-win 已屏蔽 → 这行 MCP client 一并关闭，避免仍拉起 sidecar
+  disabled: true
   config:
     serverName: wincu
     transport: stdio
@@ -102,6 +114,8 @@
 # 但**不要在同一会话里同时驱动桌面**，否则两套指针/覆盖层会互相打架。
 - insert:
     - id: preset-computer-use
+      # v3.0.0：dsh-computer-use 已屏蔽 → 整个 preset 关闭，避免会话加载 dsh-computer-use/tool
+      disabled: true
       name: "@deepseek-ai/dsh-agent-preset"
       config:
         id: computer-use
@@ -163,7 +177,9 @@
 # 的既有模式一致。源码级修复走上游 PR，见 docs/fix-plan-issue-1-v2.7.1.md。
 - id: computer-use
   name: dsh-computer-use
-  disabled: !!js process.platform !== 'win32'
+  # v3.0.0：上游无 0.2.1-rc.2 适配声明（peer 全为通配、仓库 2026-09-15 后无提交），
+  # 已从 bundles 移除；此处改为无条件 disabled（原为「非 Windows 才 disabled」的平台守卫）。
+  disabled: true
 
 # ── dsh-ops（T-Auto/dsh-ops 0.3.0）：默认值记录 + 平台守卫 ──────────────────
 # 插件自带 bundle patch 已插入 4 行（shell / file / background 空操作桩 / ptc），
@@ -178,11 +194,15 @@
 # hide-official 会遮蔽官方工具，三者都保持上游默认关闭，需要时按需开启。
 - id: dsh-ops-file
   name: dsh-ops/file
+  # v3.0.0：dsh-ops 上游未声明适配 0.2.1-rc.2 → 已屏蔽
+  disabled: true
   config:
     promptPolicy: true
     required: false
 - id: dsh-ops-shell
   name: dsh-ops/shell
+  # v3.0.0：同上，已屏蔽
+  disabled: true
   config:
     promptPolicy: true
     publishBashTool: true

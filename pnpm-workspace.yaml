@@ -3,13 +3,27 @@ packages:
 
 nodeLinker: hoisted
 autoInstallPeers: false
+# 依赖全部钉死精确版本；DSH 生态的 pnpm minimumReleaseAge 默认按 1440 分钟（1 天）拦截新发布，
+# 这里逐条登记本包钉死的确切版本，保证首次安装不会被“发布未满 1 天”挡下。
 minimumReleaseAgeExclude:
-  - '@michengai/dsh-btw@0.1.15'
-  - '@michengai/dsh-code-review@0.1.9'
-  - '@michengai/dsh-codex-ui@1.1.25'
-  - '@michengai/dsh-simplify@0.1.12'
-  - dsh-cost-meter@1.7.47
-  - dsh-pet@0.3.8
+  - '@goodandready/dsh-context-lens@0.1.28'
+  - 'dsh-cost-meter@1.9.30'
+  - '@linxin666/dsh-client-ui-git-graph@0.4.8'
+  - 'dsh-effort-slider@1.3.1'
+  - 'dsh-pet@0.3.8'
+  - '@michengai/dsh-btw@1.0.4'
+  - '@michengai/dsh-simplify@1.0.1'
+  - '@michengai/dsh-code-review@1.0.1'
+  - '@michengai/dsh-codex-ui@1.1.47'
+  - 'dsh-computer-use-win@0.2.3'
+  - '@nanmicoder/dsh-agent-teams@0.1.26'
+  - 'dsh-context@0.74.0'
+  - 'dsh-plugin-subagent-director@0.6.0-beta.2'
   - '@mrweicodes/dsh-loop-guard@1.0.8'
-  - '@goodandready/dsh-key-limits@0.2.19'
+  - '@modusensus/dsh-mneme@0.8.13'
+  - '@liustack/modlens@3.26.6'
   - 'dsh-prompt@0.3.0'
+  - 'dsh-plugin-wallpaper-engine@1.2.0'
+  - '@goodandready/dsh-key-limits@0.2.19'
+  - 'dsh-workbuddy-connect@0.7.9'
+  - 'dsh-ops@0.3.0'

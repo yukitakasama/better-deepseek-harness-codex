@@ -1,3 +1,4 @@
 # 只以 pre-release 形式发布的版本号（每行一个，与 manifest.version 逐字对齐）。
 # release.yml 命中本文件即给 gh release create 追加 --prerelease；正式版不要写进这里。
 2.9.0
+3.0.0

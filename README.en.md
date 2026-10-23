@@ -3,42 +3,58 @@
 简体中文 | English
 
 A DeepSeek Harness modpack for **Coding users**, aligned with the style and features of Codex.
-Built on **DSH 0.2.0-rc.2**.
+Built on **DSH 0.2.1-rc.2** (since v3.0.0; the previous release used 0.2.0-rc.2).
 
 > Modpack identifier: `better-deepseek-harness-codex` (repo name / `.dspack` prefix / profile name).
 > Community modpack — not an official DeepSeek product.
 
-## What's Inside
+## ⚠️ v3.0.0 is a breaking update (pre-release)
 
-One command to get a complete Codex-style coding workbench:
+- **Host**: 0.2.0-rc.2 → **0.2.1-rc.2**. This is a cross-minor host change, so every plugin peer gate is re-evaluated and the old plugin set cannot simply be carried over.
+- **Only the 11 plugins whose upstream explicitly declares 0.2.1-rc.2 support are mounted.** Another **13 plugins are installed but not mounted** — they are removed from `dsh.profile.bundles`, and their rows in `overrides/cordis.patch.yml` are set to `disabled: true` (the patch layer applies independently of bundles, so leaving a row alive would pull the module back in).
+- **Install into a fresh profile**; do not overwrite a v2.x profile in place — the plugin sets only half overlap.
+- **To re-enable a shelved plugin**: add it back to `package.json` → `dsh.profile.bundles`, delete the matching `disabled: true` in `overrides/cordis.patch.yml`, and confirm upstream has added 0.2.1-rc.2 to its peer range or `dsh.compatibility.dshReleases`.
+- Per-plugin evidence (peer matrix / `dshReleases` / `engines.dsh` / README / release notes) is in `docs/release-notes-v3.0.0.md`.
 
-- **Codex-style UI** — workspace session tree, global search, turn navigation, session rename/archive/fork
-- **Code review & simplification** — `/review` runs an independent sub-agent for code review; `/simplify` simplifies code by Git change scope
-- **Read-only side-ask** — ask questions based on the current context without interrupting the main task
-- **Reasoning-effort slider** — the reasoning level becomes a Codex-style continuous slider, with animations
-- **Cost & balance** — per-session/daily cost, 90+ model prices, quota for 11 coding plans
-- **Desk pet** — dsh-pet, a blue big fish with 97 seamless transparent animations, idle breathing, screen wandering, throw-and-bounce dragging, multiple pets on one screen, and an optional always-on-top transparent desktop window
-- **Context guard** — AST compression, test log filtering, token budget
-- **Git graph** — branch selection and commit graph
-- **Multi-agent collaboration** — agent-teams for multi-agent teamwork; dsh-agent-arena as a multi-agent council and prompt arena (adjustable collaboration bar, channel rate limiting, auto turn-taking)
-- **Context dashboard** — dsh-context for context visualization
-- **Per-subagent model** — subagent-director assigns an independent model to each sub-agent
-- **Loop guard** — loop-guard detects degenerate "all thought, no action" loops and auto-interrupts with corrective prompts
-- **Cross-session memory** — mneme lets the agent remember project background and past decisions
-- **Vision** — modlens as a vision bridge, routing screenshots/images to a vision model
-- **Prompt toolbox** — dsh-prompt with 24 deep templates one click away
-- **Live wallpapers** — brings Wallpaper Engine wallpapers into the DSH web UI
-- **Quota limits** — key-limits shows API key / subscription remaining quota (complements cost-meter)
-- **Computer Use** — control the native Windows desktop: UIA accessibility tree inspection, screenshots, mouse/keyboard, window management (22 tools)
-- **Codex-style Computer Use** — a separate `computer-use` agent preset with 13 native window2 tools, a visible synthetic cursor and an Esc interrupt; ordinary coding sessions never get the mouse
-- **QQ Bot channel** — dsh-qqbot bridges a QQ Bot into DSH (DMs and group chats, image/file understanding, streaming replies); **disabled by default, opt-in**
-- **WorkBuddy model access** — dsh-workbuddy-connect reuses the WorkBuddy desktop app's local sign-in so GLM-5.3, DeepSeek-V4, Kimi-K3, MiniMax-M3, Hy3 and more show up in the model picker with zero configuration; the domestic and international editions form separate groups, and **when WorkBuddy is not installed or signed in the group simply hides — startup is unaffected**
-- **Native high-performance tooling** — dsh-ops adds four Rust file tools (`ops_inspect_local_file` / `ops_grep` / `ops_glob` / `ops_replace`) plus an `ops_bash` command executor and a bundled PowerShell 7 on Windows; smaller input and output, wider coverage
-- **50 bundled skills** — installed into `DSH_HOME/skills/` on import, ready to use (design/frontend, motion, data analysis, coding, office documents, browser automation including ego-lite's `ego-browser`, and more; MCP servers are not shipped with the pack — configure them in your local `cordis.patch.yml`)
+## What's Inside (the 11 plugins actually mounted in this release)
+
+One command for the core of a Codex-style coding workbench:
+
+- **Codex-style UI** — workspace session tree, global search, turn navigation, session rename/archive/fork (`@michengai/dsh-codex-ui` 1.1.47)
+- **Code review & simplification** — `/review` runs an independent sub-agent; `/simplify` works by Git change scope (1.0.1 / 1.0.1)
+- **Read-only side-ask** — ask about the current context without interrupting the main task (`@michengai/dsh-btw` 1.0.4)
+- **Cost & balance** — per-session/daily cost, model prices, coding-plan quota, balance (`dsh-cost-meter` 1.9.30)
+- **Desk pet** — dsh-pet: a blue big fish with 97 seamless transparent animations, idle breathing, screen wandering, throw-and-bounce dragging, multiple pets on one screen, and an optional always-on-top transparent desktop window (`dsh-pet` 0.3.8)
+- **Git graph** — branch selection and commit graph (`@linxin666/dsh-client-ui-git-graph` 0.4.8)
+- **Context dashboard** — dsh-context visualization (0.74.0)
+- **Multi-agent teams** — agent-teams collaboration (`@nanmicoder/dsh-agent-teams` 0.1.26)
+- **Per-subagent model** — subagent-director assigns a model per sub-agent (0.6.0-beta.2, **upstream `latest` is a beta**)
+- **WorkBuddy model access** — reuses the WorkBuddy desktop app sign-in so GLM-5.3, DeepSeek-V4, Kimi-K3, MiniMax-M3, Hy3 and more appear in the model picker with zero configuration; **when nothing is installed or signed in the group simply hides** (0.7.9)
+- **50 bundled skills** — installed into `DSH_HOME/skills/` on import (design/frontend, motion, data analysis, coding, office documents, browser automation including ego-lite's `ego-browser`; MCP servers are not shipped — configure them in your local `cordis.patch.yml`)
+
+### Shelved in this release (installed, not mounted)
+
+Upstream has **not explicitly declared** 0.2.1-rc.2 support for these (or explicitly does not support it); they are not loaded to avoid a gate rejection or a startup crash. Re-enable one at a time and verify it yourself.
+
+| Plugin | Pinned version | Why it is shelved |
+|---|---|---|
+| `dsh-ops` | 0.3.0 | Upstream 0.4.1 only covers it via `^0.2.0-rc.2`; rc.2 is never named |
+| `@goodandready/dsh-context-lens` | 0.1.28 | Range coverage only (`^0.1.7-rc.2 \|\| ^0.2.0-rc.1`) |
+| `@goodandready/dsh-key-limits` | 0.2.19 | No `@deepseek-ai/dsh-*` peer at all → cannot confirm |
+| `dsh-plugin-wallpaper-engine` | 1.2.0 | Range coverage only (`>=0.2.0-rc.1`); 1.4.0 also splits into 8 packages |
+| `@modusensus/dsh-mneme` | 0.8.13 | Range coverage only; 0.9.4 adds a `dsh-better-sidebar` peer |
+| `@mrweicodes/dsh-loop-guard` | 1.0.8 | Range coverage only; no upstream update since 2026-10-09 |
+| `dsh-computer-use-win` | 0.2.3 | No `@deepseek-ai/dsh-*` peer at all → cannot confirm |
+| `dsh-computer-use` | fork `72f390a` | Peers are all `*`, no compat statement; upstream stopped at 2026-09-15 |
+| `dsh-prompt` | 0.3.0 | Only `engines.dsh >=0.2.0-rc.2` range coverage, no rc named |
+| `@liustack/modlens` | 3.26.6 | No peer / engines declaration at all → cannot confirm |
+| `dsh-effort-slider` | 1.3.1 | No compat statement at all; upstream stopped at 2026-09-26 → cannot confirm |
+| `dsh-agent-arena` | fork `25e2c55` | Upstream Tikzen 0.7.0 **pins `0.2.0-rc.2` exactly** → not adapted |
+| `@tencent-connect/dsh-qqbot` | fork `7e88006` | Range coverage only (`>=0.1.0-rc.6`); upstream 0.5.2 does not name rc.2 either |
 
 ## Installation
 
-Requires **DSH 0.2.0-rc.2** (this modpack's `dshVersion` pins exactly that version; it also declares compatibility with 0.2.0-rc.1).
+Requires **DSH 0.2.1-rc.2** (this modpack's `dshVersion` pins exactly that version; since v3.0.0 it no longer declares 0.2.0.x compatibility).
 
 ```bash
 dsh --profile better-deepseek-harness-codex
@@ -46,9 +62,10 @@ dsh --profile better-deepseek-harness-codex
 
 Or import the `.dspack` from the DSH launcher.
 
-> **Note**: since v2.2.0, `dsh-agent-arena` is added as a git fork dependency
-> (`github:yukitakasama/dsh-agent-arena#25e2c55`), so installation requires access to GitHub.
-> It will be switched back to the npm registry version once upstream ships an official release for 0.2.0-rc.2.
+> **Note (git dependencies)**: the pack still carries 3 git dependencies (`dsh-computer-use`, `dsh-agent-arena`,
+> `@tencent-connect/dsh-qqbot`), so installation requires access to GitHub. Since v3.0.0 all three are
+> **shelved** (not mounted) but stay in `dependencies` so they can be re-enabled at any time; if your network
+> cannot fetch git dependencies, delete them from `package.json` — the mounted set is unaffected.
 
 > **WorkBuddy prerequisite**: since v2.7.0 the pack ships `dsh-workbuddy-connect`, which reuses the
 > **local sign-in state** of the WorkBuddy desktop app. To actually see the WorkBuddy model groups you
@@ -58,6 +75,17 @@ Or import the `.dspack` from the DSH launcher.
 
 ## Changelog
 
+### v3.0.0 (2026-10-23) (**breaking update · pre-release**)
+
+- **Host upgrade**: DSH `0.2.0-rc.2` → **`0.2.1-rc.2`** (identical under both npm `latest` and the newest official GitHub Release; npm also carries `0.2.1-rc.3` under `next` as of the same day, with no GitHub Release, and this release does not follow it). `manifest.dshVersions` now declares only `0.2.1-rc.2`.
+- **Plugins are selectively mounted** by one criterion: does upstream explicitly declare 0.2.1-rc.2?
+  **Mounted (11)**: `@michengai/dsh-codex-ui` 1.1.47, `@michengai/dsh-code-review` 1.0.1, `@michengai/dsh-simplify` 1.0.1, `@michengai/dsh-btw` 1.0.4, `dsh-cost-meter` 1.9.30, `dsh-context` 0.74.0, `dsh-pet` 0.3.8, `@linxin666/dsh-client-ui-git-graph` 0.4.8, `@nanmicoder/dsh-agent-teams` 0.1.26, `dsh-plugin-subagent-director` 0.6.0-beta.2 (upstream `latest` is a beta), `dsh-workbuddy-connect` 0.7.9.
+  **Shelved (13)**: installed but removed from `bundles` and disabled in the patch layer — `dsh-ops`, `@goodandready/dsh-context-lens`, `@goodandready/dsh-key-limits`, `dsh-plugin-wallpaper-engine`, `@modusensus/dsh-mneme`, `@mrweicodes/dsh-loop-guard`, `dsh-computer-use-win`, `dsh-computer-use`, `dsh-prompt`, `@liustack/modlens`, `dsh-effort-slider`, `dsh-agent-arena`, `@tencent-connect/dsh-qqbot`.
+- **Patch layer disabled in step** (critical — otherwise a single patch row pulls the module back in): `computer-use` (the HOST row, previously the "non-Windows only" guard, now unconditionally `disabled: true`), `preset-computer-use` (whole preset), `mcp-dsh-computer-use-win` (its MCP client), `dsh-ops-file` / `dsh-ops-shell`.
+- **Version jumps**: three of the MichengAI plugins cross a major (`dsh-btw` 0.1.15→1.0.4, `dsh-code-review` 0.1.9→1.0.1, `dsh-simplify` 0.1.12→1.0.1), plus `dsh-context` 0.63→0.74, `dsh-cost-meter` 1.7.47→1.9.30, `dsh-agent-teams` 0.1.22→0.1.26. **All of these are upstream rebuilds for the 0.2.1 line, so behaviour changes — walk your usual flows after installing.**
+- **Counts**: dependencies 24 → **24** (nothing removed); bundles 26 → **13** (11 plugins + 2 official bases); `compat-check` mounted **11/11 pass**, 13 shelved reported separately (6 of which have no peer declaration at all).
+- **Known trade-off**: `dsh-plugin-subagent-director@0.6.0-beta.2` is a beta and moves persona/toolFilter into Agent Presets; it is the only version declaring rc.2, so it is mounted — if you do not want a beta, move it out of `bundles` (same shelving procedure).
+- Per-plugin evidence (current version / upstream latest / declaration / source links) is in `docs/release-notes-v3.0.0.md`.
 ### v2.9.0 (2026-10-23) (**pre-release, not a stable release**)
 
 - **Desk pet swap**: `dsh-whale-girl-pet@0.3.7` → **`dsh-pet@0.3.8`**
@@ -272,36 +300,41 @@ Or import the `.dspack` from the DSH launcher.
 - `dshVersions`: declares the set of tested-compatible versions (0.2.0-rc.2, 0.2.0-rc.1)
 - `launchers`: declares launcher compatibility (dshl, dsh-packforge-app)
 
-## Plugin List (24)
+## Plugin List (24 in the pack; 11 mounted in this release)
 
-| Plugin | Version | Purpose |
-|---|---|---|
-| `@michengai/dsh-codex-ui` | 1.1.25 | Codex-style sidebar, workspace session tree, global search, turn navigation |
-| `@michengai/dsh-code-review` | 0.1.9 | `/review` code review via an independent sub-agent |
-| `@michengai/dsh-simplify` | 0.1.12 | `/simplify` Git-scoped code simplification |
-| `@michengai/dsh-btw` | 0.1.15 | Read-only side-ask without interrupting the main task |
-| `dsh-effort-slider` | 1.3.1 | Codex-style continuous reasoning-effort slider |
-| `dsh-cost-meter` | 1.7.47 | Cost metering, model prices, coding plan quota, balance |
-| `dsh-pet` | 0.3.8 | Desk pet: a blue big fish with 97 transparent animations, multiple pets, and an optional transparent desktop window (browser side needs no configuration) |
-| `@goodandready/dsh-context-lens` | 0.1.28 | AST context compression, token budget guard |
-| `@linxin666/dsh-client-ui-git-graph` | 0.4.4 | Git branch graph |
-| `dsh-computer-use-win` | 0.2.3 | Windows Computer Use desktop control (22 tools) |
-| `dsh-computer-use` | fork `72f390a` | **Codex-style Computer Use**: 13 native window2 tools (+3 DSH extensions), a visible synthetic cursor and status pill, an Esc interrupt, per-app approvals. Mounted in its own **`computer-use` preset**, so ordinary coding sessions never get the mouse. See "Codex-style Computer Use" below |
-| `@nanmicoder/dsh-agent-teams` | 0.1.22 | Multi-agent team collaboration |
-| `dsh-context` | 0.63.0 | Context visualization dashboard |
-| `dsh-plugin-subagent-director` | 0.5.5 | Per-subagent model selection |
-| `dsh-agent-arena` | 0.6.0 (fork `25e2c55`) | Multi-agent council and prompt arena |
-| `@mrweicodes/dsh-loop-guard` | 1.0.8 | Thought-loop guard with auto-interruption |
-| `@modusensus/dsh-mneme` | 0.8.13 | Cross-session long-term memory |
-| `@liustack/modlens` | 3.26.6 | Vision bridge & screenshot understanding |
-| `dsh-prompt` | 0.3.0 | Prompt template toolbox |
-| `dsh-plugin-wallpaper-engine` | 1.2.0 | Wallpaper Engine live wallpapers |
-| `@goodandready/dsh-key-limits` | 0.2.19 | API key / subscription quota limits |
-| `@tencent-connect/dsh-qqbot` | fork 0.5.1 | QQ Bot channel: **disabled by default, opt-in**. DM/group chat, image & file understanding, streaming replies, proactive questions and action confirmations, `/preset` switching, `/compact`. This pack uses the `yukitakasama/dsh-qqbot` fork, which skips instead of blocking when credentials are missing |
-| `dsh-workbuddy-connect` | 0.7.1 | **WorkBuddy model access**: reuses the WorkBuddy desktop app's local sign-in to feed GLM-5.3, DeepSeek-V4, Kimi-K3, MiniMax-M3, Hy3 and more into the DSH model picker with zero configuration; domestic and international editions form separate groups with independent accounts and credits, and an unsigned-in edition just hides its group. See "WorkBuddy model access" below |
-| `dsh-ops` | 0.3.0 | Four Rust file tools + `ops_bash` + bundled PowerShell 7 |
+### Mounted (present in `dsh.profile.bundles`)
+
+| Plugin | Version | Purpose | Upstream declaration |
+|---|---|---|---|
+| `@michengai/dsh-codex-ui` | 1.1.47 | Codex-style sidebar, workspace session tree, global search, turn navigation | peer matrix enumerates `0.2.1-rc.2`; README says explicit support since 1.1.42 |
+| `@michengai/dsh-code-review` | 1.0.1 | `/review` code review via an independent sub-agent | peer matrix + README badge "up to 0.2.1-rc.2" |
+| `@michengai/dsh-simplify` | 1.0.1 | `/simplify` Git-scoped simplification | peer matrix enumerates `0.2.1-rc.2` |
+| `@michengai/dsh-btw` | 1.0.4 | Read-only side-ask | peer matrix + README says 1.0.0 was tested on rc.1/rc.2 |
+| `dsh-cost-meter` | 1.9.30 | Cost metering, model prices, coding-plan quota, balance | `dsh.compatibility.dshReleases` includes rc.2; README names rc.2 as the adaptation target |
+| `dsh-context` | 0.74.0 | Context visualization dashboard | `dshReleases` explicitly `0.2.1-rc.2 = compatible` |
+| `dsh-pet` | 0.3.8 | Desk pet: blue big fish, 97 transparent animations, multiple pets, optional desktop window | `dshReleases` explicitly rc.2 = compatible |
+| `@linxin666/dsh-client-ui-git-graph` | 0.4.8 | Git branch graph | `dsh.engines.dsh >=0.2.1-rc.2` + v0.4.7 notes name rc.2 |
+| `@nanmicoder/dsh-agent-teams` | 0.1.26 | Multi-agent teams | 21 peers enumerate rc.2; README recommends "rc.2 + 0.1.26" |
+| `dsh-plugin-subagent-director` | 0.6.0-beta.2 | Per-subagent model selection | `dshReleases` rc.1/rc.2 = compatible; `engines.dsh >=0.2.1-rc.1` (**beta**) |
+| `dsh-workbuddy-connect` | 0.7.9 | WorkBuddy desktop model access (group hides when signed out) | 6 peers **pin** `0.2.1-rc.2` |
+
+> ⚠️ **`dsh-workbuddy-connect` is deprecated upstream** (npm `deprecated`: the author has stopped maintaining it).
+> It stays mounted here because 0.7.9 pins its peers to `0.2.1-rc.2`, which counts as an explicit declaration; but it will
+> never be updated again, so if a future host bump leaves it behind, the only options are a local fork or removing it
+> (removing it only means dropping it from `bundles` — it has no patch row).
+
+> Layer-stack order: `@deepseek-ai/dsh-base` → `@deepseek-ai/dsh-web-app` → the table order above (`@michengai/dsh-codex-ui` always **last**, since it takes over the sidebar and settings page).
+
+> The **13 shelved plugins** (installed but not mounted, with the re-enable procedure) are listed in the "Shelved in this release" table above.
+
+### Two historical items upstream explicitly does not support
+
+- `dsh-agent-arena`: upstream Tikzen 0.7.0 pins all 10 peers to **`0.2.0-rc.2` exactly**, so it would be rejected outright on 0.2.1-rc.2; this pack only ever mounted it through a self-maintained fork with relaxed peers — shelved in this release.
+- `dsh-computer-use`: all peers are `*`, so no gate ever blocks it — and that says nothing about actual compatibility; upstream has had no commit since 2026-09-15, so it is shelved here (together with `preset-computer-use` and its MCP client row).
 
 ### Codex-style Computer Use (dsh-computer-use)
+
+> **v3.0.0 status: shelved (not mounted)** — upstream has not explicitly declared 0.2.1-rc.2 support, so this plugin is not loaded in this release. The section is kept as reference for re-enabling it via the procedure in "Shelved in this release".
 
 Upstream: [wushi2333/dsh-computer-use_codex-style](https://github.com/wushi2333/dsh-computer-use_codex-style),
 pinned to an exact commit (`#72f390a`) and **shipped unmodified**.
@@ -337,7 +370,7 @@ The pack ships the `computer-use` and `computer-use-browser` skills into `DSH_HO
 ### WorkBuddy model access (dsh-workbuddy-connect)
 
 Upstream: [corrinehu/dsh-workbuddy-connect](https://github.com/corrinehu/dsh-workbuddy-connect),
-pinned to npm `0.7.1` (current stable), **shipped unmodified**.
+pinned to npm `0.7.9` (the version that declares 0.2.1-rc.2), **shipped unmodified**.
 
 It registers the models bundled in the WorkBuddy desktop app (GLM-5.3, GLM-5.2, GLM-5.3-Flash,
 DeepSeek-V4-Pro/Flash, Kimi-K3, MiniMax-M3, Hy3, …) as a DSH LLM provider (`llm-workbuddy`), so they
@@ -364,11 +397,11 @@ appear in the model picker and in `/model` — **no extra API key required**.
   `dsh-cost-meter` use a **different basis**: cost-meter estimates by model price, while WorkBuddy
   deducts credit multipliers.
 
-> **The version has to match**: since `0.7.0` the plugin targets the **0.2.0 kernel only**
-> (`0.7.1` supports `0.2.0-rc.2` and nothing else), which is exactly this pack's base. On DSH `0.1.x`
-> you need `0.6.5`. A mismatched combination makes DSH **fail to start** — upstream issue #63 is the
-> "plugin skipped wholesale by the host" case. This is one reason the pack pins `dshVersion`
-> to `0.2.0-rc.2`.
+> **The version has to match**: v3.0.0 ships `dsh-workbuddy-connect@0.7.9`, whose six
+> `@deepseek-ai/dsh-*` peers **pin `0.2.1-rc.2` exactly** — the same base as this pack (the previous
+> 0.7.1 pinned `0.2.0-rc.2` and would be skipped wholesale after the host bump). A mismatched
+> combination makes DSH **fail to start** — upstream issue #63 is the "plugin skipped wholesale by the
+> host" case. This is one reason the pack pins `dshVersion` to `0.2.1-rc.2`. On DSH `0.1.x` you need `0.6.5`.
 >
 > The plugin also injects **web-platform client code** (`dsh.client.platform: web`, six official
 > client packages including model-selection), matching this pack's web base. If you install it into a
@@ -376,6 +409,8 @@ appear in the model picker and in `/model` — **no extra API key required**.
 > fail to start (`events is not iterable`).
 
 ### Native high-performance tooling (dsh-ops)
+
+> **v3.0.0 status: shelved (not mounted)** — upstream has not explicitly declared 0.2.1-rc.2 support, so this plugin is not loaded in this release. The section is kept as reference for re-enabling it via the procedure in "Shelved in this release".
 
 Upstream: [T-Auto/dsh-ops](https://github.com/T-Auto/dsh-ops), pinned to npm `0.3.0`
 (the registry latest; upstream 0.3.1 shipped only as a GitHub Release and was never published
@@ -445,6 +480,8 @@ finish the one-time onboarding, which is what puts `ego-browser` on PATH (and on
 afterwards will see it). This pack ships only the Skill text and small icons (~90 KB), not the browser.
 
 ### Computer Use Notes
+
+> **v3.0.0 status: shelved (not mounted)** — upstream has not explicitly declared 0.2.1-rc.2 support, so this plugin is not loaded in this release. The section is kept as reference for re-enabling it via the procedure in "Shelved in this release".
 
 `dsh-computer-use-win` bridges an MCP stdio server through DSH's built-in
 `@deepseek-ai/dsh-mcp-client`; the tools appear as `mcp__wincu__windows_computer_use_*`:
@@ -532,14 +569,16 @@ DSH validates with `semver.satisfies(version, peerRange, { includePrerelease: tr
 - Wide ranges like `>=0.1.0-rc.5 <0.2.0` **match** rc.2;
 - Plugins pinned to an exact version (e.g. `0.1.7-rc.1`) **hard-fail** on rc.2 — none are selected.
 
-The gate uses the host's own rule — `semver.satisfies(hostVersion, peerRange, { includePrerelease: true })`.
-`docs/compat-check.cjs` currently records peer ranges for **13 of the installed plugins**, and they
-measure **13/13 pass** (since v2.9.0 including `dsh-pet@0.3.8`; the previous `dsh-whale-girl-pet` was never recorded there); the candidate pool adds 1 incompatible entry (`dsh-edit-resend`, removed in
-v2.3.0, not installed) which no longer counts toward the verdict. The remaining plugins' ranges were
-evaluated one by one during v2.0.0–v2.3.0 selection but **are not in the script**, so do not read this
-as a 24/24 automated-coverage claim.
+The gate uses the host's own rule — `semver.satisfies(hostVersion, peerRange, { includePrerelease: true })`, with the host version being **0.2.1-rc.2** since v3.0.0.
 
-`dsh-workbuddy-connect@0.7.1` (added in v2.7.0) declares 7 `@deepseek-ai/dsh-*` peers, **all pinned to
+`docs/compat-check.cjs` now records the 24 plugins in two groups:
+
+- **11 mounted** → they feed the gate, measuring **11/11 pass** (the script exit code only depends on this group);
+- **13 shelved** → reported separately, not counted. Six of them have no `@deepseek-ai/dsh*` peer at all (cannot confirm) and the rest only get open-range "coverage" without upstream ever naming rc.2 — which is exactly why this release moved them out of `bundles`.
+
+**Two gate differences to know under v3.0.0**: (1) a few upstreams (`dsh-prompt`, `dsh-plugin-subagent-director`, `dsh-client-ui-git-graph`) declare their floor through `dsh.engines.dsh`, and the DSH 0.2.1 line app-boot gate **prefers `engines.dsh`**; (2) enumeration-style peers (the three MichengAI plugins, agent-teams, workbuddy) hard-code a whitelist of known RCs, so the moment the host moves to 0.2.1-rc.3 those rows are disabled until upstream republishes.
+
+(Historical record) `dsh-workbuddy-connect@0.7.1` (added in v2.7.0) declares 7 `@deepseek-ai/dsh-*` peers, **all pinned to
 exactly `0.2.0-rc.2`**, one-for-one with this pack's base → 7/7 ✅. Its non-`dsh-*` host peers are met
 by the base tree: `@deepseek-ai/cordis ^4.0.2` (host ships 4.0.4), `@deepseek-ai/schemastery ^3.18.2`
 (web-app carries `~3.18.4`), `@earendil-works/pi-ai ^0.87.1` (the range `dsh-llm-pi-ai@0.2.0-rc.2`

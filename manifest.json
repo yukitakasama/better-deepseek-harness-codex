@@ -2,21 +2,20 @@
   "manifestVersion": 5,
   "type": "profile",
   "name": "better-deepseek-harness-codex",
-  "version": "2.9.0",
+  "version": "3.0.0",
   "displayName": {
     "zh-CN": "更好的 deepseek harness（codex 风格）",
     "en-US": "Better DeepSeek Harness (Codex Style)"
   },
   "description": {
-    "zh-CN": "面向 Coding 用户的 DSH 整合包：Codex 风格工作区侧栏与轮次导航、/review 独立子 Agent 代码审查、/simplify Git 范围代码简化、只读旁问、Codex 式思考强度连续滑块、费用与余额计量、dsh-pet 桌面宠物（蓝色大肥鱼，97 段透明动画、可多开、可脱离浏览器住上桌面）、AST 上下文压缩与 token 预算守卫、Git 分支图、多智能体协作（agent-teams）、上下文可视化仪表盘（dsh-context）、子代理独立选模型（subagent-director）、多智能体议事厅（agent-arena）、思考循环守护（loop-guard）、跨会话长期记忆（mneme）、视觉桥与截图理解（modlens）、Prompt 模板工具箱（dsh-prompt）、Wallpaper Engine 动态壁纸、API 额度上限显示（key-limits）、Windows Computer Use 桌面操控（22 个工具，含安全护栏）、Codex 风格 Computer Use（dsh-computer-use，13 个 window2 原生工具 + 可见合成光标覆盖层 + Esc 急停，挂在独立 computer-use preset）、QQ 机器人频道（dsh-qqbot，默认关闭、按需启用）、WorkBuddy 桌面端模型接入（dsh-workbuddy-connect，复用 WorkBuddy App 登录态，零配置在 DSH 模型选择器里选用 GLM-5.3、DeepSeek-V4、Kimi-K3、MiniMax-M3、Hy3 等，国内版与国际版分组并存；未登录时该分组自动隐藏，不影响启动）。原生高性能工具链（dsh-ops 0.3.0：Rust 编写的 ops_inspect_local_file / ops_grep / ops_glob / ops_replace 四个文件工具 + ops_bash 命令执行器 + Windows 随包 PowerShell 7，默认开启 file 与 shell 两个组件，PTC 与只读 TUI 侧栏保持可选关闭）。基座 DSH 0.2.0-rc.2，全部插件已钉死精确版本并校验 peer 兼容。v2.5.0 起整合包额外自带 50 个跨 harness 精选 skill（安装时由 home/skills/ 落入 DSH_HOME/skills/）。v2.7.1 修复 6 个自带 skill 误嵌套的 home/ 目录（安装后成为 skill 加载器扫不到的死数据），并给构建脚本加打包期防回归校验；dsh-computer-use 增加平台守卫，非 Windows 平台该 sidecar 安静禁用、不再打印启动 Traceback。v2.8.0 新增 dsh-ops 插件（T-Auto/dsh-ops 0.3.0，npm registry 版本，peer 已声明兼容 DSH 0.2.0-rc.2；上游 0.3.1 只发了 GitHub Release、未 npm publish，故取 registry 上最新的 0.3.0）。v2.8.1 移除 dsh-inline-figures：其 draw_figure 工具返回通道持续报 invalid output（最小 spec 复现，故障与 spec 内容无关，属工具绑定层缺陷），无法配置规避；绘图能力改由自带 chart-visualization 技能与宿主原生能力承担。v2.9.0（预发布）：桌宠由 dsh-whale-girl-pet 0.3.7 换成 dsh-pet 0.3.8（蓝色大肥鱼，97 段透明动画、可多开、可把宠物落到桌面独立透明小窗；浏览器端零配置可用，桌面模式首次启动才按需下载 Electron runtime）；新增 ego-lite（citrolabs/ego-lite v2.1.0）的 ego-browser 技能——让 agent 直接驱动用户已登录的 Chromium 做浏览器自动化，随包落入 DSH_HOME/skills/（上游 DSH 插件形态 @citrolabs/ego 只以仓库子目录分发，npm 打包会丢掉它软链的 Skill 目录导致加载即 ENOENT，故本包改为投递同一份 Skill 载荷）；插件数维持 24，自带 skill 49 → 50。",
-    "en-US": "A coding-oriented DSH modpack: Codex-style workspace sidebar and turn navigation, /review independent code review, /simplify Git-scoped simplification, read-only side-ask, Codex-style reasoning-effort slider, cost and balance metering, a dsh-pet desk pet (a blue big fish with 97 transparent animations, multi-instance, and an optional desktop window), AST context compression with token budget guard, a Git graph, multi-agent teams (agent-teams), a context visualization dashboard (dsh-context), per-subagent model director (subagent-director), a multi-agent council (agent-arena), thought-loop guard (loop-guard), cross-session memory (mneme), vision bridge & screenshot understanding (modlens), a prompt template toolbox (dsh-prompt), Wallpaper Engine live wallpapers, API key quota limits (key-limits), and Windows Computer Use desktop control (22 tools with safety guards), Codex-style Computer Use (dsh-computer-use: 13 native window2 tools, a visible synthetic-cursor overlay and an Esc interrupt, mounted in its own computer-use preset), plus a QQ Bot IM channel (dsh-qqbot, official Tencent plugin), and WorkBuddy desktop model access (dsh-workbuddy-connect: reuses the WorkBuddy app sign-in so GLM-5.3, DeepSeek-V4, Kimi-K3, MiniMax-M3, Hy3 and more appear in the DSH model picker with zero configuration, with separate groups for the domestic and international editions; when no sign-in is present the group simply hides and startup is unaffected). The pack also adds dsh-ops 0.3.0 (T-Auto/dsh-ops): four Rust file tools (ops_inspect_local_file / ops_grep / ops_glob / ops_replace), an ops_bash command executor and a bundled PowerShell 7 on Windows, with the file and shell components enabled by default and PTC plus the read-only TUI sidebar kept opt-in. Built for DSH 0.2.0-rc.2; all plugins pinned to exact versions and peer-verified. As of v2.5.0 the pack also bundles 50 curated cross-harness skills (shipped via home/skills/, landing in DSH_HOME/skills/ on install). v2.7.1 fixes 6 bundled skills that carried a mistakenly nested home/ directory (which became dead data unreadable by the skill loader after install), adds a pack-time regression guard to the build script, and introduces a platform guard for dsh-computer-use so its sidecar is quietly disabled on non-Windows instead of printing a startup Traceback. v2.8.0 adds the dsh-ops plugin (T-Auto/dsh-ops 0.3.0 from the npm registry, whose peer range already declares DSH 0.2.0-rc.2; upstream 0.3.1 shipped only as a GitHub Release and was never published to npm, so the registry-latest 0.3.0 is pinned). v2.8.1 removes dsh-inline-figures, whose draw_figure tool kept failing with an invalid-output error on the return channel (reproduced with a minimal spec, so the fault is in the tool binding layer, not the spec, and cannot be configured around); figure drawing now falls back to the bundled chart-visualization skill and host-native capabilities.v2.9.0 (pre-release): the desk pet switches from dsh-whale-girl-pet 0.3.7 to dsh-pet 0.3.8 (a blue big fish with 97 transparent animations, multiple pets on one screen, and an optional always-on-top transparent desktop window; the browser pet needs no configuration, and only desktop mode downloads the Electron runtime on first start); adds ego-lite (citrolabs/ego-lite v2.1.0) and its ego-browser skill so the agent can drive the signed-in Chromium for browser automation, shipped into DSH_HOME/skills/ (the upstream DSH plugin form @citrolabs/ego is only distributed as a repo subdirectory and npm packing drops its symlinked Skill directory, so it throws ENOENT on load; this pack therefore ships the same Skill payload directly); plugin count stays at 24, bundled skills 49 -> 50."
+    "zh-CN": "面向 Coding 用户的 DSH 整合包，v3.0.0 基座锁定 DSH 0.2.1-rc.2（破坏性更新，预发布）。【已挂载 11 个，全部为上游显式声明适配 0.2.1-rc.2】Codex 风格工作区侧栏与轮次导航（@michengai/dsh-codex-ui 1.1.47）、/review 独立子 Agent 代码审查（@michengai/dsh-code-review 1.0.1）、/simplify Git 范围代码简化（@michengai/dsh-simplify 1.0.1）、只读旁问（@michengai/dsh-btw 1.0.4）、费用与余额计量（dsh-cost-meter 1.9.30）、dsh-pet 桌面宠物（0.3.8：蓝色大肥鱼、97 段透明动画、可多开、可选桌面独立小窗）、上下文可视化仪表盘（dsh-context 0.74.0）、子代理独立选模型（dsh-plugin-subagent-director 0.6.0-beta.2，注意上游为 beta）、多智能体团队协作（@nanmicoder/dsh-agent-teams 0.1.26）、Git 分支图（@linxin666/dsh-client-ui-git-graph 0.4.8）、WorkBuddy 桌面端模型接入（dsh-workbuddy-connect 0.7.9，复用 WorkBuddy App 登录态，未登录时分组自动隐藏；注意上游已在 npm 标记停止维护）。【暂屏蔽 13 个：随包安装但不挂载到 bundle 层】这些插件的上游尚未明确声明适配 0.2.1-rc.2（或已明确不适配），为避免兼容门禁拒装与启动崩溃，本版把它们移出 bundles 并同步禁用其在 overrides/cordis.patch.yml 中的行：dsh-ops 0.3.0、@goodandready/dsh-context-lens 0.1.28、@goodandready/dsh-key-limits 0.2.19、dsh-plugin-wallpaper-engine 1.2.0、@modusensus/dsh-mneme 0.8.13、@mrweicodes/dsh-loop-guard 1.0.8、dsh-computer-use-win 0.2.3、dsh-computer-use（fork 钉 72f390a）、dsh-prompt 0.3.0、@liustack/modlens 3.26.6、dsh-effort-slider 1.3.1、dsh-agent-arena（fork 钉 25e2c55，上游精确钉 0.2.0-rc.2）、@tencent-connect/dsh-qqbot（fork 钉 7e88006）。重新启用方式：把插件包名加回 package.json 的 dsh.profile.bundles，并删除 overrides/cordis.patch.yml 中对应的屏蔽条目。自带 50 个跨 harness 精选 skill（安装时由 home/skills/ 落入 DSH_HOME/skills/），含 ego-lite v2.1.0 的 ego-browser（浏览器自动化 skill 形态投递）。版本沿革：v2.9.0 桌宠换装 dsh-pet、新增 ego-lite ego-browser；v2.8.x 增删 dsh-ops/dsh-inline-figures；v2.7.x 修自修复嵌套 skill 与 computer-use 平台守卫；v2.6.0 引入 Codex 风格 Computer Use；v2.5.0 起整合包自带跨 harness skill；v3.0.0 基座 0.2.0-rc.2 → 0.2.1-rc.2 并做插件筛选挂载（详见 README 与 docs/release-notes-v3.0.0.md）。",
+    "en-US": "A coding-oriented DSH modpack. v3.0.0 pins the host to DSH 0.2.1-rc.2 (breaking update, pre-release). [Mounted: 11 plugins, every one of which upstream explicitly declares 0.2.1-rc.2 support] Codex-style workspace sidebar and turn navigation (@michengai/dsh-codex-ui 1.1.47), /review independent code review (@michengai/dsh-code-review 1.0.1), /simplify Git-scoped simplification (@michengai/dsh-simplify 1.0.1), read-only side-ask (@michengai/dsh-btw 1.0.4), cost and balance metering (dsh-cost-meter 1.9.30), the dsh-pet desk pet (0.3.8: a blue big fish with 97 transparent animations, multiple pets, and an optional desktop window), a context dashboard (dsh-context 0.74.0), per-subagent model selection (dsh-plugin-subagent-director 0.6.0-beta.2, note: upstream ships a beta), multi-agent teams (@nanmicoder/dsh-agent-teams 0.1.26), a Git branch graph (@linxin666/dsh-client-ui-git-graph 0.4.8), and WorkBuddy desktop model access (dsh-workbuddy-connect 0.7.9, reusing the WorkBuddy app sign-in; the group hides itself when no sign-in is present — note upstream has deprecated this package on npm). [Shelved: 13 plugins are installed but not mounted] Upstream has not explicitly declared 0.2.1-rc.2 support for these (or explicitly does not support it), so to avoid a peer-gate rejection or a startup crash this release removes them from dsh.profile.bundles and disables their rows in overrides/cordis.patch.yml: dsh-ops 0.3.0, @goodandready/dsh-context-lens 0.1.28, @goodandready/dsh-key-limits 0.2.19, dsh-plugin-wallpaper-engine 1.2.0, @modusensus/dsh-mneme 0.8.13, @mrweicodes/dsh-loop-guard 1.0.8, dsh-computer-use-win 0.2.3, dsh-computer-use (fork pinned 72f390a), dsh-prompt 0.3.0, @liustack/modlens 3.26.6, dsh-effort-slider 1.3.1, dsh-agent-arena (fork pinned 25e2c55; upstream pins 0.2.0-rc.2 exactly), @tencent-connect/dsh-qqbot (fork pinned 7e88006). To re-enable one, add its package name back to dsh.profile.bundles and delete the matching shelving entry in overrides/cordis.patch.yml. The pack ships 50 curated cross-harness skills into DSH_HOME/skills/, including ego-lite v2.1.0 ego-browser (delivered as a skill). History: v2.9.0 swapped the desk pet to dsh-pet and added ego-lite; v2.8.x added/removed dsh-ops and dsh-inline-figures; v2.7.x fixed nested skills and added the computer-use platform guard; v2.6.0 introduced Codex-style Computer Use; cross-harness skills ship inside the pack since v2.5.0; v3.0.0 moves the host from 0.2.0-rc.2 to 0.2.1-rc.2 with selective plugin mounting (see README and docs/release-notes-v3.0.0.md)."
   },
   "author": "yukitakasama",
   "category": "coding",
-  "dshVersion": "0.2.0-rc.2",
+  "dshVersion": "0.2.1-rc.2",
   "dshVersions": [
-    "0.2.0-rc.2",
-    "0.2.0-rc.1"
+    "0.2.1-rc.2"
   ],
   "launchers": [
     "dshl",
@@ -26,12 +25,8 @@
   "bundles": [
     "@deepseek-ai/dsh-base",
     "@deepseek-ai/dsh-web-app",
-    "@goodandready/dsh-context-lens",
     "dsh-cost-meter",
     "@linxin666/dsh-client-ui-git-graph",
-    "dsh-computer-use-win",
-    "dsh-computer-use",
-    "dsh-effort-slider",
     "dsh-pet",
     "@michengai/dsh-btw",
     "@michengai/dsh-simplify",
@@ -39,33 +34,24 @@
     "@nanmicoder/dsh-agent-teams",
     "dsh-context",
     "dsh-plugin-subagent-director",
-    "dsh-agent-arena",
-    "@mrweicodes/dsh-loop-guard",
-    "@modusensus/dsh-mneme",
-    "@liustack/modlens",
-    "dsh-prompt",
-    "dsh-plugin-wallpaper-engine",
-    "@goodandready/dsh-key-limits",
-    "@tencent-connect/dsh-qqbot",
     "dsh-workbuddy-connect",
-    "@michengai/dsh-codex-ui",
-    "dsh-ops"
+    "@michengai/dsh-codex-ui"
   ],
   "dependencies": {
     "@goodandready/dsh-context-lens": "0.1.28",
-    "dsh-cost-meter": "1.7.47",
-    "@linxin666/dsh-client-ui-git-graph": "0.4.4",
+    "dsh-cost-meter": "1.9.30",
+    "@linxin666/dsh-client-ui-git-graph": "0.4.8",
     "dsh-effort-slider": "1.3.1",
     "dsh-pet": "0.3.8",
-    "@michengai/dsh-btw": "0.1.15",
-    "@michengai/dsh-simplify": "0.1.12",
-    "@michengai/dsh-code-review": "0.1.9",
-    "@michengai/dsh-codex-ui": "1.1.25",
+    "@michengai/dsh-btw": "1.0.4",
+    "@michengai/dsh-simplify": "1.0.1",
+    "@michengai/dsh-code-review": "1.0.1",
+    "@michengai/dsh-codex-ui": "1.1.47",
     "dsh-computer-use-win": "0.2.3",
     "dsh-computer-use": "github:wushi2333/dsh-computer-use_codex-style#72f390ae076948968370510ea7f5b44dcf3e6015",
-    "@nanmicoder/dsh-agent-teams": "0.1.22",
-    "dsh-context": "0.63.0",
-    "dsh-plugin-subagent-director": "0.5.5",
+    "@nanmicoder/dsh-agent-teams": "0.1.26",
+    "dsh-context": "0.74.0",
+    "dsh-plugin-subagent-director": "0.6.0-beta.2",
     "dsh-agent-arena": "github:yukitakasama/dsh-agent-arena#25e2c55",
     "@mrweicodes/dsh-loop-guard": "1.0.8",
     "@modusensus/dsh-mneme": "0.8.13",
@@ -74,7 +60,7 @@
     "dsh-plugin-wallpaper-engine": "1.2.0",
     "@goodandready/dsh-key-limits": "0.2.19",
     "@tencent-connect/dsh-qqbot": "github:yukitakasama/dsh-qqbot#7e88006dff56447248301a282667ab7b63fd70f0",
-    "dsh-workbuddy-connect": "0.7.1",
+    "dsh-workbuddy-connect": "0.7.9",
     "dsh-ops": "0.3.0"
   }
 }
