@@ -3,14 +3,14 @@
 简体中文 | English
 
 A DeepSeek Harness modpack for **Coding users**, aligned with the style and features of Codex.
-Built on **DSH 0.2.2-rc.1** (v3.1.0-pre.1; the previous release used 0.2.1-rc.2).
+Built on **DSH 0.2.2-rc.1** (v3.1.0-pre.2; the previous release used 0.2.1-rc.2).
 
 > Modpack identifier: `better-deepseek-harness-codex` (repo name / `.dspack` prefix / profile name).
 > Community modpack — not an official DeepSeek product.
 
-## ⚠️ v3.1.0-pre.1 is a pre-release
+## ⚠️ v3.1.0-pre.2 is a pre-release
 
-- **Host**: DSH 0.2.2-rc.1. The pack mounts 10 plugins that pass the host compatibility gate.
+- **Host**: DSH 0.2.2-rc.1. The pack mounts 12 plugins; 11 pass the host compatibility gate, while billion-context has no declared DSH version range.
 - `dsh-workbuddy-connect` is removed because its six peers still pin DSH 0.2.1-rc.2 exactly; npm has no compatible update.
 - This release no longer ships any cross-harness skills, so importing it does not populate `DSH_HOME/skills/`.
 - The **13 plugins that could not be confirmed compatible or were incompatible have been removed completely**: they are absent from `dependencies`, `dsh.profile.bundles`, and `overrides/cordis.patch.yml`.
@@ -18,7 +18,7 @@ Built on **DSH 0.2.2-rc.1** (v3.1.0-pre.1; the previous release used 0.2.1-rc.2)
 - **Install into a fresh profile**; do not overwrite a v2.x profile in place — the plugin sets only half overlap.
 - Per-plugin evidence (peer matrix / `dshReleases` / `engines.dsh` / README / release notes) is in `docs/release-notes-v3.0.1.md` and `docs/release-notes-v3.0.0.md`.
 
-## What's Inside (the 10 plugins actually mounted in this release)
+## What's Inside (the 12 plugins actually mounted in this release)
 
 One command for the core of a Codex-style coding workbench:
 
@@ -29,6 +29,8 @@ One command for the core of a Codex-style coding workbench:
 - **Desk pet** — dsh-pet with its blue fish and desktop window (`dsh-pet` 0.4.5)
 - **Git graph** — branch selection and commit graph (`@linxin666/dsh-client-ui-git-graph` 0.4.14)
 - **Context dashboard** — dsh-context visualization (0.82.2)
+- **Context compression** — model-driven context compression from billion-context (0.1.212)
+- **Plugin marketplace** — browse, search, and install community plugins inside DSH with dshmarket (1.73.14)
 - **Multi-agent teams** — agent-teams collaboration (`@nanmicoder/dsh-agent-teams` 0.1.29)
 - **Per-subagent model** — subagent-director assigns a model per sub-agent (0.6.0)
 
@@ -64,7 +66,13 @@ Or import the `.dspack` from the DSH launcher.
 
 > This release does not include WorkBuddy model access. Use the older DSH 0.2.1-rc.2-compatible plugin separately if needed.
 
-## v3.1.0-pre.1 changes
+## v3.1.0-pre.2 changes
+
+- **Context compression**: added `billion-context@0.1.212`. It ships a DSH bundle patch but declares no explicit DSH version range, so the compatibility check marks it unverified.
+- **Plugin marketplace**: added `dshmarket@1.73.14`; its DSH settings peer range covers this pack's host.
+- **Plugin count**: the release mounts 12 plugins instead of 10.
+- **Release channel**: `3.1.0-pre.2` is published only as a GitHub pre-release.
+
 
 - **Host upgrade**: DSH `0.2.1-rc.2` → `0.2.2-rc.1`.
 - **Plugin updates**: all 10 retained plugins are updated to the current npm latest and pass the DSH 0.2.2 host gate.

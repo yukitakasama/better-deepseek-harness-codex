@@ -3,14 +3,14 @@
 [English](README.en.md) | 简体中文
 
 面向 **Coding 用户**的 DeepSeek Harness 整合包，向 Codex 的风格与功能看齐。
-基座 **DSH 0.2.2-rc.1**（v3.1.0-pre.1；上一版为 0.2.1-rc.2）。
+基座 **DSH 0.2.2-rc.1**（v3.1.0-pre.2；上一版为 0.2.1-rc.2）。
 
 > 整合包标识 `better-deepseek-harness-codex`（仓库名 / `.dspack` 前缀 / profile 名）。
 > 社区整合包，非 DeepSeek 官方产品。
 
-## ⚠️ v3.1.0-pre.1 是预发布版
+## ⚠️ v3.1.0-pre.2 是预发布版
 
-- **基座**为 DSH 0.2.2-rc.1；实际挂载 10 个通过宿主兼容门禁的插件。
+- **基座**为 DSH 0.2.2-rc.1；实际挂载 12 个插件，其中 11 个通过宿主兼容门禁，billion-context 未声明 DSH 版本范围。
 - `dsh-workbuddy-connect` 因 6 个 peer 仍精确锁定 DSH 0.2.1-rc.2 而移除；npm 没有兼容的新版本。
 - 本版不再随包安装任何跨 harness skill，导入后不会向 `DSH_HOME/skills/` 投递 skill 文件。
 - v3.0.0 中 **13 个无法确认兼容或已明确不兼容的插件已彻底移除**：不再进入 `dependencies`、`dsh.profile.bundles` 或 `overrides/cordis.patch.yml`。
@@ -18,7 +18,7 @@
 - **建议新建 profile 安装**，不要原地覆盖 v2.x：插件集只重叠一半，旧配置未必对得上。
 - 逐插件判定依据（peer 矩阵 / `dshReleases` / `engines.dsh` / README / release notes）见 `docs/release-notes-v3.0.0.md`。
 
-## 装什么（本版实际挂载的 10 个插件）
+## 装什么（本版实际挂载的 12 个插件）
 
 一条命令拿到 Codex 式编码工作台的核心部分：
 
@@ -29,6 +29,8 @@
 - **桌宠** —— dsh-pet 蓝色大肥鱼与桌面窗口（`dsh-pet` 0.4.5）
 - **Git 图** —— 分支选择与提交图（`@linxin666/dsh-client-ui-git-graph` 0.4.14）
 - **上下文仪表盘** —— dsh-context 上下文可视化（0.82.2）
+- **上下文压缩** —— billion-context 模型驱动的上下文压缩（0.1.212）
+- **插件市场** —— dshmarket 在 DSH 内浏览、搜索和安装社区插件（1.73.14）
 - **多智能体协作** —— agent-teams 多 Agent 团队协作（`@nanmicoder/dsh-agent-teams` 0.1.29）
 - **子代理选模型** —— subagent-director 为每个子代理独立指定模型（0.6.0）
 
@@ -64,7 +66,13 @@ dsh --profile better-deepseek-harness-codex
 
 > 本版不包含 WorkBuddy 模型接入。需要该功能时，请单独使用与 DSH 0.2.1-rc.2 匹配的旧版插件。
 
-## v3.1.0-pre.1 变更说明
+## v3.1.0-pre.2 变更说明
+
+- **新增上下文压缩**：加入 `billion-context@0.1.212`。该包提供 DSH bundle patch，但没有显式 DSH 版本声明，兼容性检查标记为未验证。
+- **新增插件市场**：加入 `dshmarket@1.73.14`，其 DSH settings peer 范围覆盖本包基座。
+- **插件数量**：实际挂载插件从 10 个增加到 12 个。
+- **发布通道**：`3.1.0-pre.2` 只作为 GitHub pre-release 发布。
+
 
 - **基座升级**：DSH `0.2.1-rc.2` → `0.2.2-rc.1`。
 - **插件更新**：10 个保留插件更新到当前 npm latest，并通过 DSH 0.2.2 的宿主兼容门禁。

@@ -2,14 +2,14 @@
   "manifestVersion": 5,
   "type": "profile",
   "name": "better-deepseek-harness-codex",
-  "version": "3.1.0-pre.1",
+  "version": "3.1.0-pre.2",
   "displayName": {
     "zh-CN": "更好的 deepseek harness（codex 风格）",
     "en-US": "Better DeepSeek Harness (Codex Style)"
   },
   "description": {
-    "zh-CN": "面向 Coding 用户的 DSH 整合包。v3.1.0-pre.1 基于 DSH 0.2.2-rc.1，挂载 10 个通过宿主兼容门禁的插件；dsh-workbuddy-connect 因仍精确锁定旧基座而移除。本预发布包不再随包安装跨 harness skill。",
-    "en-US": "A coding-oriented DSH modpack. v3.1.0-pre.1 is based on DSH 0.2.2-rc.1 and mounts 10 plugins that pass the host compatibility gate. dsh-workbuddy-connect is removed because it still pins the old host exactly. This pre-release no longer ships cross-harness skills."
+    "zh-CN": "面向 Coding 用户的 DSH 整合包。v3.1.0-pre.2 基于 DSH 0.2.2-rc.1，挂载 12 个插件；新增 billion-context 上下文压缩与 dshmarket 插件市场。dsh-workbuddy-connect 因仍精确锁定旧基座而移除。本预发布包不再随包安装跨 harness skill。",
+    "en-US": "A coding-oriented DSH modpack. v3.1.0-pre.2 is based on DSH 0.2.2-rc.1 and mounts 12 plugins, adding billion-context context compression and dshmarket plugin marketplace. dsh-workbuddy-connect is removed because it still pins the old host exactly. This pre-release no longer ships cross-harness skills."
   },
   "author": "yukitakasama",
   "category": "coding",
@@ -34,6 +34,8 @@
     "@nanmicoder/dsh-agent-teams",
     "dsh-context",
     "dsh-plugin-subagent-director",
+    "billion-context",
+    "dshmarket",
     "@michengai/dsh-codex-ui"
   ],
   "dependencies": {
@@ -46,6 +48,8 @@
     "@michengai/dsh-codex-ui": "2.0.19",
     "@nanmicoder/dsh-agent-teams": "0.1.29",
     "dsh-context": "0.82.2",
-    "dsh-plugin-subagent-director": "0.6.0"
+    "dsh-plugin-subagent-director": "0.6.0",
+    "billion-context": "0.1.212",
+    "dshmarket": "1.73.14"
   }
 }

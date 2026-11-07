@@ -16,3 +16,5 @@ minimumReleaseAgeExclude:
   - '@nanmicoder/dsh-agent-teams@0.1.29'
   - 'dsh-context@0.82.2'
   - 'dsh-plugin-subagent-director@0.6.0'
+  - 'billion-context@0.1.212'
+  - 'dshmarket@1.73.14'

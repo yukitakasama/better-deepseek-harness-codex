@@ -1,4 +1,4 @@
-// DSH plugin compatibility check for v3.1.0-pre.1.
+// DSH plugin compatibility check for v3.1.0-pre.2.
 // This mirrors dsh-app-boot@0.2.2-rc.1: engines.dsh takes precedence over
 // DSH peer dependencies, and prereleases participate in range matching.
 const HOST = "0.2.2-rc.1";
@@ -88,22 +88,33 @@ const MOUNTED = [
   ["dsh-context", "0.82.2", {
     engines: ">=0.2.0-rc.2 || >=0.2.1-rc.2 || >=0.2.2-rc.1"
   }],
-  ["dsh-plugin-subagent-director", "0.6.0", { engines: ">=0.2.1-rc.1" }]
+  ["dsh-plugin-subagent-director", "0.6.0", { engines: ">=0.2.1-rc.1" }],
+  ["billion-context", "0.1.212", {
+    note: "no explicit engines.dsh or @deepseek-ai/dsh-* peer declaration"
+  }],
+  ["dshmarket", "1.73.14", {
+    peers: {
+      "@deepseek-ai/dsh-settings": "^0.1.0-rc.7 || ^0.1.1-rc.2 || ^0.1.2-alpha.2 || ^0.2.0-rc.1 || ^0.2.1-alpha.3 || ^0.2.1-rc.1"
+    }
+  }]
 ];
 
 let failures = 0;
 for (const [name, version, declaration] of MOUNTED) {
   const requirements = declaration.engines
     ? { "engines.dsh": declaration.engines }
-    : declaration.peers;
+    : declaration.peers || {};
   const unmet = Object.entries(requirements).filter(([, range]) => !satisfies(HOST, range));
+  const status = unmet.length > 0 ? "incompatible" : declaration.note ? "unverified" : "compatible";
   if (unmet.length > 0) failures++;
   console.log(`\n=== ${name}@${version} ===`);
   for (const [field, range] of Object.entries(requirements)) {
     console.log(`  ${satisfies(HOST, range) ? "PASS" : "FAIL"} ${field}: ${range}`);
   }
-  console.log(`  >> ${unmet.length === 0 ? "compatible" : "incompatible"} with ${HOST}`);
+  if (declaration.note) console.log(`  !! ${declaration.note}`);
+  console.log(`  >> ${status} with ${HOST}`);
 }
 
-console.log(`\n==== mounted plugins: ${MOUNTED.length - failures}/${MOUNTED.length} pass ====\n`);
+const unverified = MOUNTED.filter(([, , declaration]) => declaration.note).length;
+console.log(`\n==== mounted plugins: ${MOUNTED.length - failures}/${MOUNTED.length} gate pass; ${unverified} unverified ====\n`);
 process.exitCode = failures === 0 ? 0 : 1;
