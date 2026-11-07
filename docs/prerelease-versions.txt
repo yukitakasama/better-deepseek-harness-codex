@@ -2,3 +2,5 @@
 # release.yml 命中本文件即给 gh release create 追加 --prerelease；正式版不要写进这里。
 2.9.0
 3.0.0
+3.0.1
+3.1.0-pre.1

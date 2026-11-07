@@ -3,40 +3,40 @@
 [English](README.en.md) | 简体中文
 
 面向 **Coding 用户**的 DeepSeek Harness 整合包，向 Codex 的风格与功能看齐。
-基座 **DSH 0.2.1-rc.2**（v3.0.0 起；上一版为 0.2.0-rc.2）。
+基座 **DSH 0.2.2-rc.1**（v3.1.0-pre.1；上一版为 0.2.1-rc.2）。
 
 > 整合包标识 `better-deepseek-harness-codex`（仓库名 / `.dspack` 前缀 / profile 名）。
 > 社区整合包，非 DeepSeek 官方产品。
 
-## ⚠️ v3.0.0 是破坏性更新（预发布）
+## ⚠️ v3.1.0-pre.1 是预发布版
 
-- **基座** 0.2.0-rc.2 → **0.2.1-rc.2**：跨小版本换宿主，所有插件的 peer 门禁都会重判，旧版插件集不能原样搬过去。
-- **只挂载「上游明确声明适配 0.2.1-rc.2」的 11 个插件**；另外 **13 个插件随包安装但暂不挂载**——它们被移出 `dsh.profile.bundles`，同时它们在 `overrides/cordis.patch.yml` 里的行被 `disabled: true` 关掉（patch 层独立于 bundles 生效，不关就会绕过后面的屏蔽把模块重新拉起来）。
+- **基座**为 DSH 0.2.2-rc.1；实际挂载 10 个通过宿主兼容门禁的插件。
+- `dsh-workbuddy-connect` 因 6 个 peer 仍精确锁定 DSH 0.2.1-rc.2 而移除；npm 没有兼容的新版本。
+- 本版不再随包安装任何跨 harness skill，导入后不会向 `DSH_HOME/skills/` 投递 skill 文件。
+- v3.0.0 中 **13 个无法确认兼容或已明确不兼容的插件已彻底移除**：不再进入 `dependencies`、`dsh.profile.bundles` 或 `overrides/cordis.patch.yml`。
+- 下方名单保留每个移除项的版本与兼容性原因；它们不属于本整合包的安装内容。
 - **建议新建 profile 安装**，不要原地覆盖 v2.x：插件集只重叠一半，旧配置未必对得上。
-- **重新启用某个被屏蔽插件**：把它加回 `package.json` → `dsh.profile.bundles`，删掉 `overrides/cordis.patch.yml` 里对应条目的 `disabled: true`，再确认上游已把 0.2.1-rc.2 写进 peer 范围或 `dsh.compatibility.dshReleases`。
 - 逐插件判定依据（peer 矩阵 / `dshReleases` / `engines.dsh` / README / release notes）见 `docs/release-notes-v3.0.0.md`。
 
-## 装什么（本版实际挂载的 11 个插件）
+## 装什么（本版实际挂载的 10 个插件）
 
 一条命令拿到 Codex 式编码工作台的核心部分：
 
-- **Codex 风格界面** —— 工作区会话树、全局搜索、轮次跳转、会话重命名/归档/分叉（`@michengai/dsh-codex-ui` 1.1.47）
-- **代码审查与简化** —— `/review` 调独立子 Agent 审代码，`/simplify` 按 Git 变更范围简化（1.0.1 / 1.0.1）
-- **只读旁问** —— 基于当前上下文单独提问，不打断主任务（`@michengai/dsh-btw` 1.0.4）
-- **费用与余额** —— 本会话/当日费用、模型价格、Coding Plan 额度、余额（`dsh-cost-meter` 1.9.30）
-- **桌宠** —— dsh-pet 蓝色大肥鱼：97 段透明动画、待机呼吸、屏幕漫游、拖拽甩抛、可多开同屏，还能落到桌面做透明置顶小窗（`dsh-pet` 0.3.8）
-- **Git 图** —— 分支选择与提交图（`@linxin666/dsh-client-ui-git-graph` 0.4.8）
-- **上下文仪表盘** —— dsh-context 上下文可视化（0.74.0）
-- **多智能体协作** —— agent-teams 多 Agent 团队协作（`@nanmicoder/dsh-agent-teams` 0.1.26）
-- **子代理选模型** —— subagent-director 为每个子代理独立指定模型（0.6.0-beta.2，**上游当前 latest 就是 beta**）
-- **WorkBuddy 模型接入** —— dsh-workbuddy-connect 复用 WorkBuddy 桌面 App 的登录态，GLM-5.3、DeepSeek-V4、Kimi-K3、MiniMax-M3、Hy3 等直接出现在模型选择器中，零配置；**本机没装/没登录时该分组自动隐藏，不影响启动**（0.7.9）
-- **自带 50 个 skill** —— 安装即落入 `DSH_HOME/skills/`，开箱即用（覆盖设计/前端、动效、数据分析、代码开发、办公文档、浏览器自动化（含 ego-lite 的 `ego-browser`）等；MCP 服务器本次未随包分发，按本机 `cordis.patch.yml` 单独配置）
+- **Codex 风格界面** —— 工作区会话树、全局搜索、轮次跳转、会话重命名/归档/分叉（`@michengai/dsh-codex-ui` 2.0.19）
+- **代码审查与简化** —— `/review` 调独立子 Agent 审代码，`/simplify` 按 Git 变更范围简化（1.0.8 / 1.0.7）
+- **只读旁问** —— 基于当前上下文单独提问，不打断主任务（`@michengai/dsh-btw` 1.3.5）
+- **费用与余额** —— 本会话/当日费用、模型价格、Coding Plan 额度、余额（`dsh-cost-meter` 1.9.58）
+- **桌宠** —— dsh-pet 蓝色大肥鱼与桌面窗口（`dsh-pet` 0.4.5）
+- **Git 图** —— 分支选择与提交图（`@linxin666/dsh-client-ui-git-graph` 0.4.14）
+- **上下文仪表盘** —— dsh-context 上下文可视化（0.82.2）
+- **多智能体协作** —— agent-teams 多 Agent 团队协作（`@nanmicoder/dsh-agent-teams` 0.1.29）
+- **子代理选模型** —— subagent-director 为每个子代理独立指定模型（0.6.0）
 
-### 本版暂屏蔽（随包安装、但不挂载）
+### 因兼容性问题移除（不随包安装）
 
-这些插件的上游**尚未明确声明**适配 DSH 0.2.1-rc.2（或已明确不适配），为避免门禁拒装/启动崩溃，本版不加载它们；需要时按上面的步骤逐个启用并自行验证。
+这些插件的上游**尚未明确声明**适配 DSH 0.2.1-rc.2（或已明确不适配）。为避免门禁拒装/启动崩溃，它们已从整合包完全移除；如未来上游更新，需重新核验后再单独添加。
 
-| 插件 | 随包版本 | 屏蔽原因 |
+| 插件 | 原钉版本 | 移除原因 |
 |---|---|---|
 | `dsh-ops` | 0.3.0 | 上游 0.4.1 仅以 `^0.2.0-rc.2` 范围覆盖，未点名 rc.2 |
 | `@goodandready/dsh-context-lens` | 0.1.28 | 仅范围覆盖（`^0.1.7-rc.2 \|\| ^0.2.0-rc.1`） |
@@ -54,7 +54,7 @@
 
 ## 安装
 
-需要 **DSH 0.2.1-rc.2**（本包 `dshVersion` 精确锁定该版本；v3.0.0 起不再声明兼容 0.2.0.x）。
+需要 **DSH 0.2.2-rc.1**（本包 `dshVersion` 精确锁定该版本）。运行 DSH 0.2.2-rc.1 还需要 Node `>=24.9.0`。
 
 ```bash
 dsh --profile better-deepseek-harness-codex
@@ -62,14 +62,15 @@ dsh --profile better-deepseek-harness-codex
 
 或由 DSH 启动器导入 `.dspack`。
 
-> **注意（git 依赖）**：本包仍有 3 个 git 依赖（`dsh-computer-use`、`dsh-agent-arena`、`@tencent-connect/dsh-qqbot`），
-> 安装时需能访问 GitHub。v3.0.0 起这 3 个**都已暂屏蔽**（不挂载），但仍留在 `dependencies` 里以便随时启用；
-> 若你的网络拉不动 git 依赖，可以把它们从 `package.json` 里一并删掉——挂载集不会受影响。
+> 本版不包含 WorkBuddy 模型接入。需要该功能时，请单独使用与 DSH 0.2.1-rc.2 匹配的旧版插件。
 
-> **WorkBuddy 模型的前提**：自 v2.7.0 起本包带 `dsh-workbuddy-connect`，它复用 WorkBuddy 桌面 App
-> 的**本机登录态**，所以要看到 WorkBuddy 模型分组，需要先安装并登录 WorkBuddy（国内版或国际版
-> WorkBuddy AI 均可）。**没装也不影响本包启动**——对应分组直接隐藏，其余插件照旧。详见下方
-> 「WorkBuddy 模型接入」。
+## v3.1.0-pre.1 变更说明
+
+- **基座升级**：DSH `0.2.1-rc.2` → `0.2.2-rc.1`。
+- **插件更新**：10 个保留插件更新到当前 npm latest，并通过 DSH 0.2.2 的宿主兼容门禁。
+- **移除 WorkBuddy**：`dsh-workbuddy-connect@0.7.9` 的 peer 精确钉旧基座，且上游已停止维护。
+- **移除随包 skills**：删除 `home/skills/` payload；构建结果为 0 个 skill 目录。
+- **发布通道**：`3.1.0-pre.1` 只作为 GitHub pre-release 发布，不作为 latest/stable 发布。
 
 ## v2.0.0 变更说明
 
@@ -95,34 +96,28 @@ dsh --profile better-deepseek-harness-codex
 | ~~`dsh-plugin-edit-message`~~ | ~~0.1.5~~ | **已移除** | 无 0.2.x 兼容版本 |
 
 ### 新增字段（manifest v5）
-- `dshVersions`: 声明实测兼容版本集合（0.2.0-rc.2、0.2.0-rc.1）
+- `dshVersions`: 声明本版基座兼容版本集合（0.2.2-rc.1）
 - `launchers`: 声明启动器兼容性（dshl、dsh-packforge-app）
 
-## 插件清单（随包 24 个；本版挂载 11 个）
+## 插件清单（随包 10 个；本版挂载 10 个）
 
 ### 已挂载（在 `dsh.profile.bundles` 里）
 
 | 插件 | 版本 | 作用 | 上游声明依据 |
 |---|---|---|---|
-| `@michengai/dsh-codex-ui` | 1.1.47 | Codex 风格侧栏、工作区会话树、全局搜索、轮次导航 | peer 矩阵枚举 `0.2.1-rc.2`；README 称 1.1.42 起显式支持 |
-| `@michengai/dsh-code-review` | 1.0.1 | `/review` 独立子 Agent 代码审查 | peer 矩阵枚举 + README badge「up to 0.2.1-rc.2」 |
-| `@michengai/dsh-simplify` | 1.0.1 | `/simplify` Git 范围代码简化 | peer 矩阵枚举 `0.2.1-rc.2` |
-| `@michengai/dsh-btw` | 1.0.4 | 只读旁问，不打断主任务 | peer 矩阵枚举 + README 称 1.0.0 起在 rc.1/rc.2 实测 |
-| `dsh-cost-meter` | 1.9.30 | 费用统计、模型价格、Coding Plan 额度、余额 | `dsh.compatibility.dshReleases` 含 rc.2；README 标注适配目标 rc.2 |
-| `dsh-context` | 0.74.0 | 上下文可视化仪表盘 | `dshReleases` 显式 `0.2.1-rc.2 = compatible` |
-| `dsh-pet` | 0.3.8 | 桌宠：蓝色大肥鱼，97 段透明动画、可多开、可落桌面独立小窗 | `dshReleases` 显式 rc.2 = compatible |
-| `@linxin666/dsh-client-ui-git-graph` | 0.4.8 | Git 分支图 | `dsh.engines.dsh >=0.2.1-rc.2` + v0.4.7 发行说明点名 rc.2 |
-| `@nanmicoder/dsh-agent-teams` | 0.1.26 | 多智能体团队协作 | 21 个 peer 精确枚举 rc.2；README「推荐 rc.2 + 0.1.26」 |
-| `dsh-plugin-subagent-director` | 0.6.0-beta.2 | 子代理独立选模型 | `dshReleases` rc.1/rc.2 = compatible；`engines.dsh >=0.2.1-rc.1`（**beta**） |
-| `dsh-workbuddy-connect` | 0.7.9 | WorkBuddy 桌面端模型接入（未登录自动隐藏分组） | 6 个 peer **精确钉** `0.2.1-rc.2` |
-
-> ⚠️ **`dsh-workbuddy-connect` 上游已停止维护**（npm `deprecated`：「因个人精力有限，本项目已停止维护」）。
-> 本版仍挂载它，因为 0.7.9 的 peer 精确钉 `0.2.1-rc.2`、属明确声明；但它今后不会再有更新，若某次宿主升级后掉队，
-> 只能本包 fork 或直接移除（移除只需从 `bundles` 去掉，不用动 patch 层）。
-
+| `@michengai/dsh-codex-ui` | 2.0.19 | Codex 风格侧栏、工作区会话树、全局搜索、轮次导航 | `engines.dsh >=0.2.0-rc.1 <0.3.0-0` |
+| `@michengai/dsh-code-review` | 1.0.8 | `/review` 独立子 Agent 代码审查 | `engines.dsh >=0.2.0-rc.1 <0.3.0-0` |
+| `@michengai/dsh-simplify` | 1.0.7 | `/simplify` Git 范围代码简化 | `engines.dsh >=0.2.0-rc.1 <0.3.0-0` |
+| `@michengai/dsh-btw` | 1.3.5 | 只读旁问，不打断主任务 | `engines.dsh >=0.2.0-rc.1 <0.3.0-0` |
+| `dsh-cost-meter` | 1.9.58 | 费用统计、模型价格、Coding Plan 额度、余额 | `engines.dsh >=0.2.0-rc.1 <0.3.0-0` |
+| `dsh-context` | 0.82.2 | 上下文可视化仪表盘 | `engines.dsh >=0.2.2-rc.1` |
+| `dsh-pet` | 0.4.5 | 桌宠与桌面窗口 | 9 个 DSH peer 使用 `^0.2.0-rc.1` |
+| `@linxin666/dsh-client-ui-git-graph` | 0.4.14 | Git 分支图 | peer `@deepseek-ai/dsh >=0.2.1-rc.3` |
+| `@nanmicoder/dsh-agent-teams` | 0.1.29 | 多智能体团队协作 | `engines.dsh >=0.1.2-alpha.2` |
+| `dsh-plugin-subagent-director` | 0.6.0 | 子代理独立选模型 | `engines.dsh >=0.2.1-rc.1` |
 > 层栈顺序：`@deepseek-ai/dsh-base` → `@deepseek-ai/dsh-web-app` → 上表顺序（`@michengai/dsh-codex-ui` 固定在**末位**，由它最后接管侧栏与设置页）。
 
-> **暂屏蔽的 13 个插件**（随包安装但不挂载、原因与重新启用步骤）见上方「本版暂屏蔽」表格。
+> **因兼容性问题移除的 13 个历史插件**（不随包安装及其原因）见上方名单；本版另移除已停止维护且锁定旧基座的 WorkBuddy 插件。
 
 ### 上游明确不适配的两个历史项
 
@@ -131,7 +126,7 @@ dsh --profile better-deepseek-harness-codex
 
 ### Codex 风格 Computer Use（dsh-computer-use）
 
-> **v3.0.0 状态：暂屏蔽（不挂载）** —— 上游尚未明确声明适配 DSH 0.2.1-rc.2，本版不加载该插件。本节内容保留，供你按「本版暂屏蔽」里的步骤重新启用时参考。
+> **v3.0.1 状态：已移除** —— 上游尚未明确声明适配 DSH 0.2.1-rc.2；本节仅作历史资料，插件不随包安装。
 
 上游： [wushi2333/dsh-computer-use_codex-style](https://github.com/wushi2333/dsh-computer-use_codex-style)，
 按提交精确钉死（`#72f390a`），**未做任何源码修改**。
@@ -164,7 +159,7 @@ loader patch 对已存在的 preset 条目是「整体替换它的 `plugins` 数
 
 ### QQ 机器人频道（im-qqbot）
 
-> **v3.0.0 状态：暂屏蔽（不挂载）** —— 上游尚未明确声明适配 DSH 0.2.1-rc.2，本版不加载该插件。本节内容保留，供你按「本版暂屏蔽」里的步骤重新启用时参考。
+> **v3.0.1 状态：已移除** —— 上游尚未明确声明适配 DSH 0.2.1-rc.2；本节仅作历史资料，插件不随包安装。
 
 本插件**默认关闭**。原因是原版在凭据缺失时会于插件加载阶段同步等待扫码，而那个
 Promise 没有超时、二维码过期只会不断刷新——cordis 串行加载插件，于是整个 dsh 实例
@@ -183,7 +178,9 @@ Promise 没有超时、二维码过期只会不断刷新——cordis 串行加�
 **然后启用并重启**：启动器「插件」页把 `im-qqbot` 设为启用，**重启实例**后生效
 （插件开关与环境变量都只在进程启动时读取，不支持热启用）。
 
-### WorkBuddy 模型接入（dsh-workbuddy-connect）
+### WorkBuddy 模型接入（历史说明，v3.1.0-pre.1 已移除）
+
+> 本节只记录旧版功能；`dsh-workbuddy-connect` 不在 v3.1.0-pre.1 的 dependencies 或 bundles 中。
 
 上游：[corrinehu/dsh-workbuddy-connect](https://github.com/corrinehu/dsh-workbuddy-connect)，
 钉 npm `0.7.1`（当前稳定版），**未做任何源码修改**。
@@ -221,7 +218,7 @@ Kimi-K3、MiniMax-M3、Hy3 等）注册成 DSH 的一个 LLM provider（`llm-wor
 
 ### 原生高性能工具链（dsh-ops）
 
-> **v3.0.0 状态：暂屏蔽（不挂载）** —— 上游尚未明确声明适配 DSH 0.2.1-rc.2，本版不加载该插件。本节内容保留，供你按「本版暂屏蔽」里的步骤重新启用时参考。
+> **v3.0.1 状态：已移除** —— 上游尚未明确声明适配 DSH 0.2.1-rc.2；本节仅作历史资料，插件不随包安装。
 
 上游：[T-Auto/dsh-ops](https://github.com/T-Auto/dsh-ops)，钉 npm `0.3.0`（registry 最新版；
 上游 0.3.1 只发了 GitHub Release、未 npm publish，故取 0.3.0），**未做任何源码修改**。
@@ -253,7 +250,7 @@ Kimi-K3、MiniMax-M3、Hy3 等）注册成 DSH 的一个 LLM provider（`llm-wor
 > 已校验 IPC 兼容的随包 MSYS 副本；指向自己的 Git for Windows 会按设计返回
 > `EXECUTOR_UNAVAILABLE`，不会裸执行。`danger-full-access` 下可用 `bashPath` 指定执行器。
 
-### ego-lite 浏览器自动化（ego-browser skill）
+### ego-lite 浏览器自动化（历史说明，v3.1.0-pre.1 不再随包投递 skill）
 
 上游：[citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) v2.1.0。ego-lite 是给 AI agent
 用的 Chromium：agent 直接复用你**已登录**的浏览器状态去开网页、填表、点击、截图、取数据，
@@ -269,7 +266,7 @@ npm / pnpm 打包 git 依赖时会丢掉软链，装出来的包缺 `SKILL.md`�
 when packing the source directly」，而 DSH 侧的官方分发物（`@citrolabs/ego-deepseek-harness`
 tgz）只存在于其打包脚本产物中，**未上 npm**。
 
-所以本包直接把**同一份** `skills/ego-browser/`（取自仓库 tag `v2.1.0`，含 `references/`、
+旧版曾把**同一份** `skills/ego-browser/`（取自仓库 tag `v2.1.0`，含 `references/`、
 `scripts/`、`learnings/`、`assets/`）随 `home/skills/` 投递到 `DSH_HOME/skills/ego-browser/`
 ——效果与装那个插件等价（插件本身就是一个 Skill provider，没有额外 UI/工具），且不依赖 git
 打包行为。等上游把 `@citrolabs/ego-deepseek-harness` 发上 npm 后，可改回插件依赖形态。
@@ -282,7 +279,7 @@ tgz）只存在于其打包脚本产物中，**未上 npm**。
 
 ### Computer Use 说明
 
-> **v3.0.0 状态：暂屏蔽（不挂载）** —— 上游尚未明确声明适配 DSH 0.2.1-rc.2，本版不加载该插件。本节内容保留，供你按「本版暂屏蔽」里的步骤重新启用时参考。
+> **v3.0.1 状态：已移除** —— 上游尚未明确声明适配 DSH 0.2.1-rc.2；本节仅作历史资料，插件不随包安装。
 
 `dsh-computer-use-win` 通过 DSH 内置的 `@deepseek-ai/dsh-mcp-client` 桥接一个
 MCP stdio 服务器，工具以 `mcp__wincu__windows_computer_use_*` 出现：
@@ -368,10 +365,10 @@ DSH 用 `semver.satisfies(版本, peer范围, { includePrerelease: true })` 校�
 
 判定口径与宿主一致：`semver.satisfies(宿主版本, peer范围, { includePrerelease: true })`，宿主版本自 v3.0.0 起为 **0.2.1-rc.2**。
 
-`docs/compat-check.cjs` 现在把 24 个插件分成两组录入：
+`docs/compat-check.cjs` 现在只校验实际挂载的 11 个插件，并保留 13 个移除项的原因名单：
 
 - **已挂载 11 个** → 参与门禁，实测 **11/11 通过**（脚本 exit code 只看这一组）；
-- **暂屏蔽 13 个** → 单列统计，不计入门禁。其中 6 个根本没有 `@deepseek-ai/dsh*` peer 声明（无法确认），其余仅靠开区间「范围覆盖」而未被上游点名——这正是本版把它们移出 bundles 的原因。
+- **已移除 13 个** → 不参与安装或门禁，只输出移除原因；其中 6 个根本没有 `@deepseek-ai/dsh*` peer 声明（无法确认）。
 
 **v3.0.0 起的两处判定差异**：① 少数上游（`dsh-prompt`、`dsh-plugin-subagent-director`、`dsh-client-ui-git-graph`）改用 `dsh.engines.dsh` 声明下限，而 DSH 0.2.1 线的 app-boot 兼容门**优先读 `engines.dsh`**；② 精确枚举型 peer（MichengAI 三件套、agent-teams、workbuddy）写死的是「已知 RC 白名单」，宿主一旦升到 0.2.1-rc.3 就会被整行禁用，必须等上游重发。
 
@@ -436,11 +433,8 @@ DSH 用 `semver.satisfies(版本, peer范围, { includePrerelease: true })` 校�
 
 ## 自定义
 
-profile patch 层 `overrides/cordis.patch.yml` 现有 **5 条**：`dsh-computer-use-win` 的 MCP 路径修正、
-`im-qqbot` 默认关闭、`computer-use` preset 注入、`dsh-ops` 的 file/shell 配置记录、
-`pwsh-sandbox` 的 Windows 平台守卫。其余挂载关系仍由各插件自身的 bundle patch 表达——
-`dsh-workbuddy-connect` 的 provider 行、`dsh-ops` 的四个组件行同样由它们自带 patch 注册，
-**不需要在这里补条目**。改动后请跑：
+profile patch 层只保留官方 `pwsh-sandbox` 的 Windows 平台守卫；所有已移除插件的旧 patch 行均已删除，
+避免插件虽不在依赖中却被 patch 重新拉起。改动后请跑：
 
 ```bash
 dsh --profile better-deepseek-harness-codex --dump-config
@@ -470,6 +464,17 @@ dsh --profile better-deepseek-harness-codex --dump-config
 格式规范：[DSH-PackForge](https://github.com/DSH-PackForge/DSH-PackForge)。
 
 ## 更新日志
+
+### v3.0.1（2026-11-07）（**预发布 pre-release**）
+
+- **彻底移除不兼容插件**：将 v3.0.0 中 13 个“随包安装但不挂载”的插件从
+  `package.json`、`manifest.json`、profile patch 和安装 payload 中删除；它们只保留在
+  「因兼容性问题移除」名单中。
+- **清理关联内容**：删除 Computer Use 专属 skill，避免整合包安装后暴露未提供的工具说明；
+  profile patch 只保留官方 `pwsh-sandbox` 平台守卫。
+- **计数**：dependencies 24 → **11**；bundles 保持 **13**（11 个插件 + 2 个官方基座）；
+  构建脚本统计的可打包 skill 目录为 **49**；实际挂载兼容检查仍为 **11/11**。
+- 详细移除清单与原因见 `docs/release-notes-v3.0.1.md`。
 
 ### v3.0.0 (2026-10-23)（**破坏性更新 · 预发布 pre-release**）
 
