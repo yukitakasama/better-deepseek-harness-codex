@@ -3,12 +3,12 @@
 [English](README.en.md) | 简体中文
 
 面向 **Coding 用户**的 DeepSeek Harness 整合包，向 Codex 的风格与功能看齐。
-基座 **DSH 0.2.2-rc.1**（v3.1.0-pre.3；上一版为 0.2.1-rc.2）。
+基座 **DSH 0.2.2-rc.1**（v3.1.0-pre.4；上一版为 0.2.1-rc.2）。
 
 > 整合包标识 `better-deepseek-harness-codex`（仓库名 / `.dspack` 前缀 / profile 名）。
 > 社区整合包，非 DeepSeek 官方产品。
 
-## ⚠️ v3.1.0-pre.3 是预发布版
+## ⚠️ v3.1.0-pre.4 是预发布版
 
 - **基座**为 DSH 0.2.2-rc.1；实际挂载 14 个插件，其中 13 个通过宿主兼容门禁，billion-context 未声明 DSH 版本范围。
 - `dsh-workbuddy-connect` 因 6 个 peer 仍精确锁定 DSH 0.2.1-rc.2 而移除；npm 没有兼容的新版本。
@@ -32,7 +32,7 @@
 - **上下文压缩** —— billion-context 模型驱动的上下文压缩（0.1.212）
 - **插件市场** —— dshmarket 在 DSH 内浏览、搜索和安装社区插件（1.73.14）
 - **逆向工程桥接** —— dsh-rea 接入 REA MCP，提供二进制、APK、.NET、JS/Electron 等逆向分析工具（v1.4.0；Git commit `5769b4e`）
-- **DeepSeek 工作流 skills** —— `dsh-deepseek-stack` 通过 DSH 官方 skill 注册表提供上游 29 个计划、验证、审查、多智能体和发布流程 skill（Git commit `9d5b7a7`）
+- **DeepSeek 工作流 skills** —— `dsh-deepseek-stack` 通过 DSH 官方 skill 注册表提供上游 29 个计划、验证、审查、多智能体和发布流程 skill（修复 commit `ed2fb18`）
 - **多智能体协作** —— agent-teams 多 Agent 团队协作（`@nanmicoder/dsh-agent-teams` 0.1.29）
 - **子代理选模型** —— subagent-director 为每个子代理独立指定模型（0.6.0）
 
@@ -68,12 +68,12 @@ dsh --profile better-deepseek-harness-codex
 
 > 本版不包含 WorkBuddy 模型接入。需要该功能时，请单独使用与 DSH 0.2.1-rc.2 匹配的旧版插件。
 
-## v3.1.0-pre.3 变更说明
+## v3.1.0-pre.4 变更说明
 
-- **新增 dsh-rea**：固定到 `Fanqi89/dsh-rea@5769b4e`（v1.4.0），通过 `@deepseek-ai/dsh-mcp-client` 接入 REA MCP；其 `engines.dsh >=0.2.1-rc.2` 覆盖本包基座。
-- **新增 dsh-deepseek-stack**：固定到 `yukitakasama/dsh-deepseek-stack@9d5b7a7`，通过官方 DSH skill provider 暴露 29 个上游 skill；个人版覆盖层不进入公共插件仓库。
-- **插件数量**：实际挂载插件从 13 个增加到 14 个；兼容性门禁为 13/14 通过，billion-context 仍为未验证。
-- **发布通道**：`3.1.0-pre.3` 只作为 GitHub pre-release 发布。
+- **修复 dsh-deepseek-stack 加载失败**：插件现在声明标准 `dsh.bundle.patch`，并由包内 `cordis.patch.yml` 注册 `dsh-deepseek-stack` entry；列入 `dsh.profile.bundles` 后不再因缺少 DSH 元数据而被跳过。
+- **固定插件修复 commit**：`yukitakasama/dsh-deepseek-stack@ed2fb18`（插件版本 `0.1.1`），29 个上游 skill 内容不变。
+- **个人包同步**：重新生成包含 29 个个人适配 skill 的 `.dspack`，公共仓库不携带个人覆盖层。
+- **发布通道**：`3.1.0-pre.4` 只作为 GitHub pre-release 发布。
 
 ## v3.1.0-pre.2 变更说明
 

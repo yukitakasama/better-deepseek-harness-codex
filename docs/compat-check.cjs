@@ -1,4 +1,4 @@
-// DSH plugin compatibility check for v3.1.0-pre.3.
+// DSH plugin compatibility check for v3.1.0-pre.4.
 // This mirrors dsh-app-boot@0.2.2-rc.1: engines.dsh takes precedence over
 // DSH peer dependencies, and prereleases participate in range matching.
 const HOST = "0.2.2-rc.1";
@@ -100,7 +100,7 @@ const MOUNTED = [
   ["dsh-rea", "github:Fanqi89/dsh-rea#5769b4e55246787cb7c09025725db8e34db93e81", {
     engines: ">=0.2.1-rc.2"
   }],
-  ["dsh-deepseek-stack", "github:yukitakasama/dsh-deepseek-stack#9d5b7a7f819ee3410ba8b135946617ea71d2b91b", {
+  ["dsh-deepseek-stack", "github:yukitakasama/dsh-deepseek-stack#ed2fb187e6c8eea1b74bba754c1b229d17c176ac", {
     engines: ">=0.2.2-rc.1 <0.3.0-0"
   }]
 ];

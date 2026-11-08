@@ -3,12 +3,12 @@
 简体中文 | English
 
 A DeepSeek Harness modpack for **Coding users**, aligned with the style and features of Codex.
-Built on **DSH 0.2.2-rc.1** (v3.1.0-pre.3; the previous release used 0.2.1-rc.2).
+Built on **DSH 0.2.2-rc.1** (v3.1.0-pre.4; the previous release used 0.2.1-rc.2).
 
 > Modpack identifier: `better-deepseek-harness-codex` (repo name / `.dspack` prefix / profile name).
 > Community modpack — not an official DeepSeek product.
 
-## ⚠️ v3.1.0-pre.3 is a pre-release
+## ⚠️ v3.1.0-pre.4 is a pre-release
 
 - **Host**: DSH 0.2.2-rc.1. The pack mounts 14 plugins; 13 pass the host compatibility gate, while billion-context has no declared DSH version range.
 - `dsh-workbuddy-connect` is removed because its six peers still pin DSH 0.2.1-rc.2 exactly; npm has no compatible update.
@@ -32,7 +32,7 @@ One command for the core of a Codex-style coding workbench:
 - **Context compression** — model-driven context compression from billion-context (0.1.212)
 - **Plugin marketplace** — browse, search, and install community plugins inside DSH with dshmarket (1.73.14)
 - **Reverse-engineering bridge** — dsh-rea connects REA MCP for native binaries, APKs, .NET, JS/Electron, and other analysis targets (v1.4.0; commit `5769b4e`)
-- **DeepSeek workflow skills** — `dsh-deepseek-stack` exposes all 29 upstream planning, verification, review, multi-agent, and shipping skills through the official DSH skill registry (commit `9d5b7a7`)
+- **DeepSeek workflow skills** — `dsh-deepseek-stack` exposes all 29 upstream planning, verification, review, multi-agent, and shipping skills through the official DSH skill registry (fix commit `ed2fb18`)
 - **Multi-agent teams** — agent-teams collaboration (`@nanmicoder/dsh-agent-teams` 0.1.29)
 - **Per-subagent model** — subagent-director assigns a model per sub-agent (0.6.0)
 
@@ -68,12 +68,12 @@ Or import the `.dspack` from the DSH launcher.
 
 > This release does not include WorkBuddy model access. Use the older DSH 0.2.1-rc.2-compatible plugin separately if needed.
 
-## v3.1.0-pre.3 changes
+## v3.1.0-pre.4 changes
 
-- **Added dsh-rea**: pinned `Fanqi89/dsh-rea@5769b4e` (v1.4.0), exposing the REA MCP server through `@deepseek-ai/dsh-mcp-client`; its `engines.dsh >=0.2.1-rc.2` covers this pack's host.
-- **Added dsh-deepseek-stack**: pinned `yukitakasama/dsh-deepseek-stack@9d5b7a7`, exposing all 29 upstream skills through the official DSH skill provider; personal overlays stay out of the public adapter repository.
-- **Plugin count**: the release mounts 14 plugins instead of 13; 13 pass the compatibility gate and billion-context remains unverified.
-- **Release channel**: `3.1.0-pre.3` is published only as a GitHub pre-release.
+- **Fixed dsh-deepseek-stack loading**: the plugin now declares the standard `dsh.bundle.patch` metadata and registers its `dsh-deepseek-stack` entry through the package-owned `cordis.patch.yml`, so DSH no longer skips it when it is listed in `dsh.profile.bundles`.
+- **Pinned the plugin fix**: `yukitakasama/dsh-deepseek-stack@ed2fb18` (plugin version `0.1.1`); the 29 upstream skill bodies are unchanged.
+- **Personal pack refreshed**: regenerated the `.dspack` with the 29-skill personal overlay; the public repository still carries no personal overlay.
+- **Release channel**: `3.1.0-pre.4` is published only as a GitHub pre-release.
 
 ## v3.1.0-pre.2 changes
 

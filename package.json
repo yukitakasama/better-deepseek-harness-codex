@@ -15,7 +15,7 @@
     "billion-context": "0.1.212",
     "dshmarket": "1.73.14",
     "dsh-rea": "github:Fanqi89/dsh-rea#5769b4e55246787cb7c09025725db8e34db93e81",
-    "dsh-deepseek-stack": "github:yukitakasama/dsh-deepseek-stack#9d5b7a7f819ee3410ba8b135946617ea71d2b91b"
+    "dsh-deepseek-stack": "github:yukitakasama/dsh-deepseek-stack#ed2fb187e6c8eea1b74bba754c1b229d17c176ac"
   },
   "dsh": {
     "profile": {
