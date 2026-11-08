@@ -10,7 +10,7 @@
 
 ## ⚠️ v3.1.0-pre.4 是预发布版
 
-- **基座**为 DSH 0.2.2-rc.1；实际挂载 14 个插件，其中 13 个通过宿主兼容门禁，billion-context 未声明 DSH 版本范围。
+- **基座**为 DSH 0.2.2-rc.1；实际挂载 14 个插件，14/14 通过宿主兼容门禁，billion-context 仍未声明 DSH 版本范围（因此标记为未验证）。
 - `dsh-workbuddy-connect` 因 6 个 peer 仍精确锁定 DSH 0.2.1-rc.2 而移除；npm 没有兼容的新版本。
 - 本版通过 `dsh-deepseek-stack` 插件安装上游 `deepseek-stack` 的 29 个 skill；公共插件保留上游原文，个人规则适配只进入本地 `.dspack` 覆盖层。
 - v3.0.0 中 **13 个无法确认兼容或已明确不兼容的插件已彻底移除**：不再进入 `dependencies`、`dsh.profile.bundles` 或 `overrides/cordis.patch.yml`。

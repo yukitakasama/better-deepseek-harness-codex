@@ -10,7 +10,7 @@ Built on **DSH 0.2.2-rc.1** (v3.1.0-pre.4; the previous release used 0.2.1-rc.2)
 
 ## ⚠️ v3.1.0-pre.4 is a pre-release
 
-- **Host**: DSH 0.2.2-rc.1. The pack mounts 14 plugins; 13 pass the host compatibility gate, while billion-context has no declared DSH version range.
+- **Host**: DSH 0.2.2-rc.1. The pack mounts 14 plugins; all 14 pass the host compatibility gate, while billion-context has no declared DSH version range and remains unverified.
 - `dsh-workbuddy-connect` is removed because its six peers still pin DSH 0.2.1-rc.2 exactly; npm has no compatible update.
 - This release installs the 29 upstream `deepseek-stack` skills through the `dsh-deepseek-stack` plugin. The public adapter keeps upstream text unchanged; personal policy adaptations exist only in the local `.dspack` overlay.
 - The **13 plugins that could not be confirmed compatible or were incompatible have been removed completely**: they are absent from `dependencies`, `dsh.profile.bundles`, and `overrides/cordis.patch.yml`.
