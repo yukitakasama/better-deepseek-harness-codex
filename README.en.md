@@ -3,22 +3,22 @@
 简体中文 | English
 
 A DeepSeek Harness modpack for **Coding users**, aligned with the style and features of Codex.
-Built on **DSH 0.2.2-rc.1** (v3.1.0-pre.2; the previous release used 0.2.1-rc.2).
+Built on **DSH 0.2.2-rc.1** (v3.1.0-pre.3; the previous release used 0.2.1-rc.2).
 
 > Modpack identifier: `better-deepseek-harness-codex` (repo name / `.dspack` prefix / profile name).
 > Community modpack — not an official DeepSeek product.
 
-## ⚠️ v3.1.0-pre.2 is a pre-release
+## ⚠️ v3.1.0-pre.3 is a pre-release
 
-- **Host**: DSH 0.2.2-rc.1. The pack mounts 12 plugins; 11 pass the host compatibility gate, while billion-context has no declared DSH version range.
+- **Host**: DSH 0.2.2-rc.1. The pack mounts 14 plugins; 13 pass the host compatibility gate, while billion-context has no declared DSH version range.
 - `dsh-workbuddy-connect` is removed because its six peers still pin DSH 0.2.1-rc.2 exactly; npm has no compatible update.
-- This release no longer ships any cross-harness skills, so importing it does not populate `DSH_HOME/skills/`.
+- This release installs the 29 upstream `deepseek-stack` skills through the `dsh-deepseek-stack` plugin. The public adapter keeps upstream text unchanged; personal policy adaptations exist only in the local `.dspack` overlay.
 - The **13 plugins that could not be confirmed compatible or were incompatible have been removed completely**: they are absent from `dependencies`, `dsh.profile.bundles`, and `overrides/cordis.patch.yml`.
 - The list below keeps their pinned versions and compatibility reasons; none of them is installed by this pack.
 - **Install into a fresh profile**; do not overwrite a v2.x profile in place — the plugin sets only half overlap.
 - Per-plugin evidence (peer matrix / `dshReleases` / `engines.dsh` / README / release notes) is in `docs/release-notes-v3.0.1.md` and `docs/release-notes-v3.0.0.md`.
 
-## What's Inside (the 12 plugins actually mounted in this release)
+## What's Inside (the 14 plugins actually mounted in this release)
 
 One command for the core of a Codex-style coding workbench:
 
@@ -31,6 +31,8 @@ One command for the core of a Codex-style coding workbench:
 - **Context dashboard** — dsh-context visualization (0.82.2)
 - **Context compression** — model-driven context compression from billion-context (0.1.212)
 - **Plugin marketplace** — browse, search, and install community plugins inside DSH with dshmarket (1.73.14)
+- **Reverse-engineering bridge** — dsh-rea connects REA MCP for native binaries, APKs, .NET, JS/Electron, and other analysis targets (v1.4.0; commit `5769b4e`)
+- **DeepSeek workflow skills** — `dsh-deepseek-stack` exposes all 29 upstream planning, verification, review, multi-agent, and shipping skills through the official DSH skill registry (commit `9d5b7a7`)
 - **Multi-agent teams** — agent-teams collaboration (`@nanmicoder/dsh-agent-teams` 0.1.29)
 - **Per-subagent model** — subagent-director assigns a model per sub-agent (0.6.0)
 
@@ -65,6 +67,13 @@ dsh --profile better-deepseek-harness-codex
 Or import the `.dspack` from the DSH launcher.
 
 > This release does not include WorkBuddy model access. Use the older DSH 0.2.1-rc.2-compatible plugin separately if needed.
+
+## v3.1.0-pre.3 changes
+
+- **Added dsh-rea**: pinned `Fanqi89/dsh-rea@5769b4e` (v1.4.0), exposing the REA MCP server through `@deepseek-ai/dsh-mcp-client`; its `engines.dsh >=0.2.1-rc.2` covers this pack's host.
+- **Added dsh-deepseek-stack**: pinned `yukitakasama/dsh-deepseek-stack@9d5b7a7`, exposing all 29 upstream skills through the official DSH skill provider; personal overlays stay out of the public adapter repository.
+- **Plugin count**: the release mounts 14 plugins instead of 13; 13 pass the compatibility gate and billion-context remains unverified.
+- **Release channel**: `3.1.0-pre.3` is published only as a GitHub pre-release.
 
 ## v3.1.0-pre.2 changes
 

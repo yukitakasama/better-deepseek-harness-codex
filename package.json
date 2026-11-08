@@ -13,7 +13,9 @@
     "dsh-context": "0.82.2",
     "dsh-plugin-subagent-director": "0.6.0",
     "billion-context": "0.1.212",
-    "dshmarket": "1.73.14"
+    "dshmarket": "1.73.14",
+    "dsh-rea": "github:Fanqi89/dsh-rea#5769b4e55246787cb7c09025725db8e34db93e81",
+    "dsh-deepseek-stack": "github:yukitakasama/dsh-deepseek-stack#9d5b7a7f819ee3410ba8b135946617ea71d2b91b"
   },
   "dsh": {
     "profile": {
@@ -31,6 +33,8 @@
         "dsh-plugin-subagent-director",
         "billion-context",
         "dshmarket",
+        "dsh-rea",
+        "dsh-deepseek-stack",
         "@michengai/dsh-codex-ui"
       ]
     }
