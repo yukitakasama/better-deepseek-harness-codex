@@ -3,14 +3,14 @@
 简体中文 | English
 
 A DeepSeek Harness modpack for **Coding users**, aligned with the style and features of Codex.
-Built on **DSH 0.2.2-rc.1** (v3.1.0-pre.4; the previous release used 0.2.1-rc.2).
+Built on **DSH 0.2.2-rc.1** (v3.1.0; the previous release used 0.2.1-rc.2).
 
 > Modpack identifier: `better-deepseek-harness-codex` (repo name / `.dspack` prefix / profile name).
 > Community modpack — not an official DeepSeek product.
 
-## ⚠️ v3.1.0-pre.4 is a pre-release
+## v3.1.0 is the stable release
 
-- **Host**: DSH 0.2.2-rc.1. The pack mounts 14 plugins; all 14 pass the host compatibility gate, while billion-context has no declared DSH version range and remains unverified.
+- **Host**: DSH 0.2.2-rc.1. The pack mounts 11 plugins; all 11 pass the host compatibility gate.
 - `dsh-workbuddy-connect` is removed because its six peers still pin DSH 0.2.1-rc.2 exactly; npm has no compatible update.
 - This release installs the 29 upstream `deepseek-stack` skills through the `dsh-deepseek-stack` plugin. The public adapter keeps upstream text unchanged; personal policy adaptations exist only in the local `.dspack` overlay.
 - The **13 plugins that could not be confirmed compatible or were incompatible have been removed completely**: they are absent from `dependencies`, `dsh.profile.bundles`, and `overrides/cordis.patch.yml`.
@@ -18,7 +18,7 @@ Built on **DSH 0.2.2-rc.1** (v3.1.0-pre.4; the previous release used 0.2.1-rc.2)
 - **Install into a fresh profile**; do not overwrite a v2.x profile in place — the plugin sets only half overlap.
 - Per-plugin evidence (peer matrix / `dshReleases` / `engines.dsh` / README / release notes) is in `docs/release-notes-v3.0.1.md` and `docs/release-notes-v3.0.0.md`.
 
-## What's Inside (the 14 plugins actually mounted in this release)
+## What's Inside (the 11 plugins actually mounted in this release)
 
 One command for the core of a Codex-style coding workbench:
 
@@ -29,12 +29,9 @@ One command for the core of a Codex-style coding workbench:
 - **Desk pet** — dsh-pet with its blue fish and desktop window (`dsh-pet` 0.4.5)
 - **Git graph** — branch selection and commit graph (`@linxin666/dsh-client-ui-git-graph` 0.4.14)
 - **Context dashboard** — dsh-context visualization (0.82.2)
-- **Context compression** — model-driven context compression from billion-context (0.1.212)
 - **Plugin marketplace** — browse, search, and install community plugins inside DSH with dshmarket (1.73.14)
 - **Reverse-engineering bridge** — dsh-rea connects REA MCP for native binaries, APKs, .NET, JS/Electron, and other analysis targets (v1.4.0; commit `5769b4e`)
 - **DeepSeek workflow skills** — `dsh-deepseek-stack` exposes all 29 upstream planning, verification, review, multi-agent, and shipping skills through the official DSH skill registry (fix commit `ed2fb18`)
-- **Multi-agent teams** — agent-teams collaboration (`@nanmicoder/dsh-agent-teams` 0.1.29)
-- **Per-subagent model** — subagent-director assigns a model per sub-agent (0.6.0)
 
 ### Removed for compatibility (not installed)
 
@@ -68,12 +65,13 @@ Or import the `.dspack` from the DSH launcher.
 
 > This release does not include WorkBuddy model access. Use the older DSH 0.2.1-rc.2-compatible plugin separately if needed.
 
-## v3.1.0-pre.4 changes
+## v3.1.0 changes
 
+- **Removed three optional plugins**: `billion-context`, `dsh-plugin-subagent-director`, and `@nanmicoder/dsh-agent-teams` are no longer dependencies, bundles, or install payload.
 - **Fixed dsh-deepseek-stack loading**: the plugin now declares the standard `dsh.bundle.patch` metadata and registers its `dsh-deepseek-stack` entry through the package-owned `cordis.patch.yml`, so DSH no longer skips it when it is listed in `dsh.profile.bundles`.
 - **Pinned the plugin fix**: `yukitakasama/dsh-deepseek-stack@ed2fb18` (plugin version `0.1.1`); the 29 upstream skill bodies are unchanged.
 - **Personal pack refreshed**: regenerated the `.dspack` with the 29-skill personal overlay; the public repository still carries no personal overlay.
-- **Release channel**: `3.1.0-pre.4` is published only as a GitHub pre-release.
+- **Release channel**: `3.1.0` is published as the GitHub stable release and marked latest.
 
 ## v3.1.0-pre.2 changes
 

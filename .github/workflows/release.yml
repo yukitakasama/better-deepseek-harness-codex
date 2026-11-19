@@ -90,6 +90,8 @@ jobs:
           fi
           if [ "${{ steps.channel.outputs.prerelease }}" = "true" ]; then
             ARGS+=(--prerelease)
+          else
+            ARGS+=(--latest)
           fi
           ARGS+=("$DSPACK" "$DSPACK.sha256")
           gh "${ARGS[@]}"

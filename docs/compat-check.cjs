@@ -1,4 +1,4 @@
-// DSH plugin compatibility check for v3.1.0-pre.4.
+// DSH plugin compatibility check for v3.1.0.
 // This mirrors dsh-app-boot@0.2.2-rc.1: engines.dsh takes precedence over
 // DSH peer dependencies, and prereleases participate in range matching.
 const HOST = "0.2.2-rc.1";
@@ -84,13 +84,8 @@ const MOUNTED = [
   ["@michengai/dsh-simplify", "1.0.7", { engines: ">=0.2.0-rc.1 <0.3.0-0" }],
   ["@michengai/dsh-code-review", "1.0.8", { engines: ">=0.2.0-rc.1 <0.3.0-0" }],
   ["@michengai/dsh-codex-ui", "2.0.19", { engines: ">=0.2.0-rc.1 <0.3.0-0" }],
-  ["@nanmicoder/dsh-agent-teams", "0.1.29", { engines: ">=0.1.2-alpha.2" }],
   ["dsh-context", "0.82.2", {
     engines: ">=0.2.0-rc.2 || >=0.2.1-rc.2 || >=0.2.2-rc.1"
-  }],
-  ["dsh-plugin-subagent-director", "0.6.0", { engines: ">=0.2.1-rc.1" }],
-  ["billion-context", "0.1.212", {
-    note: "no explicit engines.dsh or @deepseek-ai/dsh-* peer declaration"
   }],
   ["dshmarket", "1.73.14", {
     peers: {

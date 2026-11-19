@@ -13,8 +13,5 @@ minimumReleaseAgeExclude:
   - '@michengai/dsh-simplify@1.0.7'
   - '@michengai/dsh-code-review@1.0.8'
   - '@michengai/dsh-codex-ui@2.0.19'
-  - '@nanmicoder/dsh-agent-teams@0.1.29'
   - 'dsh-context@0.82.2'
-  - 'dsh-plugin-subagent-director@0.6.0'
-  - 'billion-context@0.1.212'
   - 'dshmarket@1.73.14'
