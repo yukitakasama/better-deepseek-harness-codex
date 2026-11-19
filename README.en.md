@@ -591,14 +591,20 @@ DSH validates with `semver.satisfies(version, peerRange, { includePrerelease: tr
 - Wide ranges like `>=0.1.0-rc.5 <0.2.0` **match** rc.2;
 - Plugins pinned to an exact version (e.g. `0.1.7-rc.1`) **hard-fail** on rc.2 — none are selected.
 
-The gate uses the host's own rule — `semver.satisfies(hostVersion, peerRange, { includePrerelease: true })`, with the host version being **0.2.1-rc.2** since v3.0.0.
+The gate follows the host rule — `semver.satisfies(hostVersion, peerRange, { includePrerelease: true })`. The host version is no longer hard-coded: `docs/compat-check.cjs` reads `manifest.json`'s `dshVersion` (falling back to `dshVersions[0]`).
 
-`docs/compat-check.cjs` now checks the 11 installed plugins and records the 13 removed entries:
+`docs/compat-check.cjs` also derives the mounted set from the manifest and gates the manifest itself:
 
-- **11 mounted** → they feed the gate, measuring **11/11 pass** (the script exit code only depends on this group);
-- **13 removed** → not installed or counted. Six of them have no `@deepseek-ai/dsh*` peer at all (cannot confirm); their reasons are printed as a removal list.
+- **Current host** is manifest value **0.2.2-rc.1**; all **11 mounted plugins pass**;
+- plugin versions come from `dependencies`, mounted bundles come from `bundles`, and mismatches, missing compatibility declarations, or a `dshVersion` absent from `dshVersions` fail the check;
+- each plugin's `engines.dsh` / peer range remains in the checked compatibility table, while the host version is evaluated dynamically.
 
-**Two gate differences to know under v3.0.0**: (1) a few upstreams (`dsh-prompt`, `dsh-plugin-subagent-director`, `dsh-client-ui-git-graph`) declare their floor through `dsh.engines.dsh`, and the DSH 0.2.1 line app-boot gate **prefers `engines.dsh`**; (2) enumeration-style peers (the three MichengAI plugins, agent-teams, workbuddy) hard-code a whitelist of known RCs, so the moment the host moves to 0.2.1-rc.3 those rows are disabled until upstream republishes.
+GitHub Actions now has two independent gates:
+
+- opening, updating, or reopening a PR runs `.github/workflows/pr-ci.yml` for compatibility and dspack validation;
+- a push to main or manual release calls both `.github/workflows/pr-ci.yml` and `.github/workflows/release-preflight.yml`; publishing is allowed only when both succeed. Shared checks live in `.github/workflows/ci-checks.yml`.
+
+The repository still needs the PR CI check configured as a required check in main branch protection; workflow files cannot replace that GitHub repository setting.
 
 (Historical record) `dsh-workbuddy-connect@0.7.1` (added in v2.7.0) declares 7 `@deepseek-ai/dsh-*` peers, **all pinned to
 exactly `0.2.0-rc.2`**, one-for-one with this pack's base → 7/7 ✅. Its non-`dsh-*` host peers are met

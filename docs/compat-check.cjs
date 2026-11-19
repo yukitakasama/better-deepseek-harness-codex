@@ -1,7 +1,29 @@
-// DSH plugin compatibility check for v3.1.0.
-// This mirrors dsh-app-boot@0.2.2-rc.1: engines.dsh takes precedence over
-// DSH peer dependencies, and prereleases participate in range matching.
-const HOST = "0.2.2-rc.1";
+// Validate mounted plugins against the DSH version recorded in manifest.json.
+// Compatibility declarations below are the checked package metadata snapshot.
+const fs = require("node:fs");
+const path = require("node:path");
+
+const manifestPath = process.argv[2]
+  ? path.resolve(process.argv[2])
+  : path.resolve(__dirname, "..", "manifest.json");
+const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+const HOST = manifest.dshVersion || manifest.dshVersions?.[0];
+const dependencies = manifest.dependencies && !Array.isArray(manifest.dependencies)
+  ? manifest.dependencies
+  : {};
+const officialBundles = new Set([
+  "@deepseek-ai/dsh-base",
+  "@deepseek-ai/dsh-web-app"
+]);
+const bundleSet = new Set(manifest.bundles || []);
+
+if (!HOST) {
+  throw new Error("manifest does not declare dshVersion or dshVersions[0]");
+}
+if (!manifest.version || !manifest.name) {
+  throw new Error("manifest is missing name or version");
+}
+
 
 function parse(version) {
   const [core, prerelease = ""] = version.trim().split("-");
@@ -62,12 +84,12 @@ function satisfies(version, range) {
   return compare(version, term) === 0;
 }
 
-const MOUNTED = [
-  ["dsh-cost-meter", "1.9.58", { engines: ">=0.2.0-rc.1 <0.3.0-0" }],
-  ["@linxin666/dsh-client-ui-git-graph", "0.4.14", {
+const COMPATIBILITY = {
+  "dsh-cost-meter": { engines: ">=0.2.0-rc.1 <0.3.0-0" },
+  "@linxin666/dsh-client-ui-git-graph": {
     peers: { "@deepseek-ai/dsh": ">=0.2.1-rc.3" }
-  }],
-  ["dsh-pet", "0.4.5", {
+  },
+  "dsh-pet": {
     peers: {
       "@deepseek-ai/dsh-llm": "^0.2.0-rc.1",
       "@deepseek-ai/dsh-commands": "^0.2.0-rc.1",
@@ -79,43 +101,66 @@ const MOUNTED = [
       "@deepseek-ai/dsh-agent-default-model": "^0.2.0-rc.1",
       "@deepseek-ai/dsh-client-ui-primitives": "^0.2.0-rc.1"
     }
-  }],
-  ["@michengai/dsh-btw", "1.3.5", { engines: ">=0.2.0-rc.1 <0.3.0-0" }],
-  ["@michengai/dsh-simplify", "1.0.7", { engines: ">=0.2.0-rc.1 <0.3.0-0" }],
-  ["@michengai/dsh-code-review", "1.0.8", { engines: ">=0.2.0-rc.1 <0.3.0-0" }],
-  ["@michengai/dsh-codex-ui", "2.0.19", { engines: ">=0.2.0-rc.1 <0.3.0-0" }],
-  ["dsh-context", "0.82.2", {
+  },
+  "@michengai/dsh-btw": { engines: ">=0.2.0-rc.1 <0.3.0-0" },
+  "@michengai/dsh-simplify": { engines: ">=0.2.0-rc.1 <0.3.0-0" },
+  "@michengai/dsh-code-review": { engines: ">=0.2.0-rc.1 <0.3.0-0" },
+  "@michengai/dsh-codex-ui": { engines: ">=0.2.0-rc.1 <0.3.0-0" },
+  "dsh-context": {
     engines: ">=0.2.0-rc.2 || >=0.2.1-rc.2 || >=0.2.2-rc.1"
-  }],
-  ["dshmarket", "1.73.14", {
+  },
+  "dshmarket": {
     peers: {
       "@deepseek-ai/dsh-settings": "^0.1.0-rc.7 || ^0.1.1-rc.2 || ^0.1.2-alpha.2 || ^0.2.0-rc.1 || ^0.2.1-alpha.3 || ^0.2.1-rc.1"
     }
-  }],
-  ["dsh-rea", "github:Fanqi89/dsh-rea#5769b4e55246787cb7c09025725db8e34db93e81", {
-    engines: ">=0.2.1-rc.2"
-  }],
-  ["dsh-deepseek-stack", "github:yukitakasama/dsh-deepseek-stack#ed2fb187e6c8eea1b74bba754c1b229d17c176ac", {
-    engines: ">=0.2.2-rc.1 <0.3.0-0"
-  }]
-];
+  },
+  "dsh-rea": { engines: ">=0.2.1-rc.2" },
+  "dsh-deepseek-stack": { engines: ">=0.2.2-rc.1 <0.3.0-0" },
+};
 
+const mountedNames = Object.keys(dependencies);
+const mountedBundles = [...bundleSet].filter((name) => !officialBundles.has(name));
 let failures = 0;
-for (const [name, version, declaration] of MOUNTED) {
+const missingDependencies = mountedBundles.filter((name) => !dependencies[name]);
+const extraDependencies = mountedNames.filter((name) => !bundleSet.has(name));
+if (missingDependencies.length || extraDependencies.length) {
+  failures++;
+  console.error("\n!! manifest bundles/dependencies mismatch");
+  if (missingDependencies.length) {
+    console.error("  missing dependencies: " + missingDependencies.join(", "));
+  }
+  if (extraDependencies.length) {
+    console.error("  dependencies not mounted: " + extraDependencies.join(", "));
+  }
+}
+
+if (Array.isArray(manifest.dshVersions) && !manifest.dshVersions.includes(HOST)) {
+  failures++;
+  console.error("\n!! dshVersion is not included in dshVersions");
+}
+
+console.log("DSH host: " + HOST + " (manifest " + manifest.name + "@" + manifest.version + ")");
+console.log("Manifest: " + manifestPath);
+for (const name of mountedNames) {
+  const version = dependencies[name];
+  const declaration = COMPATIBILITY[name];
+  console.log("\n=== " + name + "@" + version + " ===");
+  if (!declaration) {
+    failures++;
+    console.log("  FAIL compatibility declaration: missing");
+    continue;
+  }
   const requirements = declaration.engines
     ? { "engines.dsh": declaration.engines }
     : declaration.peers || {};
-  const unmet = Object.entries(requirements).filter(([, range]) => !satisfies(HOST, range));
-  const status = unmet.length > 0 ? "incompatible" : declaration.note ? "unverified" : "compatible";
+  const unmet = Object.entries(requirements)
+    .filter(([, range]) => !satisfies(HOST, range));
   if (unmet.length > 0) failures++;
-  console.log(`\n=== ${name}@${version} ===`);
   for (const [field, range] of Object.entries(requirements)) {
-    console.log(`  ${satisfies(HOST, range) ? "PASS" : "FAIL"} ${field}: ${range}`);
+    console.log("  " + (satisfies(HOST, range) ? "PASS" : "FAIL") + " " + field + ": " + range);
   }
-  if (declaration.note) console.log(`  !! ${declaration.note}`);
-  console.log(`  >> ${status} with ${HOST}`);
+  console.log("  >> " + (unmet.length ? "incompatible" : "compatible") + " with " + HOST);
 }
 
-const unverified = MOUNTED.filter(([, , declaration]) => declaration.note).length;
-console.log(`\n==== mounted plugins: ${MOUNTED.length - failures}/${MOUNTED.length} gate pass; ${unverified} unverified ====\n`);
+console.log("\n==== mounted plugins: " + (failures === 0 ? mountedNames.length : mountedNames.length - failures) + "/" + mountedNames.length + " gate pass; " + Object.keys(COMPATIBILITY).length + " declarations available ====\n");
 process.exitCode = failures === 0 ? 0 : 1;

@@ -1,16 +1,7 @@
 name: Release
 
-# 每次向 main 推送（即「每次提交」）时，读取 manifest.json 里的 version，
-# 若该版本（tag vX.Y.Z）尚未发过版，则自动构建 .dspack + .sha256 并发布 GitHub Release。
-# 已发过的版本会自动跳过，保证幂等、不会因重复 tag 而失败。
-#
-# 约定（与 v2.0.0 / v2.1.0 完全同构）：
-#   - Release tag = v<manifest.version>（普通 semver，无 dev- 前缀）
-#   - 资产 1：<manifest.name>-<version>.dspack   （format v3 zip，含 5 个固定文件）
-#   - 资产 2：同名 .dspack.sha256                 （64 字节十六进制，无换行）
-#   - 发行说明：优先用 docs/release-notes-v<version>.md，缺省则 --generate-notes
-#   - 发行通道：docs/prerelease-versions.txt 逐行列出「只发 pre-release」的版本号，
-#     命中即给 gh release create 追加 --prerelease；不在其中则为正式版。
+# A release is eligible only after both reusable gates pass:
+# PR CI and Release preflight. The tag/version is always read from manifest.json.
 on:
   push:
     branches:
@@ -21,7 +12,21 @@ permissions:
   contents: write
 
 jobs:
+  pr-ci:
+    name: PR CI gate
+    uses: ./.github/workflows/pr-ci.yml
+
+  release-preflight:
+    name: Release preflight gate
+    uses: ./.github/workflows/release-preflight.yml
+
   release:
+    name: Publish release
+    needs: [pr-ci, release-preflight]
+    if: >-
+      ${{ needs.pr-ci.result == 'success' &&
+      needs.release-preflight.result == 'success' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,7 +36,7 @@ jobs:
         run: |
           HITS=$(find home -mindepth 2 -type d -name home 2>/dev/null || true)
           if [ -n "$HITS" ]; then
-            echo "::error::nested home/ directories in the home/ payload — these become dead data under DSH_HOME:"
+            echo "::error::nested home/ directories in the home/ payload - these become dead data under DSH_HOME:"
             echo "$HITS"
             exit 1
           fi

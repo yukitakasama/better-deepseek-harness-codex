@@ -1,0 +1,80 @@
+name: Shared CI checks
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  compatibility:
+    name: Manifest compatibility
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check compatibility script syntax
+        run: node --check docs/compat-check.cjs
+      - name: Test plugins against manifest DSH version
+        run: node docs/compat-check.cjs
+
+  package:
+    name: Build and inspect dspack
+    needs: compatibility
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Build package in a clean output directory
+        run: |
+          OUT_DIR="$RUNNER_TEMP/dspack"
+          python3 scripts/build-dspack.py . "$OUT_DIR"
+          echo "DSPACK_DIR=$OUT_DIR" >> "$GITHUB_ENV"
+      - name: Inspect package metadata and checksum
+        run: |
+          python3 - "$DSPACK_DIR" <<'PY'
+          import hashlib
+          import json
+          import sys
+          import zipfile
+          from pathlib import Path
+
+          out_dir = Path(sys.argv[1])
+          manifest = json.loads(Path("manifest.json").read_text(encoding="utf-8"))
+          name = f"{manifest['name']}-{manifest['version']}"
+          dspack = out_dir / f"{name}.dspack"
+          sidecar = out_dir / f"{name}.dspack.sha256"
+          if not dspack.is_file() or not sidecar.is_file():
+              raise SystemExit("build did not produce both dspack and sha256 sidecar")
+          digest = hashlib.sha256(dspack.read_bytes()).hexdigest()
+          if sidecar.read_text(encoding="utf-8") != digest:
+              raise SystemExit("sha256 sidecar does not match the dspack")
+          with zipfile.ZipFile(dspack) as archive:
+              entries = set(archive.namelist())
+              required = {
+                  "dspack.json",
+                  "manifest.json",
+                  "package.json",
+                  "pnpm-workspace.yaml",
+                  "overrides/cordis.patch.yml",
+              }
+              missing = required - entries
+              if missing:
+                  raise SystemExit(f"dspack is missing entries: {sorted(missing)}")
+              packed = json.loads(archive.read("manifest.json"))
+              if packed != manifest:
+                  raise SystemExit("packed manifest differs from repository manifest")
+              dspack_meta = json.loads(archive.read("dspack.json"))
+              if dspack_meta != {"format": "dspack", "version": 3}:
+                  raise SystemExit("unexpected dspack format metadata")
+          print(f"validated {dspack} ({len(entries)} entries)")
+          print(f"sha256 {digest}")
+          PY

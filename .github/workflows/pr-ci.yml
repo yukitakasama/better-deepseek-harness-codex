@@ -1,0 +1,15 @@
+name: PR CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch: {}
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: PR checks
+    uses: ./.github/workflows/ci-checks.yml

@@ -1,0 +1,13 @@
+name: Release preflight
+
+on:
+  workflow_dispatch: {}
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Release checks
+    uses: ./.github/workflows/ci-checks.yml

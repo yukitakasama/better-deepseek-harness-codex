@@ -378,14 +378,20 @@ DSH 用 `semver.satisfies(版本, peer范围, { includePrerelease: true })` 校�
 - `>=0.1.0-rc.5 <0.2.0` 这类宽范围 **匹配** rc.2；
 - 钉死精确版本（如 `0.1.7-rc.1`）的插件在 rc.2 上会**硬失败**，本包一律不选。
 
-判定口径与宿主一致：`semver.satisfies(宿主版本, peer范围, { includePrerelease: true })`，宿主版本为 **0.2.2-rc.1**。
+判定口径与宿主一致：`semver.satisfies(宿主版本, peer范围, { includePrerelease: true })`。宿主版本不再写死，`docs/compat-check.cjs` 会读取整合包 `manifest.json` 的 `dshVersion`（缺省时取 `dshVersions[0]`）。
 
-`docs/compat-check.cjs` 现在只校验实际挂载的 11 个插件，并保留 13 个移除项的原因名单：
+`docs/compat-check.cjs` 同时从 manifest 读取实际挂载插件，并对清单本身设门禁：
 
-- **已挂载 11 个** → 参与门禁，实测 **11/11 通过**（脚本 exit code 只看这一组）；
-- **已移除 13 个** → 不参与安装或门禁，只输出移除原因；其中 6 个根本没有 `@deepseek-ai/dsh*` peer 声明（无法确认）。
+- **当前基座**为 manifest 中的 **0.2.2-rc.1**，实际挂载 **11 个，11/11 通过**；
+- 插件版本来自 `dependencies`，挂载集合来自 `bundles`，两者不一致、缺少兼容声明或 `dshVersion` 不在 `dshVersions` 中都会失败；
+- 每个插件的 `engines.dsh` / peer 兼容声明集中在脚本的校验表中，主机版本变化时由同一套范围匹配逻辑自动重算。
 
-**v3.0.0 起的两处判定差异**：① 少数上游（`dsh-prompt`、`dsh-plugin-subagent-director`、`dsh-client-ui-git-graph`）改用 `dsh.engines.dsh` 声明下限，而 DSH 0.2.1 线的 app-boot 兼容门**优先读 `engines.dsh`**；② 精确枚举型 peer（MichengAI 三件套、agent-teams、workbuddy）写死的是「已知 RC 白名单」，宿主一旦升到 0.2.1-rc.3 就会被整行禁用，必须等上游重发。
+GitHub Actions 现在有两道独立门禁：
+
+- 新建、更新或重新打开 PR 会触发 `.github/workflows/pr-ci.yml`，执行兼容检查和 dspack 构建校验；
+- main 推送或手动发布会同时调用 `.github/workflows/pr-ci.yml` 与 `.github/workflows/release-preflight.yml`，只有两者都成功才允许发布；共享实现位于 `.github/workflows/ci-checks.yml`。
+
+仓库设置仍需把 PR CI 的 required check 配入 main 分支保护；工作流文件本身不能替代 GitHub 的分支保护设置。
 
 （历史记录）v2.7.0 新增的 `dsh-workbuddy-connect@0.7.1` 声明 7 个 `@deepseek-ai/dsh-*` peer，
 **全部精确钉 `0.2.0-rc.2`**，与本包基座逐一对上 → 7/7 ✅。非 `dsh-*` 的 host peer 由基座树
