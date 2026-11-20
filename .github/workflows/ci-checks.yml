@@ -19,6 +19,8 @@ jobs:
           node-version: 22
       - name: Check compatibility script syntax
         run: node --check docs/compat-check.cjs
+      - name: Check bilingual release notes
+        run: node docs/check-release-notes.cjs
       - name: Test plugins against manifest DSH version
         run: node docs/compat-check.cjs
 

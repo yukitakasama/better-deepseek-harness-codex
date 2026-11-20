@@ -88,11 +88,11 @@ jobs:
           DSPACK="$NAME-$VERSION.dspack"
           NOTES="docs/release-notes-v$VERSION.md"
           ARGS=(release create "$TAG" --title "$TAG" --target main)
-          if [ -f "$NOTES" ]; then
-            ARGS+=(--notes-file "$NOTES")
-          else
-            ARGS+=(--generate-notes)
+          if [ ! -f "$NOTES" ]; then
+            echo "::error::missing required bilingual release notes: $NOTES"
+            exit 1
           fi
+          ARGS+=(--notes-file "$NOTES")
           if [ "${{ steps.channel.outputs.prerelease }}" = "true" ]; then
             ARGS+=(--prerelease)
           else
