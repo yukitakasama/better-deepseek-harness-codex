@@ -116,6 +116,8 @@ const COMPATIBILITY = {
   },
   "dsh-rea": { engines: ">=0.2.1-rc.2" },
   "dsh-deepseek-stack": { engines: ">=0.2.2-rc.1 <0.3.0-0" },
+  "dsh-chief": { engines: ">=0.2.2-rc.2" },
+  "dsh-deep-ptc-mode": { engines: ">=0.2.2-rc.1 <0.3.0" },
 };
 
 const mountedNames = Object.keys(dependencies);

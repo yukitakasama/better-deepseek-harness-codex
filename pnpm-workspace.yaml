@@ -15,3 +15,5 @@ minimumReleaseAgeExclude:
   - '@michengai/dsh-codex-ui@2.0.19'
   - 'dsh-context@0.82.2'
   - 'dshmarket@1.73.14'
+  - 'dsh-chief@1.4.0'
+  - 'dsh-deep-ptc-mode@2.1.0'

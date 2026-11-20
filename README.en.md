@@ -3,14 +3,14 @@
 简体中文 | English
 
 A DeepSeek Harness modpack for **Coding users**, aligned with the style and features of Codex.
-Built on **DSH 0.2.2-rc.1** (v3.1.0; the previous release used 0.2.1-rc.2).
+Built on **DSH 0.2.2-rc.5** (v3.2.0-pre.1; the previous release used 0.2.2-rc.1).
 
 > Modpack identifier: `better-deepseek-harness-codex` (repo name / `.dspack` prefix / profile name).
 > Community modpack — not an official DeepSeek product.
 
-## v3.1.0 is the stable release
+## v3.2.0-pre.1 pre-release
 
-- **Host**: DSH 0.2.2-rc.1. The pack mounts 11 plugins; all 11 pass the host compatibility gate.
+- **Host**: DSH 0.2.2-rc.5. The pack mounts 13 plugins; all 13 pass the host compatibility gate.
 - `dsh-workbuddy-connect` is removed because its six peers still pin DSH 0.2.1-rc.2 exactly; npm has no compatible update.
 - This release installs the 29 upstream `deepseek-stack` skills through the `dsh-deepseek-stack` plugin. The public adapter keeps upstream text unchanged; personal policy adaptations exist only in the local `.dspack` overlay.
 - The **13 plugins that could not be confirmed compatible or were incompatible have been removed completely**: they are absent from `dependencies`, `dsh.profile.bundles`, and `overrides/cordis.patch.yml`.
@@ -18,7 +18,7 @@ Built on **DSH 0.2.2-rc.1** (v3.1.0; the previous release used 0.2.1-rc.2).
 - **Install into a fresh profile**; do not overwrite a v2.x profile in place — the plugin sets only half overlap.
 - Per-plugin evidence (peer matrix / `dshReleases` / `engines.dsh` / README / release notes) is in `docs/release-notes-v3.0.1.md` and `docs/release-notes-v3.0.0.md`.
 
-## What's Inside (the 11 plugins actually mounted in this release)
+## What's Inside (the 13 plugins actually mounted in this release)
 
 One command for the core of a Codex-style coding workbench:
 
@@ -32,6 +32,8 @@ One command for the core of a Codex-style coding workbench:
 - **Plugin marketplace** — browse, search, and install community plugins inside DSH with dshmarket (1.73.14)
 - **Reverse-engineering bridge** — dsh-rea connects REA MCP for native binaries, APKs, .NET, JS/Electron, and other analysis targets (v1.4.0; commit `5769b4e`)
 - **DeepSeek workflow skills** — `dsh-deepseek-stack` exposes all 29 upstream planning, verification, review, multi-agent, and shipping skills through the official DSH skill registry (fix commit `ed2fb18`)
+- **Workflow supervision and safety approvals** — `dsh-chief` 1.4.0 with task monitoring, archives, and pre-execute guardrails (AGPL-3.0-only)
+- **Deep PTC** — `dsh-deep-ptc-mode` 2.1.0 for the DSH 0.2.2 PTC mode
 
 ### Removed for compatibility (not installed)
 
@@ -53,9 +55,15 @@ Upstream has **not explicitly declared** 0.2.1-rc.2 support for these (or explic
 | `dsh-agent-arena` | fork `25e2c55` | Upstream Tikzen 0.7.0 **pins `0.2.0-rc.2` exactly** → not adapted |
 | `@tencent-connect/dsh-qqbot` | fork `7e88006` | Range coverage only (`>=0.1.0-rc.6`); upstream 0.5.2 does not name rc.2 either |
 
+## Added and skipped in this release
+
+Added: `dsh-chief@1.4.0` and `dsh-deep-ptc-mode@2.1.0`. Both declarations include `0.2.2-rc.5`, but neither has an independent rc.5 test report.
+
+Skipped: `dsh-live-compact@1.1.12`, `dsh-drawai@0.4.8`, and `dsh-computer-use-ljl454@1.50.1` look like they cover 0.2.x, but strict npm prerelease rules do not satisfy `0.2.2-rc.5`, and no explicit rc.5 test exists. `dsh-research` (wonderandyou) has an identity mismatch and an unsatisfied peer; `@hxhxh/dsh-tray-restart` is only a Windows package without DSH declarations; `@dsh-packforge/dsh-pack-plugin` has no DSH version declaration.
+
 ## Installation
 
-Requires **DSH 0.2.2-rc.1** (this modpack's `dshVersion` pins exactly that version). DSH 0.2.2-rc.1 requires Node `>=24.9.0`.
+Requires **DSH 0.2.2-rc.5** (this modpack's `dshVersion` pins exactly that version). DSH 0.2.2-rc.5 requires Node `>=24.9.0`.
 
 ```bash
 dsh --profile better-deepseek-harness-codex
@@ -64,6 +72,13 @@ dsh --profile better-deepseek-harness-codex
 Or import the `.dspack` from the DSH launcher.
 
 > This release does not include WorkBuddy model access. Use the older DSH 0.2.1-rc.2-compatible plugin separately if needed.
+
+## v3.2.0-pre.1 changes
+
+- **Host upgrade**: DSH `0.2.2-rc.1` → `0.2.2-rc.5`.
+- **Added compatible plugins**: `dsh-chief@1.4.0` and `dsh-deep-ptc-mode@2.1.0`.
+- **Strictly skipped candidates**: `dsh-live-compact`, `dsh-drawai`, and `dsh-computer-use-ljl454` fail npm prerelease comparator semantics for rc.5; three more are skipped for identity or missing declarations.
+- **Gate result**: 13 mounted plugins pass `docs/compat-check.cjs` (13/13).
 
 ## v3.1.0 changes
 
@@ -595,7 +610,7 @@ The gate follows the host rule — `semver.satisfies(hostVersion, peerRange, { i
 
 `docs/compat-check.cjs` also derives the mounted set from the manifest and gates the manifest itself:
 
-- **Current host** is manifest value **0.2.2-rc.1**; all **11 mounted plugins pass**;
+- **Current host** is manifest value **0.2.2-rc.5**; all **13 mounted plugins pass**;
 - plugin versions come from `dependencies`, mounted bundles come from `bundles`, and mismatches, missing compatibility declarations, or a `dshVersion` absent from `dshVersions` fail the check;
 - each plugin's `engines.dsh` / peer range remains in the checked compatibility table, while the host version is evaluated dynamically.
 
