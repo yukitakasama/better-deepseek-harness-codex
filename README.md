@@ -3,14 +3,14 @@
 [English](README.en.md) | 简体中文
 
 面向 **Coding 用户**的 DeepSeek Harness 整合包，向 Codex 的风格与功能看齐。
-基座 **DSH 0.2.2-rc.5**（v3.2.0-pre.1；上一版为 0.2.2-rc.1）。
+基座 **DSH 0.2.2-rc.5**（v3.2.0-pre.2；上一版为 v3.2.0-pre.1）。
 
 > 整合包标识 `better-deepseek-harness-codex`（仓库名 / `.dspack` 前缀 / profile 名）。
 > 社区整合包，非 DeepSeek 官方产品。
 
-## v3.2.0-pre.1 预发布版
+## v3.2.0-pre.2 预发布版
 
-- **基座**为 DSH 0.2.2-rc.5；实际挂载 13 个插件，13/13 通过宿主兼容门禁。
+- **基座**为 DSH 0.2.2-rc.5；本轮候选加入后实际挂载 20 个插件，兼容门禁会同时报告可验证和“未声明、待验证”项目。
 - `dsh-workbuddy-connect` 因 6 个 peer 仍精确锁定 DSH 0.2.1-rc.2 而移除；npm 没有兼容的新版本。
 - 本版通过 `dsh-deepseek-stack` 插件安装上游 `deepseek-stack` 的 29 个 skill；公共插件保留上游原文，个人规则适配只进入本地 `.dspack` 覆盖层。
 - v3.0.0 中 **13 个无法确认兼容或已明确不兼容的插件已彻底移除**：不再进入 `dependencies`、`dsh.profile.bundles` 或 `overrides/cordis.patch.yml`。
@@ -18,7 +18,7 @@
 - **建议新建 profile 安装**，不要原地覆盖 v2.x：插件集只重叠一半，旧配置未必对得上。
 - 逐插件判定依据（peer 矩阵 / `dshReleases` / `engines.dsh` / README / release notes）见 `docs/release-notes-v3.0.0.md`。
 
-## 装什么（本版实际挂载的 13 个插件）
+## 装什么（本版实际挂载的 20 个插件）
 
 一条命令拿到 Codex 式编码工作台的核心部分：
 
@@ -34,8 +34,9 @@
 - **DeepSeek 工作流 skills** —— `dsh-deepseek-stack` 通过 DSH 官方 skill 注册表提供上游 29 个计划、验证、审查、多智能体和发布流程 skill（修复 commit `ed2fb18`）
 - **流程看护与安全审批** —— `dsh-chief` 1.4.0，提供任务监督、档案柜和事前操作护栏（AGPL-3.0-only）
 - **深度 PTC** —— `dsh-deep-ptc-mode` 2.1.0，提供 DSH 0.2.2 的 PTC 模式扩展
+- **本轮 CI 候选** —— `dsh-live-compact`、`dsh-drawai`、`dsh-computer-use-ljl454`、`dsh-research`、`@hxhxh/dsh-tray-restart`、`@dsh-packforge/dsh-pack-plugin` 与 `dsh-bili-whale`；这些包加入本分支供 CI 验证，不能据此视为已完成兼容认证。
 
-### 因兼容性问题移除（不随包安装）
+### 因兼容性问题移除（历史记录，不是本版移除）
 
 这些插件的上游**尚未明确声明**适配 DSH 0.2.1-rc.2（或已明确不适配）。为避免门禁拒装/启动崩溃，它们已从整合包完全移除；如未来上游更新，需重新核验后再单独添加。
 
@@ -55,11 +56,11 @@
 | `dsh-agent-arena` | fork `25e2c55` | 上游 Tikzen 0.7.0 **精确钉 0.2.0-rc.2** → 未适配 |
 | `@tencent-connect/dsh-qqbot` | fork `7e88006` | 仅范围覆盖（`>=0.1.0-rc.6`），上游 0.5.2 同样未点名 rc.2 |
 
-## 本轮新增与跳过
+## 本轮新增与 CI 验证
 
-新增并纳入整合包：`dsh-chief@1.4.0` 与 `dsh-deep-ptc-mode@2.1.0`。两者的声明范围都包含 `0.2.2-rc.5`，但没有独立的 rc.5 实测报告。
+已保留并纳入整合包：`dsh-chief@1.4.0` 与 `dsh-deep-ptc-mode@2.1.0`。
 
-以下候选跳过：`dsh-live-compact@1.1.12`、`dsh-drawai@0.4.8`、`dsh-computer-use-ljl454@1.50.1` 的声明范围看似覆盖 0.2.x，但按 npm 严格 prerelease 规则不满足 `0.2.2-rc.5`，且没有明确 rc.5 测试；`dsh-research`（wonderandyou）身份不匹配且 peer 不满足；`@hxhxh/dsh-tray-restart` 只有无 DSH 声明的 Windows 包；`@dsh-packforge/dsh-pack-plugin` 没有 DSH 版本声明。
+本轮按用户要求把上一轮跳过的候选以及两个新插件加入分支，等待 PR CI 验证：`dsh-live-compact@1.1.12`、`dsh-drawai@0.4.8`、`dsh-computer-use-ljl454@1.50.1`、`dsh-research@0.1.0`（Git pinned）、`@hxhxh/dsh-tray-restart@0.3.1`、`@dsh-packforge/dsh-pack-plugin@0.3.5` 与 `dsh-bili-whale@1.0.1`（Git pinned）。其中部分包没有 DSH engine/peer 声明，兼容检查会标为 `unverified`；CI 通过只代表结构和构建检查通过，不等于上游兼容性认证。
 
 ## 安装
 
@@ -73,12 +74,13 @@ dsh --profile better-deepseek-harness-codex
 
 > 本版不包含 WorkBuddy 模型接入。需要该功能时，请单独使用与 DSH 0.2.1-rc.2 匹配的旧版插件。
 
-## v3.2.0-pre.1 变更说明
+## v3.2.0-pre.2 变更说明
 
 - **基座升级**：DSH `0.2.2-rc.1` → `0.2.2-rc.5`。
-- **新增兼容插件**：`dsh-chief@1.4.0`、`dsh-deep-ptc-mode@2.1.0`。
-- **严格跳过候选**：`dsh-live-compact`、`dsh-drawai`、`dsh-computer-use-ljl454` 不满足 rc.5 的 npm prerelease comparator 规则；另三项因身份或声明缺失跳过。
-- **门禁结果**：实际挂载 13 个插件，`docs/compat-check.cjs` 通过 13/13。
+- **保留插件**：`dsh-chief@1.4.0`、`dsh-deep-ptc-mode@2.1.0`。
+- **加入 CI 候选**：上一轮跳过的六项与新增的 `dsh-pack-plugin`、`dsh-bili-whale` 均已进入本分支，等待 PR CI。
+- **兼容性提示**：缺少 DSH engine/peer 的包显示 `unverified`；范围覆盖 prerelease 的包仍需 CI 和实际运行验证。
+- **发布状态**：本轮只创建分支和 PR，不合并、不发布正式版。
 
 ## v3.1.0 变更说明
 
