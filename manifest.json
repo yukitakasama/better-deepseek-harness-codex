@@ -2,14 +2,14 @@
   "manifestVersion": 5,
   "type": "profile",
   "name": "better-deepseek-harness-codex",
-  "version": "3.2.0-pre.1",
+  "version": "3.2.0-pre.2",
   "displayName": {
     "zh-CN": "更好的 deepseek harness（codex 风格）",
     "en-US": "Better DeepSeek Harness (Codex Style)"
   },
   "description": {
-    "zh-CN": "面向 Coding 用户的 DSH 整合包。v3.2.0-pre.1 基于 DSH 0.2.2-rc.5，挂载 13 个插件；加入流程看护和深度 PTC 能力。",
-    "en-US": "A coding-oriented DSH modpack. v3.2.0-pre.1 is based on DSH 0.2.2-rc.5 and mounts 13 plugins for workflow supervision and deep PTC."
+    "zh-CN": "面向 Coding 用户的 DSH 整合包。v3.2.0-pre.2 基于 DSH 0.2.2-rc.5，挂载 20 个插件；加入流程看护、深度 PTC、绘图、压缩和 B 站能力。",
+    "en-US": "A coding-oriented DSH modpack. v3.2.0-pre.2 is based on DSH 0.2.2-rc.5 and mounts 20 plugins for workflow supervision, deep PTC, drawing, compaction, and Bilibili."
   },
   "author": "yukitakasama",
   "category": "coding",
@@ -37,6 +37,13 @@
     "dsh-deepseek-stack",
     "dsh-chief",
     "dsh-deep-ptc-mode",
+    "dsh-live-compact",
+    "dsh-drawai",
+    "dsh-computer-use-ljl454",
+    "dsh-research",
+    "@hxhxh/dsh-tray-restart",
+    "@dsh-packforge/dsh-pack-plugin",
+    "dsh-bili-whale",
     "@michengai/dsh-codex-ui"
   ],
   "dependencies": {
@@ -52,6 +59,13 @@
     "dsh-rea": "github:Fanqi89/dsh-rea#5769b4e55246787cb7c09025725db8e34db93e81",
     "dsh-deepseek-stack": "github:yukitakasama/dsh-deepseek-stack#ed2fb187e6c8eea1b74bba754c1b229d17c176ac",
     "dsh-chief": "1.4.0",
-    "dsh-deep-ptc-mode": "2.1.0"
+    "dsh-deep-ptc-mode": "2.1.0",
+    "dsh-live-compact": "1.1.12",
+    "dsh-drawai": "0.4.8",
+    "dsh-computer-use-ljl454": "1.50.1",
+    "dsh-research": "github:wonderandyou/dsh-research#d3827723b242555aed558b7ec02130fd3a2a3f85",
+    "@hxhxh/dsh-tray-restart": "0.3.1",
+    "@dsh-packforge/dsh-pack-plugin": "0.3.5",
+    "dsh-bili-whale": "github:Alterssss/dsh-bili-whale#f1847ff9e1eca4fc27edadd41847fb3d9e6ec668"
   }
 }

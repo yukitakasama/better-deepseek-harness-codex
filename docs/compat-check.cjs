@@ -118,6 +118,23 @@ const COMPATIBILITY = {
   "dsh-deepseek-stack": { engines: ">=0.2.2-rc.1 <0.3.0-0" },
   "dsh-chief": { engines: ">=0.2.2-rc.2" },
   "dsh-deep-ptc-mode": { engines: ">=0.2.2-rc.1 <0.3.0" },
+  "dsh-live-compact": { engines: ">=0.2.0-rc.2 <0.3.0" },
+  "dsh-drawai": {
+    peers: {
+      "@deepseek-ai/dsh-tools": ">=0.1.0-rc.1 <0.1.0 || >=0.1.5-rc.1 <0.2.0-0 || >=0.2.0-rc.1 <0.3.0-0"
+    }
+  },
+  "dsh-computer-use-ljl454": {
+    engines: ">=0.2.1-rc.2 <0.3.0",
+    peers: {
+      "@deepseek-ai/dsh-scope": ">=0.2.1-rc.2 <0.3.0",
+      "@deepseek-ai/dsh-tools": ">=0.2.1-rc.2 <0.3.0"
+    }
+  },
+  "dsh-research": { note: "no DSH engine or peer declaration; compatibility unverified" },
+  "@hxhxh/dsh-tray-restart": { note: "no DSH engine or peer declaration; Windows desktop package" },
+  "@dsh-packforge/dsh-pack-plugin": { note: "no DSH engine or peer declaration; compatibility unverified" },
+  "dsh-bili-whale": { note: "no DSH engine or peer declaration; Node-only engine declaration" },
 };
 
 const mountedNames = Object.keys(dependencies);
@@ -155,6 +172,10 @@ for (const name of mountedNames) {
   const requirements = declaration.engines
     ? { "engines.dsh": declaration.engines }
     : declaration.peers || {};
+  if (Object.keys(requirements).length === 0) {
+    console.log("  INFO no DSH engine/peer declaration: compatibility unverified");
+    continue;
+  }
   const unmet = Object.entries(requirements)
     .filter(([, range]) => !satisfies(HOST, range));
   if (unmet.length > 0) failures++;
