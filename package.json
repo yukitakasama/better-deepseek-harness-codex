@@ -21,7 +21,8 @@
     "dsh-research": "github:wonderandyou/dsh-research#d3827723b242555aed558b7ec02130fd3a2a3f85",
     "@hxhxh/dsh-tray-restart": "0.3.1",
     "@dsh-packforge/dsh-pack-plugin": "0.3.5",
-    "dsh-bili-whale": "github:Alterssss/dsh-bili-whale#f1847ff9e1eca4fc27edadd41847fb3d9e6ec668"
+    "dsh-bili-whale": "github:Alterssss/dsh-bili-whale#f1847ff9e1eca4fc27edadd41847fb3d9e6ec668",
+    "@furongjun1999/dsh-memory": "0.11.1"
   },
   "dsh": {
     "profile": {
@@ -47,6 +48,7 @@
         "@hxhxh/dsh-tray-restart",
         "@dsh-packforge/dsh-pack-plugin",
         "dsh-bili-whale",
+        "@furongjun1999/dsh-memory",
         "@michengai/dsh-codex-ui"
       ]
     }

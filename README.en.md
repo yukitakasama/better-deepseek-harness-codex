@@ -3,14 +3,14 @@
 简体中文 | English
 
 A DeepSeek Harness modpack for **Coding users**, aligned with the style and features of Codex.
-Built on **DSH 0.2.2-rc.5** (v3.2.0-pre.2; the previous release was v3.2.0-pre.1).
+Built on **DSH 0.2.2-rc.5** (current candidate v3.2.0-pre.3; previous release v3.2.0-pre.2).
 
 > Modpack identifier: `better-deepseek-harness-codex` (repo name / `.dspack` prefix / profile name).
 > Community modpack — not an official DeepSeek product.
 
-## v3.2.0-pre.2 pre-release
+## v3.2.0-pre.3 prerelease candidate
 
-- **Host**: DSH 0.2.2-rc.5. After adding the requested candidates, the pack mounts 20 plugins; the gate reports both verified and unverified metadata.
+- **Host**: DSH 0.2.2-rc.5. This candidate mounts 21 plugins and adds `@furongjun1999/dsh-memory@0.11.1`.
 - `dsh-workbuddy-connect` is removed because its six peers still pin DSH 0.2.1-rc.2 exactly; npm has no compatible update.
 - This release installs the 29 upstream `deepseek-stack` skills through the `dsh-deepseek-stack` plugin. The public adapter keeps upstream text unchanged; personal policy adaptations exist only in the local `.dspack` overlay.
 - The **13 plugins that could not be confirmed compatible or were incompatible have been removed completely**: they are absent from `dependencies`, `dsh.profile.bundles`, and `overrides/cordis.patch.yml`.
@@ -18,7 +18,7 @@ Built on **DSH 0.2.2-rc.5** (v3.2.0-pre.2; the previous release was v3.2.0-pre.1
 - **Install into a fresh profile**; do not overwrite a v2.x profile in place — the plugin sets only half overlap.
 - Per-plugin evidence (peer matrix / `dshReleases` / `engines.dsh` / README / release notes) is in `docs/release-notes-v3.0.1.md` and `docs/release-notes-v3.0.0.md`.
 
-## What's Inside (the 20 plugins mounted on this branch)
+## What's Inside (21 plugins in this candidate)
 
 One command for the core of a Codex-style coding workbench:
 
@@ -34,7 +34,7 @@ One command for the core of a Codex-style coding workbench:
 - **DeepSeek workflow skills** — `dsh-deepseek-stack` exposes all 29 upstream planning, verification, review, multi-agent, and shipping skills through the official DSH skill registry (fix commit `ed2fb18`)
 - **Workflow supervision and safety approvals** — `dsh-chief` 1.4.0 with task monitoring, archives, and pre-execute guardrails (AGPL-3.0-only)
 - **Deep PTC** — `dsh-deep-ptc-mode` 2.1.0 for the DSH 0.2.2 PTC mode
-- **CI candidates on this branch** — `dsh-live-compact`, `dsh-drawai`, `dsh-computer-use-ljl454`, `dsh-research`, `@hxhxh/dsh-tray-restart`, `@dsh-packforge/dsh-pack-plugin`, and `dsh-bili-whale`; these are included for PR CI validation and are not certified compatible by inclusion alone.
+- **Long-term memory** — `@furongjun1999/dsh-memory` 0.11.1 automatically sediments conversations into editable Markdown cognitive graphs; forgetting is explicit, with no heat- or age-based automatic eviction. Upstream reports testing on DSH 0.2.2-rc.3; runtime validation on target rc.5 remains outstanding.
 
 ### Removed for compatibility (historical record, not removed in this branch)
 
@@ -56,11 +56,11 @@ Upstream has **not explicitly declared** 0.2.1-rc.2 support for these (or explic
 | `dsh-agent-arena` | fork `25e2c55` | Upstream Tikzen 0.7.0 **pins `0.2.0-rc.2` exactly** → not adapted |
 | `@tencent-connect/dsh-qqbot` | fork `7e88006` | Range coverage only (`>=0.1.0-rc.6`); upstream 0.5.2 does not name rc.2 either |
 
-## Added for PR CI validation
+## Compatibility and Validation
 
-Retained in the pack: `dsh-chief@1.4.0` and `dsh-deep-ptc-mode@2.1.0`.
+`dsh-chief@1.4.0` and `dsh-deep-ptc-mode@2.1.0` are included; the v3.2.0-pre.2 plugin candidates passed PR CI manifest and dspack checks. CI does not certify each plugin at runtime.
 
-Per request, this branch now adds the previously skipped candidates plus the two new plugins: `dsh-live-compact@1.1.12`, `dsh-drawai@0.4.8`, `dsh-computer-use-ljl454@1.50.1`, `dsh-research@0.1.0` (Git-pinned), `@hxhxh/dsh-tray-restart@0.3.1`, `@dsh-packforge/dsh-pack-plugin@0.3.5`, and `dsh-bili-whale@1.0.1` (Git-pinned). Some packages have no DSH engine/peer declaration and are reported as `unverified`; a passing CI build validates structure and packaging, not upstream runtime compatibility.
+This PR adds `@furongjun1999/dsh-memory@0.11.1`. Its upstream README reports DSH 0.2.2-rc.3 testing but does not explicitly declare rc.5; a passing PR CI run cannot replace startup/runtime validation on rc.5. The plugin requires Node.js `>=22.19`.
 
 ## Installation
 

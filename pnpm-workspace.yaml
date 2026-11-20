@@ -22,3 +22,4 @@ minimumReleaseAgeExclude:
   - 'dsh-computer-use-ljl454@1.50.1'
   - '@hxhxh/dsh-tray-restart@0.3.1'
   - '@dsh-packforge/dsh-pack-plugin@0.3.5'
+  - '@furongjun1999/dsh-memory@0.11.1'
