@@ -3,14 +3,14 @@
 [English](README.en.md) | 简体中文
 
 面向 **Coding 用户**的 DeepSeek Harness 整合包，向 Codex 的风格与功能看齐。
-基座 **DSH 0.2.2-rc.5**（当前候选 v3.2.0-pre.3；上一版为 v3.2.0-pre.2）。
+基座 **DSH 0.2.2-rc.5**（当前候选 v3.2.0-pre.4；上一版为 v3.2.0-pre.3）。
 
 > 整合包标识 `better-deepseek-harness-codex`（仓库名 / `.dspack` 前缀 / profile 名）。
 > 社区整合包，非 DeepSeek 官方产品。
 
-## v3.2.0-pre.3 预发布候选
+## v3.2.0-pre.4 预发布候选
 
-- **基座**为 DSH 0.2.2-rc.5；当前候选挂载 21 个插件，新增 `@furongjun1999/dsh-memory@0.11.1`。
+- **基座**为 DSH 0.2.2-rc.5；当前候选挂载 22 个插件，新增 `dsh-plugin-tool-management@0.22.8`。
 - `dsh-workbuddy-connect` 因 6 个 peer 仍精确锁定 DSH 0.2.1-rc.2 而移除；npm 没有兼容的新版本。
 - 本版通过 `dsh-deepseek-stack` 插件安装上游 `deepseek-stack` 的 29 个 skill；公共插件保留上游原文，个人规则适配只进入本地 `.dspack` 覆盖层。
 - v3.0.0 中 **13 个无法确认兼容或已明确不兼容的插件已彻底移除**：不再进入 `dependencies`、`dsh.profile.bundles` 或 `overrides/cordis.patch.yml`。
@@ -18,7 +18,7 @@
 - **建议新建 profile 安装**，不要原地覆盖 v2.x：插件集只重叠一半，旧配置未必对得上。
 - 逐插件判定依据（peer 矩阵 / `dshReleases` / `engines.dsh` / README / release notes）见 `docs/release-notes-v3.0.0.md`。
 
-## 装什么（当前候选挂载 21 个插件）
+## 装什么（当前候选挂载 22 个插件）
 
 一条命令拿到 Codex 式编码工作台的核心部分：
 
@@ -35,6 +35,7 @@
 - **流程看护与安全审批** —— `dsh-chief` 1.4.0，提供任务监督、档案柜和事前操作护栏（AGPL-3.0-only）
 - **深度 PTC** —— `dsh-deep-ptc-mode` 2.1.0，提供 DSH 0.2.2 的 PTC 模式扩展
 - **长期记忆** —— `@furongjun1999/dsh-memory` 0.11.1 自动沉淀为可手改的 Markdown 认知图；只支持显式遗忘，不会按热度或时效自动淘汰。上游 README 标注已验证 DSH 0.2.2-rc.3，当前目标 rc.5 仍待运行验证。
+- **统一工具管理** —— `dsh-plugin-tool-management` 0.22.8 汇总管理 MCP、技能、子智能体、提示词、记忆和归档会话，支持场景切换与 Agent 工具操作；需要 Node.js `>=24.9`。
 
 ### 因兼容性问题移除（历史记录，不是本版移除）
 
@@ -58,9 +59,9 @@
 
 ## 兼容性与验证状态
 
-`dsh-chief@1.4.0` 与 `dsh-deep-ptc-mode@2.1.0` 已纳入；v3.2.0-pre.2 的插件候选已通过 PR CI 的 manifest 与 dspack 检查。该 CI 不等于逐个插件的运行时认证。
+`dsh-chief@1.4.0` 与 `dsh-deep-ptc-mode@2.1.0` 已纳入；v3.2.0-pre.3 候选通过 PR CI 的 manifest 与 dspack 检查。该 CI 不等于逐个插件的运行时认证。
 
-当前 PR 新增 `@furongjun1999/dsh-memory@0.11.1`。上游 README 标注 DSH 0.2.2-rc.3 已验证，但没有明确声明 rc.5；PR CI 通过也不能替代在 rc.5 上启动和运行插件。插件需要 Node.js `>=22.19`。
+当前 PR 新增 `dsh-plugin-tool-management@0.22.8`。其 `engines.dsh` 范围覆盖 `0.2.2-rc.5`，上游 README 标注适配 DSH 0.2.2；插件要求 Node.js `>=24.9`，CI 构建通过不替代目标环境的运行验证。
 
 ## 安装
 

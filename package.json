@@ -22,7 +22,8 @@
     "@hxhxh/dsh-tray-restart": "0.3.1",
     "@dsh-packforge/dsh-pack-plugin": "0.3.5",
     "dsh-bili-whale": "github:Alterssss/dsh-bili-whale#f1847ff9e1eca4fc27edadd41847fb3d9e6ec668",
-    "@furongjun1999/dsh-memory": "0.11.1"
+    "@furongjun1999/dsh-memory": "0.11.1",
+    "dsh-plugin-tool-management": "0.22.8"
   },
   "dsh": {
     "profile": {
@@ -49,6 +50,7 @@
         "@dsh-packforge/dsh-pack-plugin",
         "dsh-bili-whale",
         "@furongjun1999/dsh-memory",
+        "dsh-plugin-tool-management",
         "@michengai/dsh-codex-ui"
       ]
     }

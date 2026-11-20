@@ -3,14 +3,14 @@
 简体中文 | English
 
 A DeepSeek Harness modpack for **Coding users**, aligned with the style and features of Codex.
-Built on **DSH 0.2.2-rc.5** (current candidate v3.2.0-pre.3; previous release v3.2.0-pre.2).
+Built on **DSH 0.2.2-rc.5** (current candidate v3.2.0-pre.4; previous candidate v3.2.0-pre.3).
 
 > Modpack identifier: `better-deepseek-harness-codex` (repo name / `.dspack` prefix / profile name).
 > Community modpack — not an official DeepSeek product.
 
-## v3.2.0-pre.3 prerelease candidate
+## v3.2.0-pre.4 prerelease candidate
 
-- **Host**: DSH 0.2.2-rc.5. This candidate mounts 21 plugins and adds `@furongjun1999/dsh-memory@0.11.1`.
+- **Host**: DSH 0.2.2-rc.5. This candidate mounts 22 plugins and adds `dsh-plugin-tool-management@0.22.8`.
 - `dsh-workbuddy-connect` is removed because its six peers still pin DSH 0.2.1-rc.2 exactly; npm has no compatible update.
 - This release installs the 29 upstream `deepseek-stack` skills through the `dsh-deepseek-stack` plugin. The public adapter keeps upstream text unchanged; personal policy adaptations exist only in the local `.dspack` overlay.
 - The **13 plugins that could not be confirmed compatible or were incompatible have been removed completely**: they are absent from `dependencies`, `dsh.profile.bundles`, and `overrides/cordis.patch.yml`.
@@ -18,7 +18,7 @@ Built on **DSH 0.2.2-rc.5** (current candidate v3.2.0-pre.3; previous release v3
 - **Install into a fresh profile**; do not overwrite a v2.x profile in place — the plugin sets only half overlap.
 - Per-plugin evidence (peer matrix / `dshReleases` / `engines.dsh` / README / release notes) is in `docs/release-notes-v3.0.1.md` and `docs/release-notes-v3.0.0.md`.
 
-## What's Inside (21 plugins in this candidate)
+## What's Inside (22 plugins in this candidate)
 
 One command for the core of a Codex-style coding workbench:
 
@@ -35,6 +35,7 @@ One command for the core of a Codex-style coding workbench:
 - **Workflow supervision and safety approvals** — `dsh-chief` 1.4.0 with task monitoring, archives, and pre-execute guardrails (AGPL-3.0-only)
 - **Deep PTC** — `dsh-deep-ptc-mode` 2.1.0 for the DSH 0.2.2 PTC mode
 - **Long-term memory** — `@furongjun1999/dsh-memory` 0.11.1 automatically sediments conversations into editable Markdown cognitive graphs; forgetting is explicit, with no heat- or age-based automatic eviction. Upstream reports testing on DSH 0.2.2-rc.3; runtime validation on target rc.5 remains outstanding.
+- **Unified tool management** — `dsh-plugin-tool-management` 0.22.8 manages MCP, skills, subagents, prompts, memory and archived sessions, with scene switching and agent-operated tools; requires Node.js `>=24.9`.
 
 ### Removed for compatibility (historical record, not removed in this branch)
 
@@ -58,9 +59,9 @@ Upstream has **not explicitly declared** 0.2.1-rc.2 support for these (or explic
 
 ## Compatibility and Validation
 
-`dsh-chief@1.4.0` and `dsh-deep-ptc-mode@2.1.0` are included; the v3.2.0-pre.2 plugin candidates passed PR CI manifest and dspack checks. CI does not certify each plugin at runtime.
+`dsh-chief@1.4.0` and `dsh-deep-ptc-mode@2.1.0` are included; the v3.2.0-pre.3 candidate passed PR CI manifest and dspack checks. CI does not certify each plugin at runtime.
 
-This PR adds `@furongjun1999/dsh-memory@0.11.1`. Its upstream README reports DSH 0.2.2-rc.3 testing but does not explicitly declare rc.5; a passing PR CI run cannot replace startup/runtime validation on rc.5. The plugin requires Node.js `>=22.19`.
+This PR adds `dsh-plugin-tool-management@0.22.8`. Its `engines.dsh` range includes `0.2.2-rc.5`, and the upstream README marks it compatible with DSH 0.2.2. It requires Node.js `>=24.9`; a passing CI build does not replace runtime validation on the target host.
 
 ## Installation
 
