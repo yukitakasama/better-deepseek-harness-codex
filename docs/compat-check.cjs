@@ -135,6 +135,10 @@ const COMPATIBILITY = {
   "@hxhxh/dsh-tray-restart": { note: "no DSH engine or peer declaration; Windows desktop package" },
   "@dsh-packforge/dsh-pack-plugin": { note: "no DSH engine or peer declaration; compatibility unverified" },
   "dsh-bili-whale": { note: "no DSH engine or peer declaration; Node-only engine declaration" },
+  "dsh-plugin-tool-management": {
+    engines: ">=0.2.2-rc.2 <0.2.3",
+    note: "upstream requires Node.js >=24.9; DSH range includes 0.2.2-rc.5"
+  },
   "@furongjun1999/dsh-memory": {
     verifiedHosts: ["0.2.2-rc.3"],
     note: "upstream README reports verification on DSH 0.2.2-rc.3; rc.5 is not explicitly verified"
