@@ -3,14 +3,14 @@
 [English](README.en.md) | 简体中文
 
 面向 **Coding 用户**的 DeepSeek Harness 整合包，向 Codex 的风格与功能看齐。
-基座 **DSH 0.2.2-rc.5**（v3.2.0-pre.2；上一版为 v3.2.0-pre.1）。
+基座 **DSH 0.2.2-rc.5**（当前候选 v3.2.0-pre.3；上一版为 v3.2.0-pre.2）。
 
 > 整合包标识 `better-deepseek-harness-codex`（仓库名 / `.dspack` 前缀 / profile 名）。
 > 社区整合包，非 DeepSeek 官方产品。
 
-## v3.2.0-pre.2 预发布版
+## v3.2.0-pre.3 预发布候选
 
-- **基座**为 DSH 0.2.2-rc.5；本轮候选加入后实际挂载 20 个插件，兼容门禁会同时报告可验证和“未声明、待验证”项目。
+- **基座**为 DSH 0.2.2-rc.5；当前候选挂载 21 个插件，新增 `@furongjun1999/dsh-memory@0.11.1`。
 - `dsh-workbuddy-connect` 因 6 个 peer 仍精确锁定 DSH 0.2.1-rc.2 而移除；npm 没有兼容的新版本。
 - 本版通过 `dsh-deepseek-stack` 插件安装上游 `deepseek-stack` 的 29 个 skill；公共插件保留上游原文，个人规则适配只进入本地 `.dspack` 覆盖层。
 - v3.0.0 中 **13 个无法确认兼容或已明确不兼容的插件已彻底移除**：不再进入 `dependencies`、`dsh.profile.bundles` 或 `overrides/cordis.patch.yml`。
@@ -18,7 +18,7 @@
 - **建议新建 profile 安装**，不要原地覆盖 v2.x：插件集只重叠一半，旧配置未必对得上。
 - 逐插件判定依据（peer 矩阵 / `dshReleases` / `engines.dsh` / README / release notes）见 `docs/release-notes-v3.0.0.md`。
 
-## 装什么（本版实际挂载的 20 个插件）
+## 装什么（当前候选挂载 21 个插件）
 
 一条命令拿到 Codex 式编码工作台的核心部分：
 
@@ -34,7 +34,7 @@
 - **DeepSeek 工作流 skills** —— `dsh-deepseek-stack` 通过 DSH 官方 skill 注册表提供上游 29 个计划、验证、审查、多智能体和发布流程 skill（修复 commit `ed2fb18`）
 - **流程看护与安全审批** —— `dsh-chief` 1.4.0，提供任务监督、档案柜和事前操作护栏（AGPL-3.0-only）
 - **深度 PTC** —— `dsh-deep-ptc-mode` 2.1.0，提供 DSH 0.2.2 的 PTC 模式扩展
-- **本轮 CI 候选** —— `dsh-live-compact`、`dsh-drawai`、`dsh-computer-use-ljl454`、`dsh-research`、`@hxhxh/dsh-tray-restart`、`@dsh-packforge/dsh-pack-plugin` 与 `dsh-bili-whale`；这些包加入本分支供 CI 验证，不能据此视为已完成兼容认证。
+- **长期记忆** —— `@furongjun1999/dsh-memory` 0.11.1 自动沉淀为可手改的 Markdown 认知图；只支持显式遗忘，不会按热度或时效自动淘汰。上游 README 标注已验证 DSH 0.2.2-rc.3，当前目标 rc.5 仍待运行验证。
 
 ### 因兼容性问题移除（历史记录，不是本版移除）
 
@@ -56,11 +56,11 @@
 | `dsh-agent-arena` | fork `25e2c55` | 上游 Tikzen 0.7.0 **精确钉 0.2.0-rc.2** → 未适配 |
 | `@tencent-connect/dsh-qqbot` | fork `7e88006` | 仅范围覆盖（`>=0.1.0-rc.6`），上游 0.5.2 同样未点名 rc.2 |
 
-## 本轮新增与 CI 验证
+## 兼容性与验证状态
 
-已保留并纳入整合包：`dsh-chief@1.4.0` 与 `dsh-deep-ptc-mode@2.1.0`。
+`dsh-chief@1.4.0` 与 `dsh-deep-ptc-mode@2.1.0` 已纳入；v3.2.0-pre.2 的插件候选已通过 PR CI 的 manifest 与 dspack 检查。该 CI 不等于逐个插件的运行时认证。
 
-本轮按用户要求把上一轮跳过的候选以及两个新插件加入分支，等待 PR CI 验证：`dsh-live-compact@1.1.12`、`dsh-drawai@0.4.8`、`dsh-computer-use-ljl454@1.50.1`、`dsh-research@0.1.0`（Git pinned）、`@hxhxh/dsh-tray-restart@0.3.1`、`@dsh-packforge/dsh-pack-plugin@0.3.5` 与 `dsh-bili-whale@1.0.1`（Git pinned）。其中部分包没有 DSH engine/peer 声明，兼容检查会标为 `unverified`；CI 通过只代表结构和构建检查通过，不等于上游兼容性认证。
+当前 PR 新增 `@furongjun1999/dsh-memory@0.11.1`。上游 README 标注 DSH 0.2.2-rc.3 已验证，但没有明确声明 rc.5；PR CI 通过也不能替代在 rc.5 上启动和运行插件。插件需要 Node.js `>=22.19`。
 
 ## 安装
 

@@ -135,6 +135,10 @@ const COMPATIBILITY = {
   "@hxhxh/dsh-tray-restart": { note: "no DSH engine or peer declaration; Windows desktop package" },
   "@dsh-packforge/dsh-pack-plugin": { note: "no DSH engine or peer declaration; compatibility unverified" },
   "dsh-bili-whale": { note: "no DSH engine or peer declaration; Node-only engine declaration" },
+  "@furongjun1999/dsh-memory": {
+    verifiedHosts: ["0.2.2-rc.3"],
+    note: "upstream README reports verification on DSH 0.2.2-rc.3; rc.5 is not explicitly verified"
+  },
 };
 
 const mountedNames = Object.keys(dependencies);
@@ -173,7 +177,15 @@ for (const name of mountedNames) {
     ? { "engines.dsh": declaration.engines }
     : declaration.peers || {};
   if (Object.keys(requirements).length === 0) {
-    console.log("  INFO no DSH engine/peer declaration: compatibility unverified");
+    if (declaration.verifiedHosts?.length) {
+      const tested = declaration.verifiedHosts.join(", ");
+      const status = declaration.verifiedHosts.includes(HOST)
+        ? "target matches upstream-reported test"
+        : "target not explicitly verified";
+      console.log("  INFO upstream-reported DSH test: " + tested + "; " + status + " (" + HOST + ")");
+    } else {
+      console.log("  INFO no DSH engine/peer declaration: compatibility unverified");
+    }
     continue;
   }
   const unmet = Object.entries(requirements)
