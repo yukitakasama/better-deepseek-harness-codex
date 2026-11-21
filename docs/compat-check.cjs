@@ -89,19 +89,6 @@ const COMPATIBILITY = {
   "@linxin666/dsh-client-ui-git-graph": {
     peers: { "@deepseek-ai/dsh": ">=0.2.1-rc.3" }
   },
-  "dsh-pet": {
-    peers: {
-      "@deepseek-ai/dsh-llm": "^0.2.0-rc.1",
-      "@deepseek-ai/dsh-commands": "^0.2.0-rc.1",
-      "@deepseek-ai/dsh-home-paths": "^0.2.0-rc.1",
-      "@deepseek-ai/dsh-credentials": "^0.2.0-rc.1",
-      "@deepseek-ai/dsh-host-webserver": "^0.2.0-rc.1",
-      "@deepseek-ai/dsh-client-ui-slots": "^0.2.0-rc.1",
-      "@deepseek-ai/dsh-client-connection": "^0.2.0-rc.1",
-      "@deepseek-ai/dsh-agent-default-model": "^0.2.0-rc.1",
-      "@deepseek-ai/dsh-client-ui-primitives": "^0.2.0-rc.1"
-    }
-  },
   "@michengai/dsh-btw": { engines: ">=0.2.0-rc.1 <0.3.0-0" },
   "@michengai/dsh-simplify": { engines: ">=0.2.0-rc.1 <0.3.0-0" },
   "@michengai/dsh-code-review": { engines: ">=0.2.0-rc.1 <0.3.0-0" },
@@ -117,7 +104,6 @@ const COMPATIBILITY = {
   "dsh-rea": { engines: ">=0.2.1-rc.2" },
   "dsh-deepseek-stack": { engines: ">=0.2.2-rc.1 <0.3.0-0" },
   "dsh-chief": { engines: ">=0.2.2-rc.2" },
-  "dsh-deep-ptc-mode": { engines: ">=0.2.2-rc.1 <0.3.0" },
   "dsh-live-compact": { engines: ">=0.2.0-rc.2 <0.3.0" },
   "dsh-drawai": {
     peers: {
@@ -131,14 +117,9 @@ const COMPATIBILITY = {
       "@deepseek-ai/dsh-tools": ">=0.2.1-rc.2 <0.3.0"
     }
   },
-  "dsh-research": { note: "no DSH engine or peer declaration; compatibility unverified" },
   "@hxhxh/dsh-tray-restart": { note: "no DSH engine or peer declaration; Windows desktop package" },
   "@dsh-packforge/dsh-pack-plugin": { note: "no DSH engine or peer declaration; compatibility unverified" },
   "dsh-bili-whale": { note: "no DSH engine or peer declaration; Node-only engine declaration" },
-  "dsh-plugin-tool-management": {
-    engines: ">=0.2.2-rc.2 <0.2.3",
-    note: "upstream requires Node.js >=24.9; DSH range includes 0.2.2-rc.5"
-  },
   "@furongjun1999/dsh-memory": {
     verifiedHosts: ["0.2.2-rc.3"],
     note: "upstream README reports verification on DSH 0.2.2-rc.3; rc.5 is not explicitly verified"
