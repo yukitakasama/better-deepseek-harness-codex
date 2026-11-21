@@ -7,6 +7,7 @@
 - 基座 DSH 版本：0.2.2-rc.5。
 - 整合包版本：3.2.0-pre.4。
 - 实际挂载插件：22 个；在 3.2.0-pre.3 候选基础上新增 `dsh-plugin-tool-management@0.22.8`。
+- 修复整合包导入兼容性：将 `manifest.launchers` 改为带 `supported` 字段的对象格式，兼容当前导入器的严格校验（#6）。
 - 本改动以独立 PR 提交；当前不合并、不发布，stable/latest 不变。
 
 ### 新增：工具管理面板
@@ -29,6 +30,7 @@
 - Base DSH version: 0.2.2-rc.5.
 - Modpack version: 3.2.0-pre.4.
 - Mounted plugins: 22; adds `dsh-plugin-tool-management@0.22.8` on top of the v3.2.0-pre.3 candidate.
+- Fixes pack import compatibility by expressing `manifest.launchers` as an object with `supported` declarations for importers that enforce the full form (#6).
 - Submitted as a separate PR; it is not merged or released, and stable/latest remains unchanged.
 
 ### Added: Tool management panel

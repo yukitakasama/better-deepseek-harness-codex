@@ -23,6 +23,21 @@ jobs:
         run: node docs/check-release-notes.cjs
       - name: Test plugins against manifest DSH version
         run: node docs/compat-check.cjs
+      - name: Validate launcher compatibility declarations
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const manifest = JSON.parse(fs.readFileSync('manifest.json', 'utf8'));
+          if (!manifest.launchers || Array.isArray(manifest.launchers) || typeof manifest.launchers !== 'object') {
+            throw new Error('manifest.launchers must be an object for importer compatibility');
+          }
+          for (const [id, declaration] of Object.entries(manifest.launchers)) {
+            if (!declaration || typeof declaration !== 'object' || typeof declaration.supported !== 'boolean') {
+              throw new Error(`manifest.launchers.${id} must declare a boolean supported field`);
+            }
+          }
+          console.log(`validated ${Object.keys(manifest.launchers).length} launcher declarations`);
+          NODE
 
   package:
     name: Build and inspect dspack
