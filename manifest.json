@@ -2,14 +2,14 @@
   "manifestVersion": 5,
   "type": "profile",
   "name": "better-deepseek-harness-codex",
-  "version": "3.2.0-pre.4",
+  "version": "3.2.0-pre.5",
   "displayName": {
     "zh-CN": "更好的 deepseek harness（codex 风格）",
     "en-US": "Better DeepSeek Harness (Codex Style)"
   },
   "description": {
-    "zh-CN": "面向 Coding 用户的 DSH 整合包。v3.2.0-pre.4 基于 DSH 0.2.2-rc.5，挂载 22 个插件；新增灵枢长期记忆与工具管理面板。",
-    "en-US": "A coding-oriented DSH modpack. v3.2.0-pre.4 is based on DSH 0.2.2-rc.5 and mounts 22 plugins, including Lingshu memory and a unified tool-management panel."
+    "zh-CN": "面向 Coding 用户的 DSH 整合包。v3.2.0-pre.5 基于 DSH 0.2.2-rc.5，挂载 22 个插件；修复启动器兼容声明导致的导入失败。",
+    "en-US": "A coding-oriented DSH modpack. v3.2.0-pre.5 is based on DSH 0.2.2-rc.5 and mounts 22 plugins; fixes import failures caused by launcher compatibility declarations."
   },
   "author": "yukitakasama",
   "category": "coding",
