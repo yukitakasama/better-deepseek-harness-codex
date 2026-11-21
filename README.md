@@ -3,14 +3,15 @@
 [English](README.en.md) | 简体中文
 
 面向 **Coding 用户**的 DeepSeek Harness 整合包，向 Codex 的风格与功能看齐。
-基座 **DSH 0.2.2-rc.5**（当前候选 v3.2.0-pre.4；上一版为 v3.2.0-pre.3）。
+基座 **DSH 0.2.2-rc.5**（当前候选 v3.2.0-pre.6；上一版为 v3.2.0-pre.5）。
 
 > 整合包标识 `better-deepseek-harness-codex`（仓库名 / `.dspack` 前缀 / profile 名）。
 > 社区整合包，非 DeepSeek 官方产品。
 
-## v3.2.0-pre.4 预发布候选
+## v3.2.0-pre.6 预发布候选
 
-- **基座**为 DSH 0.2.2-rc.5；当前候选挂载 22 个插件，新增 `dsh-plugin-tool-management@0.22.8`。
+- **基座**为 DSH 0.2.2-rc.5；当前候选挂载 18 个插件。
+- 本版移除 `dsh-pet`、`dsh-deep-ptc-mode`、`dsh-plugin-tool-management` 和 `dsh-research`，它们不再进入依赖或 profile bundle。
 - `dsh-workbuddy-connect` 因 6 个 peer 仍精确锁定 DSH 0.2.1-rc.2 而移除；npm 没有兼容的新版本。
 - 本版通过 `dsh-deepseek-stack` 插件安装上游 `deepseek-stack` 的 29 个 skill；公共插件保留上游原文，个人规则适配只进入本地 `.dspack` 覆盖层。
 - v3.0.0 中 **13 个无法确认兼容或已明确不兼容的插件已彻底移除**：不再进入 `dependencies`、`dsh.profile.bundles` 或 `overrides/cordis.patch.yml`。
@@ -18,7 +19,7 @@
 - **建议新建 profile 安装**，不要原地覆盖 v2.x：插件集只重叠一半，旧配置未必对得上。
 - 逐插件判定依据（peer 矩阵 / `dshReleases` / `engines.dsh` / README / release notes）见 `docs/release-notes-v3.0.0.md`。
 
-## 装什么（当前候选挂载 22 个插件）
+## 装什么（当前候选挂载 18 个插件）
 
 一条命令拿到 Codex 式编码工作台的核心部分：
 
@@ -26,16 +27,13 @@
 - **代码审查与简化** —— `/review` 调独立子 Agent 审代码，`/simplify` 按 Git 变更范围简化（1.0.8 / 1.0.7）
 - **只读旁问** —— 基于当前上下文单独提问，不打断主任务（`@michengai/dsh-btw` 1.3.5）
 - **费用与余额** —— 本会话/当日费用、模型价格、Coding Plan 额度、余额（`dsh-cost-meter` 1.9.58）
-- **桌宠** —— dsh-pet 蓝色大肥鱼与桌面窗口（`dsh-pet` 0.4.5）
 - **Git 图** —— 分支选择与提交图（`@linxin666/dsh-client-ui-git-graph` 0.4.14）
 - **上下文仪表盘** —— dsh-context 上下文可视化（0.82.2）
 - **插件市场** —— dshmarket 在 DSH 内浏览、搜索和安装社区插件（1.73.14）
 - **逆向工程桥接** —— dsh-rea 接入 REA MCP，提供二进制、APK、.NET、JS/Electron 等逆向分析工具（v1.4.0；Git commit `5769b4e`）
 - **DeepSeek 工作流 skills** —— `dsh-deepseek-stack` 通过 DSH 官方 skill 注册表提供上游 29 个计划、验证、审查、多智能体和发布流程 skill（修复 commit `ed2fb18`）
 - **流程看护与安全审批** —— `dsh-chief` 1.4.0，提供任务监督、档案柜和事前操作护栏（AGPL-3.0-only）
-- **深度 PTC** —— `dsh-deep-ptc-mode` 2.1.0，提供 DSH 0.2.2 的 PTC 模式扩展
 - **长期记忆** —— `@furongjun1999/dsh-memory` 0.11.1 自动沉淀为可手改的 Markdown 认知图；只支持显式遗忘，不会按热度或时效自动淘汰。上游 README 标注已验证 DSH 0.2.2-rc.3，当前目标 rc.5 仍待运行验证。
-- **统一工具管理** —— `dsh-plugin-tool-management` 0.22.8 汇总管理 MCP、技能、子智能体、提示词、记忆和归档会话，支持场景切换与 Agent 工具操作；需要 Node.js `>=24.9`。
 
 ### 因兼容性问题移除（历史记录，不是本版移除）
 
@@ -59,9 +57,7 @@
 
 ## 兼容性与验证状态
 
-`dsh-chief@1.4.0` 与 `dsh-deep-ptc-mode@2.1.0` 已纳入；v3.2.0-pre.3 候选通过 PR CI 的 manifest 与 dspack 检查。该 CI 不等于逐个插件的运行时认证。
-
-当前 PR 新增 `dsh-plugin-tool-management@0.22.8`。其 `engines.dsh` 范围覆盖 `0.2.2-rc.5`，上游 README 标注适配 DSH 0.2.2；插件要求 Node.js `>=24.9`，CI 构建通过不替代目标环境的运行验证。
+v3.2.0-pre.6 移除了四个可选插件；其余插件集合沿用 v3.2.0-pre.5。PR CI 只验证 manifest、兼容性脚本和 dspack 构建，不等于逐个插件的运行时认证。
 
 ## 安装
 
@@ -132,9 +128,9 @@ dsh --profile better-deepseek-harness-codex
 - `dshVersions`: 声明本版基座兼容版本集合（0.2.2-rc.1）
 - `launchers`: 声明启动器兼容性（dshl、dsh-packforge-app）
 
-## 插件清单（随包 10 个；本版挂载 10 个）
+## v2.0.0 历史插件清单（当时随包 10 个；当时挂载 10 个）
 
-### 已挂载（在 `dsh.profile.bundles` 里）
+### v2.0.0 历史挂载（在当时的 `dsh.profile.bundles` 里）
 
 | 插件 | 版本 | 作用 | 上游声明依据 |
 |---|---|---|---|
