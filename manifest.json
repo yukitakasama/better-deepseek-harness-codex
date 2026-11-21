@@ -17,10 +17,14 @@
   "dshVersions": [
     "0.2.2-rc.5"
   ],
-  "launchers": [
-    "dshl",
-    "dsh-packforge-app"
-  ],
+  "launchers": {
+    "dshl": {
+      "supported": true
+    },
+    "dsh-packforge-app": {
+      "supported": true
+    }
+  },
   "profileName": "better-deepseek-harness-codex",
   "bundles": [
     "@deepseek-ai/dsh-base",
