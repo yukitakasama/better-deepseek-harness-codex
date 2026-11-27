@@ -3,31 +3,35 @@
 简体中文 | English
 
 A DeepSeek Harness modpack for **Coding users**, aligned with the style and features of Codex.
-Built on **DSH 0.2.2-rc.5** (current candidate v3.2.0-pre.6; previous candidate v3.2.0-pre.5).
+Built on **DSH 0.2.2-rc.5** (current stable release v3.2.0; previous release v3.2.0-pre.6).
 
 > Modpack identifier: `better-deepseek-harness-codex` (repo name / `.dspack` prefix / profile name).
 > Community modpack — not an official DeepSeek product.
 
-## v3.2.0-pre.6 prerelease candidate
+## v3.2.0 stable release
 
-- **Host**: DSH 0.2.2-rc.5. This candidate mounts 8 plugins.
-- This release removes `dsh-pet`, `dsh-deep-ptc-mode`, `dsh-plugin-tool-management`, and `dsh-research`; they are no longer dependencies or profile bundles.
-- `dsh-workbuddy-connect` is removed because its six peers still pin DSH 0.2.1-rc.2 exactly; npm has no compatible update.
-- This release installs the 29 upstream `deepseek-stack` skills through the `dsh-deepseek-stack` plugin. The public adapter keeps upstream text unchanged; personal policy adaptations exist only in the local `.dspack` overlay.
-- The **13 plugins that could not be confirmed compatible or were incompatible have been removed completely**: they are absent from `dependencies`, `dsh.profile.bundles`, and `overrides/cordis.patch.yml`.
-- The list below keeps their pinned versions and compatibility reasons; none of them is installed by this pack.
+- **Host**: DSH 0.2.2-rc.5. This release mounts 10 plugins.
+- Updates published npm plugin versions and GitHub source pins, and adds `dsh-ptc-python-win` and `dsh-flash-presets`.
+- DSH compatibility is unverified for `dsh-ptc-python-win` and `dsh-bili-whale`; neither declares a DSH compatibility range.
+- Release tag: `v3.2.0`, stable and marked GitHub Latest.
+- `dsh-deepseek-stack` exposes the 29 upstream skills; the pack remains based on DSH 0.2.2-rc.5.
 - **Install into a fresh profile**; do not overwrite a v2.x profile in place — the plugin sets only half overlap.
 - Per-plugin evidence (peer matrix / `dshReleases` / `engines.dsh` / README / release notes) is in `docs/release-notes-v3.0.1.md` and `docs/release-notes-v3.0.0.md`.
 
-## What's Inside (8 plugins in this candidate)
+## What's Inside (10 plugins)
 
 One command for the core of a Codex-style coding workbench:
 
-- **Cost & balance** — per-session/daily cost, model prices, coding-plan quota, balance (`dsh-cost-meter` 1.9.58)
-- **Context dashboard** — dsh-context visualization (0.82.2)
-- **Plugin marketplace** — browse, search, and install community plugins inside DSH with dshmarket (1.73.14)
-- **Reverse-engineering bridge** — dsh-rea connects REA MCP for native binaries, APKs, .NET, JS/Electron, and other analysis targets (v1.4.0; commit `5769b4e`)
+- **Cost & balance** — per-session/daily cost, model prices, coding-plan quota, balance (`dsh-cost-meter` 1.9.94)
+- **Context dashboard** — dsh-context visualization (0.87.2)
+- **Plugin marketplace** — browse, search, and install community plugins inside DSH with dshmarket (1.85.0)
+- **Reverse-engineering bridge** — dsh-rea connects REA MCP for native binaries, APKs, .NET, JS/Electron, and other analysis targets (v1.6.1; commit `f0af7f9`)
 - **DeepSeek workflow skills** — `dsh-deepseek-stack` exposes all 29 upstream planning, verification, review, multi-agent, and shipping skills through the official DSH skill registry (fix commit `ed2fb18`)
+- **Live compaction** — `dsh-live-compact` 1.1.14
+- **Computer use** — `dsh-computer-use-ljl454` 1.50.1
+- **Bilibili memory and interaction** — `dsh-bili-whale` 1.0.2 (commit `10af44c`; DSH compatibility unverified)
+- **Python PTC** — `dsh-ptc-python-win` 0.1.0 (commit `89847ec`; DSH compatibility unverified)
+- **Flash presets** — `dsh-flash-presets` 0.3.4 (commit `40052db`)
 
 ### Removed for compatibility (historical record, not removed in this branch)
 
@@ -51,7 +55,7 @@ Upstream has **not explicitly declared** 0.2.1-rc.2 support for these (or explic
 
 ## Compatibility and Validation
 
-The current working tree removes the requested optional plugins from v3.2.0-pre.6 and retains 8 plugins. PR CI validates the manifest, compatibility script, and dspack build; it does not certify every plugin at runtime.
+The manifest declares 10 plugins. `dsh-flash-presets` declares a DSH range covering rc.5; `dsh-ptc-python-win` and `dsh-bili-whale` have no DSH compatibility declaration. CI checks static metadata and the dspack build; it does not certify every plugin at runtime.
 
 ## Installation
 

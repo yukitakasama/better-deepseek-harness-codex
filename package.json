@@ -2,14 +2,16 @@
   "name": "dsh-profile-better-deepseek-harness-codex",
   "private": true,
   "dependencies": {
-    "dsh-cost-meter": "1.9.58",
-    "dsh-context": "0.82.2",
-    "dshmarket": "1.73.14",
-    "dsh-rea": "github:Fanqi89/dsh-rea#5769b4e55246787cb7c09025725db8e34db93e81",
+    "dsh-cost-meter": "1.9.94",
+    "dsh-context": "0.87.2",
+    "dshmarket": "1.85.0",
+    "dsh-rea": "github:Fanqi89/dsh-rea#f0af7f9bec0d27880b678e116f00889a73c4d4",
     "dsh-deepseek-stack": "github:yukitakasama/dsh-deepseek-stack#ed2fb187e6c8eea1b74bba754c1b229d17c176ac",
-    "dsh-live-compact": "1.1.12",
+    "dsh-live-compact": "1.1.14",
     "dsh-computer-use-ljl454": "1.50.1",
-    "dsh-bili-whale": "github:Alterssss/dsh-bili-whale#f1847ff9e1eca4fc27edadd41847fb3d9e6ec668"
+    "dsh-bili-whale": "github:Alterssss/dsh-bili-whale#10af44cd4b8249de064e4b662aa2b8e73fb0c58e",
+    "dsh-ptc-python-win": "github:yukitakasama/dsh-ptc-python-win#89847ecd72a9d9e4326332af67e2b87d2dba565c",
+    "dsh-flash-presets": "github:LarryE135/dsh-flash-presets#40052db3d1561a030868a0b76a5141fb6e445dc5"
   },
   "dsh": {
     "profile": {
@@ -23,7 +25,9 @@
         "dsh-deepseek-stack",
         "dsh-live-compact",
         "dsh-computer-use-ljl454",
-        "dsh-bili-whale"
+        "dsh-bili-whale",
+        "dsh-ptc-python-win",
+        "dsh-flash-presets"
       ]
     }
   }
