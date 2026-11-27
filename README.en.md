@@ -10,7 +10,7 @@ Built on **DSH 0.2.2-rc.5** (current candidate v3.2.0-pre.6; previous candidate 
 
 ## v3.2.0-pre.6 prerelease candidate
 
-- **Host**: DSH 0.2.2-rc.5. This candidate mounts 18 plugins.
+- **Host**: DSH 0.2.2-rc.5. This candidate mounts 8 plugins.
 - This release removes `dsh-pet`, `dsh-deep-ptc-mode`, `dsh-plugin-tool-management`, and `dsh-research`; they are no longer dependencies or profile bundles.
 - `dsh-workbuddy-connect` is removed because its six peers still pin DSH 0.2.1-rc.2 exactly; npm has no compatible update.
 - This release installs the 29 upstream `deepseek-stack` skills through the `dsh-deepseek-stack` plugin. The public adapter keeps upstream text unchanged; personal policy adaptations exist only in the local `.dspack` overlay.
@@ -19,21 +19,15 @@ Built on **DSH 0.2.2-rc.5** (current candidate v3.2.0-pre.6; previous candidate 
 - **Install into a fresh profile**; do not overwrite a v2.x profile in place — the plugin sets only half overlap.
 - Per-plugin evidence (peer matrix / `dshReleases` / `engines.dsh` / README / release notes) is in `docs/release-notes-v3.0.1.md` and `docs/release-notes-v3.0.0.md`.
 
-## What's Inside (18 plugins in this candidate)
+## What's Inside (8 plugins in this candidate)
 
 One command for the core of a Codex-style coding workbench:
 
-- **Codex-style UI** — workspace session tree, global search, turn navigation, session rename/archive/fork (`@michengai/dsh-codex-ui` 2.0.19)
-- **Code review & simplification** — `/review` runs an independent sub-agent; `/simplify` works by Git change scope (1.0.8 / 1.0.7)
-- **Read-only side-ask** — ask about the current context without interrupting the main task (`@michengai/dsh-btw` 1.3.5)
 - **Cost & balance** — per-session/daily cost, model prices, coding-plan quota, balance (`dsh-cost-meter` 1.9.58)
-- **Git graph** — branch selection and commit graph (`@linxin666/dsh-client-ui-git-graph` 0.4.14)
 - **Context dashboard** — dsh-context visualization (0.82.2)
 - **Plugin marketplace** — browse, search, and install community plugins inside DSH with dshmarket (1.73.14)
 - **Reverse-engineering bridge** — dsh-rea connects REA MCP for native binaries, APKs, .NET, JS/Electron, and other analysis targets (v1.4.0; commit `5769b4e`)
 - **DeepSeek workflow skills** — `dsh-deepseek-stack` exposes all 29 upstream planning, verification, review, multi-agent, and shipping skills through the official DSH skill registry (fix commit `ed2fb18`)
-- **Workflow supervision and safety approvals** — `dsh-chief` 1.4.0 with task monitoring, archives, and pre-execute guardrails (AGPL-3.0-only)
-- **Long-term memory** — `@furongjun1999/dsh-memory` 0.11.1 automatically sediments conversations into editable Markdown cognitive graphs; forgetting is explicit, with no heat- or age-based automatic eviction. Upstream reports testing on DSH 0.2.2-rc.3; runtime validation on target rc.5 remains outstanding.
 
 ### Removed for compatibility (historical record, not removed in this branch)
 
@@ -57,7 +51,7 @@ Upstream has **not explicitly declared** 0.2.1-rc.2 support for these (or explic
 
 ## Compatibility and Validation
 
-v3.2.0-pre.6 removes four optional plugins; the remaining plugin set follows v3.2.0-pre.5. PR CI validates the manifest, compatibility script, and dspack build; it does not certify every plugin at runtime.
+The current working tree removes the requested optional plugins from v3.2.0-pre.6 and retains 8 plugins. PR CI validates the manifest, compatibility script, and dspack build; it does not certify every plugin at runtime.
 
 ## Installation
 

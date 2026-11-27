@@ -3,23 +3,13 @@
   "private": true,
   "dependencies": {
     "dsh-cost-meter": "1.9.58",
-    "@linxin666/dsh-client-ui-git-graph": "0.4.14",
-    "@michengai/dsh-btw": "1.3.5",
-    "@michengai/dsh-simplify": "1.0.7",
-    "@michengai/dsh-code-review": "1.0.8",
-    "@michengai/dsh-codex-ui": "2.0.19",
     "dsh-context": "0.82.2",
     "dshmarket": "1.73.14",
     "dsh-rea": "github:Fanqi89/dsh-rea#5769b4e55246787cb7c09025725db8e34db93e81",
     "dsh-deepseek-stack": "github:yukitakasama/dsh-deepseek-stack#ed2fb187e6c8eea1b74bba754c1b229d17c176ac",
-    "dsh-chief": "1.4.0",
     "dsh-live-compact": "1.1.12",
-    "dsh-drawai": "0.4.8",
     "dsh-computer-use-ljl454": "1.50.1",
-    "@hxhxh/dsh-tray-restart": "0.3.1",
-    "@dsh-packforge/dsh-pack-plugin": "0.3.5",
-    "dsh-bili-whale": "github:Alterssss/dsh-bili-whale#f1847ff9e1eca4fc27edadd41847fb3d9e6ec668",
-    "@furongjun1999/dsh-memory": "0.11.1"
+    "dsh-bili-whale": "github:Alterssss/dsh-bili-whale#f1847ff9e1eca4fc27edadd41847fb3d9e6ec668"
   },
   "dsh": {
     "profile": {
@@ -27,23 +17,13 @@
         "@deepseek-ai/dsh-base",
         "@deepseek-ai/dsh-web-app",
         "dsh-cost-meter",
-        "@linxin666/dsh-client-ui-git-graph",
-        "@michengai/dsh-btw",
-        "@michengai/dsh-simplify",
-        "@michengai/dsh-code-review",
         "dsh-context",
         "dshmarket",
         "dsh-rea",
         "dsh-deepseek-stack",
-        "dsh-chief",
         "dsh-live-compact",
-        "dsh-drawai",
         "dsh-computer-use-ljl454",
-        "@hxhxh/dsh-tray-restart",
-        "@dsh-packforge/dsh-pack-plugin",
-        "dsh-bili-whale",
-        "@furongjun1999/dsh-memory",
-        "@michengai/dsh-codex-ui"
+        "dsh-bili-whale"
       ]
     }
   }
