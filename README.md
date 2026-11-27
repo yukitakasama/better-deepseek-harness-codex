@@ -3,37 +3,35 @@
 [English](README.en.md) | 简体中文
 
 面向 **Coding 用户**的 DeepSeek Harness 整合包，向 Codex 的风格与功能看齐。
-基座 **DSH 0.2.2-rc.5**（当前候选 v3.2.0-pre.6；上一版为 v3.2.0-pre.5）。
+基座 **DSH 0.2.2-rc.5**（当前正式版 v3.2.0；上一版为 v3.2.0-pre.6）。
 
 > 整合包标识 `better-deepseek-harness-codex`（仓库名 / `.dspack` 前缀 / profile 名）。
 > 社区整合包，非 DeepSeek 官方产品。
 
-## v3.2.0-pre.6 预发布候选
+## v3.2.0 正式版
 
-- **基座**为 DSH 0.2.2-rc.5；当前候选挂载 18 个插件。
-- 本版移除 `dsh-pet`、`dsh-deep-ptc-mode`、`dsh-plugin-tool-management` 和 `dsh-research`，它们不再进入依赖或 profile bundle。
-- `dsh-workbuddy-connect` 因 6 个 peer 仍精确锁定 DSH 0.2.1-rc.2 而移除；npm 没有兼容的新版本。
-- 本版通过 `dsh-deepseek-stack` 插件安装上游 `deepseek-stack` 的 29 个 skill；公共插件保留上游原文，个人规则适配只进入本地 `.dspack` 覆盖层。
-- v3.0.0 中 **13 个无法确认兼容或已明确不兼容的插件已彻底移除**：不再进入 `dependencies`、`dsh.profile.bundles` 或 `overrides/cordis.patch.yml`。
-- 下方名单保留每个移除项的版本与兼容性原因；它们不属于本整合包的安装内容。
+- **基座**为 DSH 0.2.2-rc.5，挂载 10 个插件。
+- 更新已发布的 npm 插件版本及 GitHub 插件固定提交，并新增 `dsh-ptc-python-win` 和 `dsh-flash-presets`。
+- `dsh-ptc-python-win` 与 `dsh-bili-whale` 未声明 DSH 兼容范围，当前版本兼容性未验证。
+- 发布标签为 `v3.2.0`，作为 stable 并标记为 GitHub Latest。
+- `dsh-deepseek-stack` 提供上游 29 个 skill；本整合包仍以 DSH 0.2.2-rc.5 为基座。
 - **建议新建 profile 安装**，不要原地覆盖 v2.x：插件集只重叠一半，旧配置未必对得上。
 - 逐插件判定依据（peer 矩阵 / `dshReleases` / `engines.dsh` / README / release notes）见 `docs/release-notes-v3.0.0.md`。
 
-## 装什么（当前候选挂载 18 个插件）
+## 装什么（10 个插件）
 
 一条命令拿到 Codex 式编码工作台的核心部分：
 
-- **Codex 风格界面** —— 工作区会话树、全局搜索、轮次跳转、会话重命名/归档/分叉（`@michengai/dsh-codex-ui` 2.0.19）
-- **代码审查与简化** —— `/review` 调独立子 Agent 审代码，`/simplify` 按 Git 变更范围简化（1.0.8 / 1.0.7）
-- **只读旁问** —— 基于当前上下文单独提问，不打断主任务（`@michengai/dsh-btw` 1.3.5）
-- **费用与余额** —— 本会话/当日费用、模型价格、Coding Plan 额度、余额（`dsh-cost-meter` 1.9.58）
-- **Git 图** —— 分支选择与提交图（`@linxin666/dsh-client-ui-git-graph` 0.4.14）
-- **上下文仪表盘** —— dsh-context 上下文可视化（0.82.2）
-- **插件市场** —— dshmarket 在 DSH 内浏览、搜索和安装社区插件（1.73.14）
-- **逆向工程桥接** —— dsh-rea 接入 REA MCP，提供二进制、APK、.NET、JS/Electron 等逆向分析工具（v1.4.0；Git commit `5769b4e`）
+- **费用与余额** —— 本会话/当日费用、模型价格、Coding Plan 额度、余额（`dsh-cost-meter` 1.9.94）
+- **上下文仪表盘** —— dsh-context 上下文可视化（0.87.2）
+- **插件市场** —— dshmarket 在 DSH 内浏览、搜索和安装社区插件（1.85.0）
+- **逆向工程桥接** —— dsh-rea 接入 REA MCP，提供二进制、APK、.NET、JS/Electron 等逆向分析工具（v1.6.1；Git commit `f0af7f9`）
 - **DeepSeek 工作流 skills** —— `dsh-deepseek-stack` 通过 DSH 官方 skill 注册表提供上游 29 个计划、验证、审查、多智能体和发布流程 skill（修复 commit `ed2fb18`）
-- **流程看护与安全审批** —— `dsh-chief` 1.4.0，提供任务监督、档案柜和事前操作护栏（AGPL-3.0-only）
-- **长期记忆** —— `@furongjun1999/dsh-memory` 0.11.1 自动沉淀为可手改的 Markdown 认知图；只支持显式遗忘，不会按热度或时效自动淘汰。上游 README 标注已验证 DSH 0.2.2-rc.3，当前目标 rc.5 仍待运行验证。
+- **实时压缩** —— `dsh-live-compact` 1.1.14
+- **计算机操作** —— `dsh-computer-use-ljl454` 1.50.1
+- **B 站记忆与互动** —— `dsh-bili-whale` 1.0.2（commit `10af44c`；DSH 兼容性未验证）
+- **Python PTC** —— `dsh-ptc-python-win` 0.1.0（commit `89847ec`；DSH 兼容性未验证）
+- **Flash 预设** —— `dsh-flash-presets` 0.3.4（commit `40052db`）
 
 ### 因兼容性问题移除（历史记录，不是本版移除）
 
@@ -57,7 +55,7 @@
 
 ## 兼容性与验证状态
 
-v3.2.0-pre.6 移除了四个可选插件；其余插件集合沿用 v3.2.0-pre.5。PR CI 只验证 manifest、兼容性脚本和 dspack 构建，不等于逐个插件的运行时认证。
+manifest 声明 10 个插件。`dsh-flash-presets` 的 DSH 范围覆盖 rc.5；`dsh-ptc-python-win` 和 `dsh-bili-whale` 没有 DSH 兼容声明。CI 检查静态元数据和 dspack 构建，不等于逐个插件的运行时认证。
 
 ## 安装
 

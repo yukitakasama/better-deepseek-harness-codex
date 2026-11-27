@@ -98,7 +98,7 @@ const COMPATIBILITY = {
   },
   "dshmarket": {
     peers: {
-      "@deepseek-ai/dsh-settings": "^0.1.0-rc.7 || ^0.1.1-rc.2 || ^0.1.2-alpha.2 || ^0.2.0-rc.1 || ^0.2.1-alpha.3 || ^0.2.1-rc.1"
+      "@deepseek-ai/dsh-settings": "^0.1.0-rc.7 || ^0.1.1-rc.2 || ^0.1.2-alpha.2 || ^0.2.0-rc.1 || ^0.2.1-alpha.3 || ^0.2.1-rc.1 || ^0.2.2-rc.1"
     }
   },
   "dsh-rea": { engines: ">=0.2.1-rc.2" },
@@ -120,6 +120,8 @@ const COMPATIBILITY = {
   "@hxhxh/dsh-tray-restart": { note: "no DSH engine or peer declaration; Windows desktop package" },
   "@dsh-packforge/dsh-pack-plugin": { note: "no DSH engine or peer declaration; compatibility unverified" },
   "dsh-bili-whale": { note: "no DSH engine or peer declaration; Node-only engine declaration" },
+  "dsh-ptc-python-win": { note: "no DSH engine or peer declaration; compatibility unverified" },
+  "dsh-flash-presets": { engines: ">=0.2.1-rc.5 <0.2.3-0" },
   "@furongjun1999/dsh-memory": {
     verifiedHosts: ["0.2.2-rc.3"],
     note: "upstream README reports verification on DSH 0.2.2-rc.3; rc.5 is not explicitly verified"
